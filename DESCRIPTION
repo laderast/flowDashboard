@@ -1,9 +1,11 @@
 Package: flowDashboard
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Shiny Modules for Building interactive Dashboards for flow cytometry analysis
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
+Author: Ted Laderas
+Maintainer: Ted Laderas <laderast@ohsu.edu>
 Description: More about what it does (maybe more than one line)
+Depends:
+  rex, dplyr, flowCore, flowWorkspace, reshape2, shiny, data.table, dtplyr, ggvis
 License: What license is it under?
 LazyData: TRUE
