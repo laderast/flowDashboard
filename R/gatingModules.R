@@ -76,11 +76,12 @@ plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
 #        try(plotGate(gateSet[[i]], y=outnodes, default.y=defaultChan,checkName=FALSE,
  #                    marker.only=TRUE, raw.scale=FALSE,
   #                   gpar = list(nrow=1, ncol=length(outnodes))))
-        outplot <- try(autoplot(gateSet[[i]], outnodes, y="SSC-A" ) + scale_x_flowJo_biexp() + scale_y_flowJo_biexp())
+        outplot <- try(autoplot(gateSet[[i]], outnodes, y="SSC-A" ))
 
         if(!inherits(outplot, "try-error")){
-        outplot <- ggcyto_arrange(outplot, nrow = 1)
-        plot(outplot)
+          outplot <- outplot + scale_x_flowJo_biexp() + scale_y_flowJo_biexp()
+          outplot <- ggcyto_arrange(outplot, nrow = 1)
+          plot(outplot)
         }
         dev.off()
       }
