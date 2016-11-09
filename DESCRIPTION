@@ -6,6 +6,6 @@ Author: Ted Laderas
 Maintainer: Ted Laderas <laderast@ohsu.edu>
 Description: More about what it does (maybe more than one line)
 Depends:
-  rex, dplyr, flowCore, flowWorkspace, reshape2, shiny, data.table, dtplyr, ggvis
+  rex, dplyr, flowCore, flowWorkspace, reshape2, shiny, data.table, dtplyr, ggvis, ggcyto
 License: What license is it under?
 LazyData: TRUE

@@ -1,6 +1,6 @@
-require(flowWorkspace)
-require(dplyr)
-require(reshape2)
+#require(flowWorkspace)
+#require(dplyr)
+#require(reshape2)
 
 
 #' Plot all Populations
@@ -73,9 +73,15 @@ plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
         fileId <- paste0(imagePath, sampName, "...", outPop, "...", pipelineFile, ".png")
         png(fileId, width=200*length(outnodes), height=200)
 
-        try(plotGate(gateSet[[i]], y=outnodes, default.y=defaultChan,checkName=FALSE,
-                     marker.only=TRUE,
-                     gpar = list(nrow=1, ncol=length(outnodes))))
+#        try(plotGate(gateSet[[i]], y=outnodes, default.y=defaultChan,checkName=FALSE,
+ #                    marker.only=TRUE, raw.scale=FALSE,
+  #                   gpar = list(nrow=1, ncol=length(outnodes))))
+        outplot <- try(autoplot(gateSet[[i]], outnodes, y="SSC-A" ) + scale_x_flowJo_biexp() + scale_y_flowJo_biexp())
+
+        if(!inherits(outplot, "try-error")){
+        outplot <- ggcyto_arrange(outplot, nrow = 1)
+        plot(outplot)
+        }
         dev.off()
       }
     }
