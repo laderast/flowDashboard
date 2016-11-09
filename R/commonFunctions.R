@@ -12,6 +12,8 @@ buildSampledDataList <- function(fSet, controlMarkers=NULL, controlSize=2000) {
 
   dataList <- fsApply(fSet, function(x){
     #out <- read.FCS(x, transformation = NULL)
+    if(nrow(x) < controlSize){controlSize = nrow(x)}
+
     sampRow <- sample(nrow(x),size = controlSize)
     #mDesc <- which(pData())
 
