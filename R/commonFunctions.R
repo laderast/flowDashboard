@@ -211,3 +211,108 @@ setMethod("buildFileManifest", signature=c(object="flowSet"),
 }
 
 
+#' Title
+#'
+#' @param gS
+#' @param population
+#' @param removeMarkers
+#' @param samplePopulation
+#'
+#' @return
+#' @export
+#'
+#' @examples
+returnMeltedDataFromGS <- function(gS, population, removeMarkers = NULL, samplePopulation = NULL){
+  require(reshape2)
+  amlList <- getData(gS, population)
+  #amlList <- amlList[grep("D",sampleNames(amlList))]
+
+  #exprList <- fsApply(amlList, return, use.exprs = TRUE)
+
+  descFrame <- pData(parameters(amlList[[1]]))
+  grepRes <- sapply(removeMarkers, function(x){grep(x, pd$desc)})
+  nodeIDs <- do.call("c", grepRes)
+
+  #markersToInterrogate <- descFrame[!descFrame$desc %in% removeMarkers,]
+
+
+
+  mCAList <- as(amlList, "list")
+
+  exprList <- lapply(mCAList, exprs)
+
+  filteredExprList <- lapply(exprList, function(x){colnames(x) <- descFrame$desc
+  #x <- x[,colnames(x) %in% markersToInterrogate$desc]
+  x <- x[,-nodeIDs]
+  return(x)
+  })
+
+  filteredExprList <- lapply(filteredExprList, function(x){
+    #print(class(x))
+    #print(head(x))
+    if(class(x) == "numeric"){x <- as.matrix(t(x))}
+    if(!is.null(samplePopulation) & nrow(x) > samplePopulation){
+      sampleInd <- sample(1:nrow(x), samplePopulation)
+      x <- x[sampleInd,]
+    }
+    return(x)
+    #print(dim(out))
+  })
+
+  names(filteredExprList) <- sampleNames(amlList)
+
+  filteredExprMeltList <- lapply(names(filteredExprList), function(y){ x <- filteredExprList[[y]]
+  #rownames(x) <- 1:nrow(x)
+  #print(head(x))
+  if(nrow(x)==0){
+    cell=NULL
+    sample=NULL
+    x <- data.frame(cell,sample,x)
+  }
+  else{
+    x <- data.frame(cell=1:nrow(x), sample=y, x)
+    x <- melt(x, id.vars=c("cell", "sample"))
+  }
+  return(x)})
+
+  adultExprMelt <- do.call(rbind, filteredExprMeltList)
+
+  adultExprMelt <- adultExprMelt %>% mutate(Population = population)
+
+  return(adultExprMelt)
+
+}
+
+getAllPopulationMedians <- function(gs, excludeCols=NULL, excludePopulations=NULL){
+  require(openCyto)
+  require(reshape2)
+
+  if(is.null(excludeCols)){
+    excludeCols <- c("TIME", "CELL.LENGTH","XE","BEADS","DNA1","DNA2","PT1","PT2", "BCKG")
+  }
+
+  if(is.null(excludePopulations)){
+    excludePopulations <- c("root", "singlet7", "singlet", "singlet2", "live", "CD45+")
+  }
+
+  populations <- getNodes(gs, path = 1)
+
+  populations <- populations[!populations %in% excludePopulations]
+
+  outMeds <- lapply(populations, function(x){
+    print(x)
+    outFS <- getData(gs,x)
+    outMat <- getPopulationMedians(outFS, excludeCols)
+    pop <- rep(x, nrow(outMat))
+    outFrame <- data.frame(population=pop, outMat)
+    outFrame
+  })
+  outMedFrame <- do.call(rbind, outMeds)
+  outMelt <- melt(outMedFrame, id.vars=c("population","sample"))
+  return(outMelt)
+}
+
+scale_this <- function(x){
+  as.vector(scale(x))
+}
+

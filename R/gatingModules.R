@@ -109,8 +109,12 @@ getPopulationsAndZscores <- function(gateSet, pipelineFile="panel1"){
 
   popTable <- popTable %>% mutate(idVar = paste0(name,"...",Population,"...",pipelineFile),
                                   percentPop =(Count/ParentCount)*100)
-  popMat <- acast(popTable, name~Population, value.var = "percentPop")
-  popScale <- scale(popMat)
+  #popMat <- acast(popTable, name~Population, value.var = "percentPop")
+  popTable <- popTable %>%
+    group_by(variable) %>%
+    mutate(zscore = scale_this(value), uniqueID = paste0(idVar,"-",variable))
+
+  #popScale <- scale(popMat)
   popScaleMelt <- melt(popScale,value.name="zscore")
   popScaleMelt <- popScaleMelt %>% mutate(idVar=paste0(Var1,"...",Var2,"...",pipelineFile)) %>%
     select(idVar, zscore)

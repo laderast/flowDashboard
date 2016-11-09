@@ -32,9 +32,6 @@ qcModuleOutput <- function(input, output, session, data) {
     qcViolinOut(violData(), marker, colors)
   })
 
-  scale_this <- function(x){
-    as.vector(scale(x))
-  }
 
   medData <- reactive({
     order <- input$Order
