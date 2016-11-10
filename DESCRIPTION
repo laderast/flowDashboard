@@ -4,8 +4,7 @@ Title: Shiny Modules for Building interactive Dashboards for flow cytometry anal
 Version: 0.1.0
 Author: Ted Laderas
 Maintainer: Ted Laderas <laderast@ohsu.edu>
-Description: More about what it does (maybe more than one line)
-Depends:
-  rex, dplyr, flowCore, flowWorkspace, reshape2, shiny, data.table, dtplyr, ggvis, ggcyto
+Description: This package contains shiny modules to visualize gating results from the flowWorkspace/flowCore packages. It includes routines for translating GatingSet results to representations for experiment annotation, QC, gating hierarchies, and marker expression.
+Depends: rex, dplyr, flowCore, flowWorkspace, reshape2, shiny, data.table, dtplyr, ggvis, ggcyto, lazyeval
 License: What license is it under?
 LazyData: TRUE

@@ -1,44 +1,72 @@
 
 
-qcModuleUI <- function(id, label = "qcViolin", markers, conditions, colorVars) {
+qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
+                       colorConditions, subsetCondition, annotation) {
   # Create a namespace function using the provided id
   ns <- NS(id)
+  if(!subsetCondition %in% colnames(annotation)){
+    stop("subset condition is not in annotation file")
+  }
+
+  sortConditions <- sortConditions[sortConditions %in% colnames(annotation)]
+  colorConditions <- colorConditions[colorConditions %in% colnames(annotation)]
+
+  if(length(sortConditions) == 0 | length(colorConditions) == 0){
+    stop("subset or color conditions are not in annotation file")
+  }
+
+  subsetChoices = unique(as.character(annotation[[subsetCondition]]))
+
+
+  #print(subsetChoices)
+
   tagList(
-    selectInput(ns("Order"), "Select Condition to Sort on", choices=conditions, selected=conditions[1]),
+    selectInput(ns("subset"), paste0("Select ", subsetCondition, " to display"), choices=subsetChoices,
+                selected = subsetChoices[1]),
+    selectInput(ns("Order"), "Select Condition to Sort on", choices=sortConditions, selected=sortConditions[1]),
     ggvisOutput("qcHeatmap"),
-    selectInput(ns("Marker"), "Select Marker for Violin Plots", choices=qcMarkers, selected = markers[1]),
-    selectInput(ns("Color"), "Select Condition to Color", choices=colorVars, selected=colorVars[1]),
+    selectInput(ns("Marker"), "Select Marker for Violin Plots", choices=markers, selected = markers[1]),
+    selectInput(ns("Color"), "Select Condition to Color", choices=colorConditions, selected=colorConditions[1]),
     plotOutput(ns("qcViolinPlot"))
   )
 }
 
 
-qcModuleOutput <- function(input, output, session, data) {
+qcModuleOutput <- function(input, output, session, data, annotation, idColumn = "patientID") {
+
   require(dplyr)
   # The selected file, if any
   violData <- reactive({
     # If no file is selected, don't do anything
     #validate(need(input$Marker, message = FALSE))
     #validate(need(input$Population, message= FALSE))
-    dataOut <- data %>% dplyr::filter(variable %in% input$Marker) #%>% arrange_(input$Order)
+    dataOut <- data[annotateSelect()] %>% dplyr::filter(variable %in% input$Marker) #%>% arrange_(input$Order)
     dataOut
   })
 
   # Return the reactive that yields the data frame
   output$qcViolinPlot <- renderPlot({
     colors <- input$Color
-    marker <- input$Markers
+    marker <- input$Marker
 
     qcViolinOut(violData(), marker, colors)
   })
 
+  annotateSelect <- reactive({
+    subsetVar <- input$subset
+
+    annotate2 <- annotation %>% dplyr::filter(patientID %in% subsetVar)
+    annotate2
+  })
 
   medData <- reactive({
     order <- input$Order
 
-    medTable <- summarise(group_by(data,variable,idVar),med = median(value)) %>%
+    medTable <- summarise(group_by(data[annotateSelect()],variable,idVar),med = median(value)) %>%
       group_by(variable) %>%
-      mutate(zscore = scale_this(med), uniqueID = paste0(idVar,"-",variable)) #%>% arrange_(input$order)
+      mutate(zscore = scale_this(med), uniqueID = paste0(idVar,"-",variable)) #%>%
+      #dplyr::filter(patientID %in% subsetVar)
+      #dplyr::filter_(interp(~v==patientID, v=as.name(subsetVar)))#%>% arrange_(input$order)
     #print(medTable)
 
     medTable
@@ -46,7 +74,7 @@ qcModuleOutput <- function(input, output, session, data) {
 
   qcHeatmapReact <- reactive({
     #print(medData())
-    qcHeatmapPlot(medData())
+    qcHeatmapPlot(medData(), annotation)
   })
 
   qcHeatmapReact %>% bind_shiny("qcHeatmap")
@@ -63,9 +91,11 @@ qcViolinOut <- function(data, marker, colors){
   return(out)
 }
 
-qcHeatmapPlot <- function(data)
+qcHeatmapPlot <- function(data, annotation)
   {
-  domX <- unique(data$idVar)
+  namesDomX <- unique(data$idVar)
+  domX <- paste0(annotation$patientID, "-", annotation$NewCondition)
+  names(domX) <- namesDomX
 
   noSamples <- length(unique(data$idVar))
   #print(paste0("number samples: ",noSamples))
@@ -105,7 +135,7 @@ qcHeatmapPlot <- function(data)
              title_offset = 90, tick_padding=40, title="Sample/Panel") %>%
     add_axis("y", orient="left", title_offset = 80, title = "Marker") %>%
     #add_tooltip(heatmapTooltip,on="hover") %>%
-    scale_nominal("x", padding = 0, points = FALSE, domain = domX) %>%
+    scale_nominal("x", padding = 0, points = FALSE, domain = namesDomX, label=domX) %>%
     layer_text(text:=~signif(med,digits=2), stroke:="black", align:="left",
                baseline:="top", dx := 10, dy:=10) %>%
     set_options(width = 60 * (noSamples), height = 50 * (noMarkers))

@@ -202,7 +202,7 @@ gatingModuleOutput <- function(input, output, session,
   popTooltip <- function(x){
     if(is.null(x)) return(NULL)
     #out <- paste0("<img src='data/images/", x$idVar, ".png'></img>")
-    plots[["gating"]] <- paste0("data/images/", x$idVar, ".png")
+    plots[["gating"]] <- paste0(imageDir, x$idVar, ".png")
     #print(out)
     #out
   }
