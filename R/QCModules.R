@@ -37,10 +37,13 @@ qcModuleOutput <- function(input, output, session, data, annotation, idColumn = 
   require(dplyr)
   # The selected file, if any
   violData <- reactive({
+    Marker <- input$Marker
+
     # If no file is selected, don't do anything
     #validate(need(input$Marker, message = FALSE))
     #validate(need(input$Population, message= FALSE))
-    dataOut <- data[annotateSelect()] %>% dplyr::filter(variable %in% input$Marker) #%>% arrange_(input$Order)
+    dataOut <- data[annotateSelect()]
+    dataOut <- dataOut %>% dplyr::filter(variable %in% input$Marker) #%>% arrange_(input$Order)
     dataOut
   })
 
@@ -54,6 +57,7 @@ qcModuleOutput <- function(input, output, session, data, annotation, idColumn = 
 
   annotateSelect <- reactive({
     subsetVar <- input$subset
+    #print(subsetVar)
 
     annotate2 <- annotation %>% dplyr::filter(patientID %in% subsetVar)
     annotate2
@@ -62,9 +66,20 @@ qcModuleOutput <- function(input, output, session, data, annotation, idColumn = 
   medData <- reactive({
     order <- input$Order
 
-    medTable <- summarise(group_by(data[annotateSelect()],variable,idVar),med = median(value)) %>%
+    subdata <- data[annotateSelect()]
+
+    medTable <- summarise(group_by(subdata,variable,idVar),med = median(value)) %>%
       group_by(variable) %>%
-      mutate(zscore = scale_this(med), uniqueID = paste0(idVar,"-",variable)) #%>%
+      mutate(zscore = scale_this(med), uniqueID = paste0(idVar,"-",variable))
+    medTable <- data.table(medTable)
+    setkey(medTable, idVar)
+    medTable <- medTable[annotateSelect()]
+
+    #  inner_join(y=annotateSelect(), by=c("idVar"="FCSFiles"))
+
+    #medTable <- data.table(medTable)
+    #setkey(medTable, idVar)
+    #%>%
       #dplyr::filter(patientID %in% subsetVar)
       #dplyr::filter_(interp(~v==patientID, v=as.name(subsetVar)))#%>% arrange_(input$order)
     #print(medTable)
@@ -73,8 +88,8 @@ qcModuleOutput <- function(input, output, session, data, annotation, idColumn = 
   })
 
   qcHeatmapReact <- reactive({
-    #print(medData())
-    qcHeatmapPlot(medData(), annotation)
+    print(medData())
+    qcHeatmapPlot(medData())
   })
 
   qcHeatmapReact %>% bind_shiny("qcHeatmap")
@@ -83,7 +98,8 @@ qcModuleOutput <- function(input, output, session, data, annotation, idColumn = 
 qcViolinOut <- function(data, marker, colors){
   plotTitle <- marker
 
-  out <- ggplot(data, aes(x=factor(idVar),value, fill=factor(colors))) + geom_violin() +
+  out <- ggplot(data, aes(x=factor(notation),value, fill=factor(colors))) +
+    geom_violin() + scale_x_flowJo_biexp()
     #facet_grid(. ~ notation) +
     #ggtitle(plotTitle) +
     theme(axis.text.x=element_text(angle=90, hjust=1))
@@ -93,9 +109,12 @@ qcViolinOut <- function(data, marker, colors){
 
 qcHeatmapPlot <- function(data, annotation)
   {
-  namesDomX <- unique(data$idVar)
-  domX <- paste0(annotation$patientID, "-", annotation$NewCondition)
+  #print(head(data))
+
+  namesDomX <- unique(data$notation)
+  domX <- paste0(data$patientID, "-", data$NewCondition)
   names(domX) <- namesDomX
+  domY <- unique(as.character(data$variable))
 
   noSamples <- length(unique(data$idVar))
   #print(paste0("number samples: ",noSamples))
@@ -128,14 +147,15 @@ qcHeatmapPlot <- function(data, annotation)
 
   data %>%
     #filter(as.character(notation) %in% domX) %>%
-    ggvis(x=~idVar,y= ~variable, fill=~factor(round(zscore))) %>%
+    ggvis(x=~notation,y= ~variable, fill=~factor(round(zscore))) %>%
     layer_rects(height = band(), width = band(), key:=~uniqueID) %>%
     scale_ordinal('fill',range = pal) %>%
     add_axis("x", properties = axis_props(labels = list(angle = 270)), orient="top",
              title_offset = 90, tick_padding=40, title="Sample/Panel") %>%
     add_axis("y", orient="left", title_offset = 80, title = "Marker") %>%
     #add_tooltip(heatmapTooltip,on="hover") %>%
-    scale_nominal("x", padding = 0, points = FALSE, domain = namesDomX, label=domX) %>%
+    scale_nominal("y", padding = 0, points = FALSE, domain = domY) %>%
+    scale_nominal("x", padding = 0, points = FALSE, domain = namesDomX) %>%
     layer_text(text:=~signif(med,digits=2), stroke:="black", align:="left",
                baseline:="top", dx := 10, dy:=10) %>%
     set_options(width = 60 * (noSamples), height = 50 * (noMarkers))
