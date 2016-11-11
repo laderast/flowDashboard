@@ -152,7 +152,7 @@ gatingModuleUI <- function(id, label = "qcViolin", sortConditions, subsetConditi
     absolutePanel(id="heatmap", h4("Population Heatmap (Click on box to see provenance)"),
                   ggvisOutput("populationHeatmap"), top=250, left=0),
     # absolutePanel(id="scheme",imageOutput(ns("pipelineHierarchy")), top=250, left=650),
-    absolutePanel(id="gating",draggable=TRUE,top=0, left=300,
+    absolutePanel(id="gating",draggable=TRUE,top=0, left=0,
                    fixed=FALSE,
                    style="opacity: 0.8; background-color: white",
                    height=200,width="auto",
@@ -180,13 +180,11 @@ gatingModuleUI <- function(id, label = "qcViolin", sortConditions, subsetConditi
 gatingModuleOutput <- function(input, output, session,
                                imageDir, popTable, displayNodes, annotation, plotObj){
 
-
   ns <- session$ns
 
   annotateSelect <- reactive({
     subsetVar <- input$subset
     #print(subsetVar)
-
     annotate2 <- annotation[patientID %in% subsetVar] #%>% dplyr::filter(patientID %in% subsetVar)
     #annotate2 <- data.table(annotate2)
     #setkey(annotate2, FCSFiles)
@@ -274,6 +272,7 @@ gatingModuleOutput <- function(input, output, session,
     displayNodes <- displayNodes[displayNodes %in% domY]
     print(displayNodes)
 
+
     noSamples <- length(unique(data$name))
     #noMarkers <- length(unique(PopTable()$Population))
     noMarkers <- length(displayNodes)
@@ -316,11 +315,17 @@ gatingModuleOutput <- function(input, output, session,
       layer_text(text:=~signif(percentPop,digits=2), stroke:="darkgrey", align:="left",
                  baseline:="top", dx := 5, dy:=5) %>%
       set_options(width= 60 * (noSamples), height= 60 * (noMarkers))
-
   }
 
   populationHeatmap %>% bind_shiny("populationHeatmap")
   #bind_shiny("plot-plot", session = getDefaultReactiveDomain()[["parent"]])
+}
+
+padMissingValues <- function(popTable){
+  populations <- unique(as.character(popTable[["Population"]]))
+  samples <- unique(as.character(popTable[["notation"]]))
+  expand.grid(populations, samples)
+
 }
 
 padMissingValues <- function(popTable){
