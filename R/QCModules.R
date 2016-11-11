@@ -88,7 +88,7 @@ qcModuleOutput <- function(input, output, session, data, annotation, idColumn = 
   })
 
   qcHeatmapReact <- reactive({
-    print(medData())
+    #print(medData())
     qcHeatmapPlot(medData())
   })
 
@@ -99,7 +99,7 @@ qcViolinOut <- function(data, marker, colors){
   plotTitle <- marker
 
   out <- ggplot(data, aes(x=factor(notation),value, fill=factor(colors))) +
-    geom_violin() + scale_x_flowJo_biexp()
+    geom_violin() + scale_y_flowJo_biexp() +
     #facet_grid(. ~ notation) +
     #ggtitle(plotTitle) +
     theme(axis.text.x=element_text(angle=90, hjust=1))
@@ -156,7 +156,7 @@ qcHeatmapPlot <- function(data, annotation)
     #add_tooltip(heatmapTooltip,on="hover") %>%
     scale_nominal("y", padding = 0, points = FALSE, domain = domY) %>%
     scale_nominal("x", padding = 0, points = FALSE, domain = namesDomX) %>%
-    layer_text(text:=~signif(med,digits=2), stroke:="black", align:="left",
+    layer_text(text:=~signif(med,digits=2), stroke:="darkgrey", align:="left",
                baseline:="top", dx := 10, dy:=10) %>%
     set_options(width = 60 * (noSamples), height = 50 * (noMarkers))
 

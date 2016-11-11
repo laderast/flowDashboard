@@ -150,14 +150,14 @@ gatingModuleUI <- function(id, label = "qcViolin", sortConditions, subsetConditi
     selectInput('colSortPop', "Order Samples", choices= sortConditions,
                 selected=sortConditions[1]),
     absolutePanel(id="heatmap", h4("Population Heatmap (Click on box to see provenance)"),
-                  ggvisOutput("populationHeatmap"), top=250, left=0),
+                  ggvisOutput(ns("populationHeatmap")), top=250, left=0),
     # absolutePanel(id="scheme",imageOutput(ns("pipelineHierarchy")), top=250, left=650),
-    absolutePanel(id="gating",draggable=TRUE,top=0, left=0,
+    absolutePanel(id="gating",draggable=TRUE,top=0, left=300,
                    fixed=FALSE,
                    style="opacity: 0.8; background-color: white",
                    height=200,width="auto",
                    h4("Gating Scheme (draggable)"),
-                   imageOutput("gating")),
+                   imageOutput(ns("gating"))),
     br(), br(), br(), br(), br()
     )
 
@@ -236,7 +236,7 @@ gatingModuleOutput <- function(input, output, session,
     plotObj[["gating"]] <- paste0(imageDir, x$idVar, ".png")
     #print(out)
     #out
-    print(x$idVar)
+    x$idVar
   }
 
   pngGraph <- reactive({
@@ -250,27 +250,28 @@ gatingModuleOutput <- function(input, output, session,
   },deleteFile=FALSE)
 
 
+  # populationHeatmap <- reactive({
+  #
+  #   indata <- na.omit(popTable[annotateSelect()])
+  #   #print(indata)
+  #   #print(annotateSelect())
+  #   populationHeatmapPlot(indata, displayNodes) #%>%
+  #     #bind_shiny(ns("populationHeatmap"),session = getDefaultReactiveDomain()[["parent"]])
+  #
+  #   #if(length(Samples())==0){
+  #   #  domX <- domXspare
+  #   #}else{
+  #   #  domX <- Samples()
+  #   #}
+  # })
+
   populationHeatmap <- reactive({
 
-    indata <- na.omit(popTable[annotateSelect()])
-    #print(indata)
-    #print(annotateSelect())
-    populationHeatmapPlot(indata, displayNodes) #%>%
-      #bind_shiny(ns("populationHeatmap"),session = getDefaultReactiveDomain()[["parent"]])
-
-    #if(length(Samples())==0){
-    #  domX <- domXspare
-    #}else{
-    #  domX <- Samples()
-    #}
-  })
-
-  populationHeatmapPlot <- function(data, displayNodes){
-
+    data <- na.omit(popTable[annotateSelect()])
     #print(displayNodes)
     domY <- unique(as.character(data[["Population"]]))
     displayNodes <- displayNodes[displayNodes %in% domY]
-    print(displayNodes)
+    #print(displayNodes)
 
 
     noSamples <- length(unique(data$name))
@@ -279,7 +280,7 @@ gatingModuleOutput <- function(input, output, session,
     #domX <- Samples()
 
     domX <- unique(as.character(data[["notation"]]))
-    print(domX)
+    #print(domX)
     #popNotation <- as.character(unique(data$notation))
     #domX <- domX[domX %in% popNotation]
     #print(domX)
@@ -315,9 +316,10 @@ gatingModuleOutput <- function(input, output, session,
       layer_text(text:=~signif(percentPop,digits=2), stroke:="darkgrey", align:="left",
                  baseline:="top", dx := 5, dy:=5) %>%
       set_options(width= 60 * (noSamples), height= 60 * (noMarkers))
-  }
+  })
 
-  populationHeatmap %>% bind_shiny("populationHeatmap")
+  populationHeatmap %>%
+    bind_shiny(ns("populationHeatmap"), session=session)
   #bind_shiny("plot-plot", session = getDefaultReactiveDomain()[["parent"]])
 }
 
@@ -328,9 +330,3 @@ padMissingValues <- function(popTable){
 
 }
 
-padMissingValues <- function(popTable){
-  populations <- unique(as.character(popTable[["Population"]]))
-  samples <- unique(as.character(popTable[["notation"]]))
-  expand.grid(populations, samples)
-
-}
