@@ -25,7 +25,8 @@ qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
                 selected = subsetChoices[1]),
     selectInput(ns("Order"), "Select Condition to Sort on", choices=sortConditions, selected=sortConditions[1]),
     ggvisOutput("qcHeatmap"),
-    selectInput(ns("Marker"), "Select Marker for Violin Plots", choices=markers, selected = markers[1]),
+    uiOutput(ns("qcMarkerUI")),
+    #selectInput(ns("markers"), "Select Marker for Violin Plots", choices=markers, selected = markers[1]),
     selectInput(ns("Color"), "Select Condition to Color", choices=colorConditions, selected=colorConditions[1]),
     plotOutput(ns("qcViolinPlot"))
   )
@@ -37,22 +38,36 @@ qcModuleOutput <- function(input, output, session, data, annotation, idColumn = 
   require(dplyr)
   # The selected file, if any
   violData <- reactive({
-    Marker <- input$Marker
+    Marker <- input$markers
 
     # If no file is selected, don't do anything
     #validate(need(input$Marker, message = FALSE))
     #validate(need(input$Population, message= FALSE))
     dataOut <- data[annotateSelect()]
-    dataOut <- dataOut %>% dplyr::filter(variable %in% input$Marker) #%>% arrange_(input$Order)
+    #dataOut <- dataOut %>% dplyr::filter(variable %in% input$Marker) #%>% arrange_(input$Order)
     dataOut
   })
+
+  output$qcMarkerUI <- renderUI({
+    ns <- session$ns
+    markers <- unique(as.character(data[annotateSelect()]$variable))
+
+    print(markers)
+
+    selectInput(ns("Marker"), "Select Markers", choices = markers,
+                selected = markers[1])
+  })
+
 
   # Return the reactive that yields the data frame
   output$qcViolinPlot <- renderPlot({
     colors <- input$Color
     marker <- input$Marker
 
-    qcViolinOut(violData(), marker, colors)
+    outData <- data[annotateSelect()]
+    outData <- outData[variable %in% marker]
+
+    qcViolinOut(outData, marker, colors)
   })
 
   annotateSelect <- reactive({
@@ -98,7 +113,7 @@ qcModuleOutput <- function(input, output, session, data, annotation, idColumn = 
 qcViolinOut <- function(data, marker, colors){
   plotTitle <- marker
 
-  out <- ggplot(data, aes(x=factor(notation),value, fill=factor(colors))) +
+  out <- ggplot(data, aes(x=factor(notation),value, fill=factor(NewCondition))) +
     geom_violin() + scale_y_flowJo_biexp() +
     #facet_grid(. ~ notation) +
     #ggtitle(plotTitle) +
