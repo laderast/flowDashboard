@@ -274,12 +274,16 @@ gatingModuleOutput <- function(input, output, session,
     #print(displayNodes)
 
 
-    noSamples <- length(unique(data$name))
+    #noSamples <- length(unique(data$notation))
+    #print(noSamples)
     #noMarkers <- length(unique(PopTable()$Population))
     noMarkers <- length(displayNodes)
     #domX <- Samples()
+    print(noMarkers)
 
     domX <- unique(as.character(data[["notation"]]))
+    noSamples <- length(domX)
+    print(noSamples)
     #print(domX)
     #popNotation <- as.character(unique(data$notation))
     #domX <- domX[domX %in% popNotation]
