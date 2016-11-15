@@ -42,7 +42,7 @@ dotPlotOutput <- function(input, output, session, data, annotation){
     #orderVariable <- input$ConditionVariable
 
     dataOut <- data[annotation]
-    dataOut <- data[Population %in% input$Population]
+    dataOut <- dataOut[Population %in% input$Population]
 
     #%>%
     #filter_(ifelse(is.na(input$xFacet),0,input$xFacet) & ifelse(is.na(input$yFacet),0,input$yFacet))
@@ -75,7 +75,6 @@ dotPlotOutput <- function(input, output, session, data, annotation){
     }
 
     print(facetFormula)
-
     plotTitle <- paste("Population Comparison for", popTableReact()$Population[1])
 
     #out <-
