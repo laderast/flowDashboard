@@ -3,12 +3,6 @@ dotPlotUI <- function(id, populationList, facetList) {
   ns <- NS(id)
 
   tagList(
-    #checkboxGroupInput(ns("PopulationList"), label="Select Populations To Compare",
-    #                   choices=choiceList, selected=choiceList[1], inline=TRUE),
-
-
-    #uiOutput(ns("dotPlotDynamicUI")),
-
     selectInput(ns("Population"), label="Select Population to Compare", choices=displayNodes,
                 displayNodes[1]),
     selectInput(ns("xFacet"),label="Select X Facet", choices=facetList, selected=facetList[1]),
