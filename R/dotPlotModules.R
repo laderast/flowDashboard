@@ -74,11 +74,25 @@ dotPlotOutput <- function(input, output, session, data, annotation){
       facetFormula <- paste0(".~",xFacet)
     }
 
+
+
     print(facetFormula)
     plotTitle <- paste("Population Comparison for", popTableReact()$Population[1])
 
     #out <-
-    out  <- ggplot(na.omit(popTableReact()), aes(x=Population, y=percentPop)) +
+
+    completeFun <- function(data, desiredCols) {
+      completeVec <- complete.cases(data[, desiredCols])
+      return(data[completeVec, ])
+    }
+
+
+    #remove entries in popTableReact that have no value for faceting variable
+    #xInd <- is.na(popTableReact()[[xFacet]])
+
+    dataNew <- completeFun(popTableReact(),xFacet)
+
+    out  <- ggplot(dataNew, aes(x=Population, y=percentPop)) +
       #labs(list(x = "Subtype", y = "% Cell Population")) +
       theme(axis.title.x = element_text(face="bold"), axis.text.x = element_blank()) +
       theme(axis.title.y = element_text(face="bold"), axis.text.y = element_text(face="bold")) +
