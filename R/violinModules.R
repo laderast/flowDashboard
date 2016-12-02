@@ -87,8 +87,15 @@ violinOut <- function(data, marker, facets=NULL){
 
   out <- ggplot(data, aes(sample,value, fill=NewCondition)) +
     geom_violin() + #facet_grid(facets=facetForm, scales="free") +
-    scale_y_flowJo_biexp() +
+    #scale_y_flowJo_biexp() +
     theme(axis.text.x=element_text(angle=90, hjust=1)) + ggtitle(plotTitle)
+
+  transFun <- getOption("scaleTrans")
+  if(transFun == "biexp"){
+    out <- out + scale_y_continuous(trans=flowTrans)
+  }
 
   return(out)
 }
+
+

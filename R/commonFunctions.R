@@ -316,3 +316,19 @@ scale_this <- function(x){
   as.vector(scale(x))
 }
 
+
+
+
+##To implement: biexp transformation as described here: http://onlinelibrary.wiley.com/doi/10.1002/cyto.a.20258/full
+
+#' scale_x_flowJo_biexp <- function(..., maxValue = 262144, widthBasis = -10, pos = 4.5, neg = 0, equal.space = FALSE){
+#'   myTrans <- flowJo_biexp_trans(maxValue = maxValue, widthBasis = widthBasis, pos = pos, neg = neg, equal.space = equal.space)
+#'   scale_x_continuous(..., trans = myTrans)
+#' }
+#'
+#' #' @rdname scale_x_flowJo_biexp
+#' #' @export
+#' scale_y_flowJo_biexp <- function(..., maxValue = 262144, widthBasis = -10, pos = 4.5, neg = 0, equal.space = FALSE){
+#'   myTrans <- flowJo_biexp_trans(maxValue = maxValue, widthBasis = widthBasis, pos = pos, neg = neg, equal.space = equal.space)
+#'   scale_y_continuous(..., trans = myTrans)
+#' }

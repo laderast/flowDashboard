@@ -23,7 +23,8 @@ qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
   tagList(
     selectInput(ns("subset"), paste0("Select ", subsetCondition, " to display"), choices=subsetChoices,
                 selected = subsetChoices[1]),
-    selectInput(ns("Order"), "Select Condition to Sort on", choices=sortConditions, selected=sortConditions[1]),
+    selectInput(ns("Order"), "Select Condition to Sort on", choices=sortConditions,
+                selected=sortConditions[1]),
     ggvisOutput("qcHeatmap"),
     uiOutput(ns("qcMarkerUI")),
     #selectInput(ns("markers"), "Select Marker for Violin Plots", choices=markers, selected = markers[1]),
@@ -114,10 +115,15 @@ qcViolinOut <- function(data, marker, colors){
   plotTitle <- marker
 
   out <- ggplot(data, aes(x=factor(notation),value, fill=factor(NewCondition))) +
-    geom_violin() + scale_y_flowJo_biexp() +
+    geom_violin()
     #facet_grid(. ~ notation) +
     #ggtitle(plotTitle) +
     theme(axis.text.x=element_text(angle=90, hjust=1))
+
+    transFun <- getOption("scaleTrans")
+    if(transFun == "biexp"){
+      out <- out + scale_y_continuous(trans=flowTrans)
+    }
 
   return(out)
 }

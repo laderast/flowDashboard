@@ -1,1 +1,4 @@
 exportPattern("^[[:alpha:]]+")
+importFrom(flowWorkspace,flowJo_biexp_trans)
+importFrom(ggcyto, scale_x_flowJo_biexp)
+importFrom(ggcyto, scale_y_flowJo_biexp)

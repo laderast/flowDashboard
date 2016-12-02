@@ -137,7 +137,6 @@ getPopulationsAndZscores <- function(gateSet, pipelineFile="panel1"){
 #' @examples
 gatingModuleUI <- function(id, label = "qcViolin", sortConditions, subsetCondition, annotation){
 
-
     ns <- NS(id)
     subsetChoices <- unique(as.character(annotation[[subsetCondition]]))
 
