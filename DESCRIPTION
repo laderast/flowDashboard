@@ -6,6 +6,7 @@ Author: Ted Laderas
 Maintainer: Ted Laderas <laderast@ohsu.edu>
 Description: This package contains shiny modules to visualize gating results from the flowWorkspace/flowCore packages. It includes routines for translating GatingSet results to representations for experiment annotation, QC, gating hierarchies, and marker expression.
 Depends: rex, dplyr, reshape2, shiny, data.table, dtplyr, ggvis, ggcyto, lazyeval
-Imports: flowCore, flowWorkspace, ggcyto
+Imports: ggcyto
+Suggests: flowCore, flowWorkspace
 License: What license is it under?
 LazyData: TRUE
