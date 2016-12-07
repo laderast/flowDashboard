@@ -1,3 +1,13 @@
+#' Title
+#'
+#' @param id
+#' @param subjectIDList
+#' @param markerList
+#'
+#' @return
+#' @export
+#'
+#' @examples
 coexpressionPlotUI <- function(id, subjectIDList, markerList){
 
   # Create a namespace function using the provided id
@@ -15,6 +25,17 @@ coexpressionPlotUI <- function(id, subjectIDList, markerList){
 
 }
 
+#' Title
+#'
+#' @param input
+#' @param output
+#' @param session
+#' @param data
+#'
+#' @return
+#' @export
+#'
+#' @examples
 coexpressionPlot <- function(input, output, session, data){
   output$miniHistogram <- renderPlot({
     if(is.null(input$donorIdHeatmap)){

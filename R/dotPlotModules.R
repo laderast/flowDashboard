@@ -1,3 +1,13 @@
+#' Title
+#'
+#' @param id
+#' @param populationList
+#' @param facetList
+#'
+#' @return
+#' @export
+#'
+#' @examples
 dotPlotUI <- function(id, populationList, facetList) {
   # Create a namespace function using the provided id
   ns <- NS(id)
@@ -14,6 +24,18 @@ dotPlotUI <- function(id, populationList, facetList) {
   )
 }
 
+#' Title
+#'
+#' @param input
+#' @param output
+#' @param session
+#' @param data
+#' @param annotation
+#'
+#' @return
+#' @export
+#'
+#' @examples
 dotPlotOutput <- function(input, output, session, data, annotation){
 
   # dotPlotDynamicUI <- renderUI({
