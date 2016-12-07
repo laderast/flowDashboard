@@ -1,5 +1,17 @@
-
-
+#' Title
+#'
+#' @param id
+#' @param label
+#' @param markers
+#' @param sortConditions
+#' @param colorConditions
+#' @param subsetCondition
+#' @param annotation
+#'
+#' @return
+#' @export
+#'
+#' @examples
 qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
                        colorConditions, subsetCondition, annotation) {
   # Create a namespace function using the provided id
@@ -34,6 +46,19 @@ qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
 }
 
 
+#' Title
+#'
+#' @param input
+#' @param output
+#' @param session
+#' @param data
+#' @param annotation
+#' @param idColumn
+#'
+#' @return
+#' @export
+#'
+#' @examples
 qcModuleOutput <- function(input, output, session, data, annotation, idColumn = "patientID") {
 
   require(dplyr)
@@ -128,6 +153,15 @@ qcViolinOut <- function(data, marker, colors){
   return(out)
 }
 
+#' Title
+#'
+#' @param data
+#' @param annotation
+#'
+#' @return
+#' @export
+#'
+#' @examples
 qcHeatmapPlot <- function(data, annotation)
   {
   #print(head(data))

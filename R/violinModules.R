@@ -1,3 +1,17 @@
+#' Title
+#'
+#' @param id
+#' @param label
+#' @param markers
+#' @param sortConditions
+#' @param subsetCondition
+#' @param populations
+#' @param annotation
+#'
+#' @return
+#' @export
+#'
+#' @examples
 violinUI <- function(id, label = "qcViolin", markers, sortConditions,
                      subsetCondition, populations, annotation) {
   # Create a namespace function using the provided id
@@ -22,6 +36,18 @@ violinUI <- function(id, label = "qcViolin", markers, sortConditions,
 }
 
 
+#' Title
+#'
+#' @param input
+#' @param output
+#' @param session
+#' @param data
+#' @param annotation
+#'
+#' @return
+#' @export
+#'
+#' @examples
 violinOutput <- function(input, output, session, data, annotation) {
 
   output$violinMarkerUI <- renderUI({
@@ -83,7 +109,7 @@ violinOut <- function(data, marker, facets=NULL){
       return()
       }
     }
-  print(head(data))
+  #print(head(data))
 
   out <- ggplot(data, aes(sample,value, fill=NewCondition)) +
     geom_violin() + #facet_grid(facets=facetForm, scales="free") +

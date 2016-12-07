@@ -1,0 +1,35 @@
+---
+title: "flowDashboard Vignette"
+author: "Ted Laderas"
+date: "December 6, 2016"
+output: html_document
+---
+
+This document outlines how to set up a flow cytometry dashboard using the `flowDashboard` Shiny modules.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Where `flowDashboard` Fits in an Analysis Workflow
+
+`flowDashboard` enables you to visualize data at the Sample and Population Level. The package assumes that you either have FCS data in a directory, or have generated a GatingSet for your gating scheme. This gating scheme can either be automated (from a pipeline such as `openCyto`) or manually (imported from flowJo). 
+
+There are multiple modules that will enable you to examine each step of the analysis. 
+
+  - `Annotation` display - displays annotation for all the FCS files in an experiment.
+  - `QC` plots - plots that let you compare the overall state of the data before and after preprocessing.
+  - `Gating` plots - plots that display how the data was gated
+  - `Dot` plots - to visualize populations based on a covariate
+  - `Violin` plots of markers in a population
+  - `Waterfall` plots to examine how population percentage correlates with an outcome.
+  - `Coexpression` plots - a heatmap and a two-way expression explorer.
+
+## Preprocessing Data
+
+Once your data is in a GatingSet (preferably in ncdf format), we will need to transform and prep it into the `data.table` format. This package uses `data.table` because it is a very fast format for accessing and displaying data.
+
+The annotation structure is another `data.table` that we need for the dashboard. Based on your unit of analysis and what the FCS file represents (which may be patients, cell lines, or conditions within a patient), you will need an annotation table that provides covariate information at the level of analysis you are interested in. You can generate the skeleton of an annotation table.
+
+##
+
