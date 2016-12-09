@@ -17,7 +17,7 @@ waterfallOutputUI <- function(id, label="waterfall", populationChoices, colorCol
     selectInput(ns("colorVar"), "Select Outcome to Color", choices=colorColumns,
                 selected = colorColumns[1]),
     uiOutput(ns("waterfallDynamicUI")),
-    plotOutput(ns("waterfallPlot"), hover = hoverOpts("plot_hover", delay = 100, delayType = "debounce")),
+    plotOutput(ns("waterfallPlot"), hover = hoverOpts(ns("plotHover"), delay = 100, delayType = "debounce")),
     uiOutput(ns("hoverTip"))
 
   )
@@ -88,17 +88,23 @@ waterfallOutput <- function(input, output, session, data, annotation,
     #print(outcomeVar)
     #print(popTable())
 
-    out <- waterfallGraphic(popTable(), colorChoice=outcomeVar)
-    print(out)
+    out <- waterfallGraphic(popTable(), colorChoice=outcomeVar, annotation=annotation)
+    #print(out)
+    out
   })
 
   output$hoverTip <- renderUI({
 
     ns <- session$ns
 
-    hover <- input$plot_hover
-    print(hover)
-    point <- nearPoints(data, hover, threshold = 5, maxpoints = 1, addDist = TRUE)
+    hover <- input$plotHover
+
+    if(is.null(hover$x)){
+      return(NULL)
+    }
+
+    #print(hover)
+    point <- popTable()[floor(hover$x),]
 
     left_pct <- (hover$x - hover$domain$left) / (hover$domain$right - hover$domain$left)
     top_pct <- (hover$domain$top - hover$y) / (hover$domain$top - hover$domain$bottom)
@@ -125,11 +131,18 @@ waterfallOutput <- function(input, output, session, data, annotation,
 
   #waterfall graphic expects a sorted table by population percentage
 
-  waterfallGraphic <- function(data, colorChoice){
+  waterfallGraphic <- function(data, annotation, colorChoice, covariateChoices=covariateChoices){
+
+    levelOrd <- levels(data$name)
+    #annot <- annotation[FCSFiles %in% levelOrd]
+    #annot$FCSFiles <- factor(annot$FCSFiles, levels=levelOrd)
+
+    annotation <- annotation[data][,c("popKey",covariateChoices),with=FALSE]
+    #print(annotation)
 
     #x <- 1:nrow(data)
     ##code from https://www.r-bloggers.com/waterfall-plots-what-and-how/
-    b <- ggplot(data, aes_string(x="popKey", y="percentPop", fill=colorChoice, color=colorChoice)) +
+    plot1 <- ggplot(data, aes_string(x="popKey", y="percentPop", fill=colorChoice, color=colorChoice)) +
       #scale_fill_discrete(name="Treatmentnarm") +
       scale_color_discrete(guide="none") +
       #labs(list(title = "Waterfall plot for changes in QoL scores", x = NULL, y = "Change from baseline (%) in QoL score")) +
@@ -139,9 +152,15 @@ waterfallOutput <- function(input, output, session, data, annotation,
       coord_cartesian(ylim = c(0,100)) + geom_bar(stat="identity", width=0.7, position = position_dodge(width=0.4)) +
       geom_bar(stat="identity", width=0.7, position = position_dodge(width=0.4))
 
-    b
-    ##
-    #c <- ggplot(data, aes_string(x=patientID, y=ddd))
+
+    ##melt annotation
+
+    #annotMelt <- melt.data.table(annotation, id.vars="popKey")
+    #levels(annotMelt$FCSFiles) <- levelOrd
+    #c <- ggplot(data, aes_string(x=FCSFiles, y=variable))
+
+    plot1
+
 
   }
 
