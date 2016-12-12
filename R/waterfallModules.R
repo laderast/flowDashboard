@@ -60,6 +60,7 @@ waterfallOutput <- function(input, output, session, data, annotation,
     #colorVar <- input$colorVar
     pop <- input$population
     #covariates <- input$covariates
+    key <- key(data)
 
     #annotOut <- annotation[, .SD, .SDcols = covariates]
     annotOut <- annotation
@@ -67,14 +68,20 @@ waterfallOutput <- function(input, output, session, data, annotation,
     dataOut <- data[!is.na(percentPop)]
     dataOut <- dataOut[order(-percentPop)]
     #print(dataOut)
-    dataOut$popKey <- factor(dataOut$popKey, levels=unique(dataOut$popKey))
 
     dataOut <- dataOut[Population == pop]
+    dataOut$popKey <- factor(dataOut$popKey, levels=unique(dataOut$popKey))
+
+    print(dataOut)
+
     #dataOut <- dataOut[eval(call("==", as.name("Population"), pop))]
 
     #print(dataOut)
     #dataOut <- annotOut[dataOut]
     #print(dataOut)
+    #setkeyv(dataOut,key)
+    #print(dataOut)
+
     return(dataOut)
 
   })
@@ -131,14 +138,16 @@ waterfallOutput <- function(input, output, session, data, annotation,
 
   #waterfall graphic expects a sorted table by population percentage
 
-  waterfallGraphic <- function(data, annotation, colorChoice, covariateChoices=covariateChoices){
+  waterfallGraphic <- function(data, annotation, colorChoice){
 
     levelOrd <- levels(data$name)
     #annot <- annotation[FCSFiles %in% levelOrd]
     #annot$FCSFiles <- factor(annot$FCSFiles, levels=levelOrd)
 
-    annotation <- annotation[data][,c("popKey",covariateChoices),with=FALSE]
+    #annotation <- annotation[data][,c("popKey",covariateChoices),with=FALSE]
     #print(annotation)
+
+    #data <- data[annotation]
 
     #x <- 1:nrow(data)
     ##code from https://www.r-bloggers.com/waterfall-plots-what-and-how/
@@ -149,7 +158,8 @@ waterfallOutput <- function(input, output, session, data, annotation,
       theme_classic() %+replace%
       theme(axis.line.x = element_blank(), axis.text.x = element_blank(), axis.ticks.x = element_blank(),
             axis.title.y = element_text(face="bold",angle=90)) +
-      coord_cartesian(ylim = c(0,100)) + geom_bar(stat="identity", width=0.7, position = position_dodge(width=0.4)) +
+      #coord_cartesian(ylim = c(0,100)) +
+      geom_bar(stat="identity", width=0.7, position = position_dodge(width=0.4)) +
       geom_bar(stat="identity", width=0.7, position = position_dodge(width=0.4))
 
 

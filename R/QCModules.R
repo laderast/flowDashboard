@@ -13,12 +13,12 @@
 #'
 #' @examples
 qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
-                       colorConditions, subsetCondition, annotation) {
+                       colorConditions, annotation) {
   # Create a namespace function using the provided id
   ns <- NS(id)
-  if(!subsetCondition %in% colnames(annotation)){
-    stop("subset condition is not in annotation file")
-  }
+#  if(!subsetCondition %in% colnames(annotation)){
+#    stop("subset condition is not in annotation file")
+#  }
 
   sortConditions <- sortConditions[sortConditions %in% colnames(annotation)]
   colorConditions <- colorConditions[colorConditions %in% colnames(annotation)]
@@ -27,16 +27,12 @@ qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
     stop("subset or color conditions are not in annotation file")
   }
 
-  subsetChoices = unique(as.character(annotation[[subsetCondition]]))
+  #subsetChoices = unique(as.character(annotation[[subsetCondition]]))
 
 
   #print(subsetChoices)
 
   tagList(
-    selectInput(ns("subset"), paste0("Select ", subsetCondition, " to display"), choices=subsetChoices,
-                selected = subsetChoices[1]),
-    selectInput(ns("Order"), "Select Condition to Sort on", choices=sortConditions,
-                selected=sortConditions[1]),
     ggvisOutput("qcHeatmap"),
     uiOutput(ns("qcMarkerUI")),
     #selectInput(ns("markers"), "Select Marker for Violin Plots", choices=markers, selected = markers[1]),
@@ -59,7 +55,8 @@ qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
 #' @export
 #'
 #' @examples
-qcModuleOutput <- function(input, output, session, data, annotation, idColumn = "patientID") {
+qcModuleOutput <- function(input, output, session, data, annotation,
+                           idColumn = "patientID", subsetChoices=NULL, sortConditions) {
 
   require(dplyr)
   # The selected file, if any
@@ -80,8 +77,24 @@ qcModuleOutput <- function(input, output, session, data, annotation, idColumn = 
 
     print(markers)
 
-    selectInput(ns("Marker"), "Select Markers", choices = markers,
-                selected = markers[1])
+    out <- list()
+
+    if(!is.null(subsetChoices)){
+
+       out <- list(out,selectInput(ns("subset"), paste0("Select ", subsetCondition, " to display"), choices=subsetChoices,
+                selected = subsetChoices[1]))
+    }
+
+     out <- list(out, selectInput(ns("Marker"), "Select Markers", choices = markers,
+                selected = markers[1]))
+
+     out <- list(out,selectInput(ns("Order"), "Select Condition to Sort on", choices=sortConditions,
+                 selected=sortConditions[1]))
+
+
+     out <- tagList(out)
+
+     out
   })
 
 
@@ -97,10 +110,14 @@ qcModuleOutput <- function(input, output, session, data, annotation, idColumn = 
   })
 
   annotateSelect <- reactive({
+    annotate2 <- annotation
+
+    if(!is.null(subsetChoices)){
     subsetVar <- input$subset
     #print(subsetVar)
-
     annotate2 <- annotation %>% dplyr::filter(patientID %in% subsetVar)
+    }
+    print(annotate2)
     annotate2
   })
 
@@ -114,7 +131,8 @@ qcModuleOutput <- function(input, output, session, data, annotation, idColumn = 
       mutate(zscore = scale_this(med), uniqueID = paste0(idVar,"-",variable))
     medTable <- data.table(medTable)
     setkey(medTable, idVar)
-    medTable <- medTable[annotateSelect()]
+    print(medTable)
+    #medTable <- medTable[annotateSelect()]
 
     #  inner_join(y=annotateSelect(), by=c("idVar"="FCSFiles"))
 
@@ -139,7 +157,7 @@ qcModuleOutput <- function(input, output, session, data, annotation, idColumn = 
 qcViolinOut <- function(data, marker, colors){
   plotTitle <- marker
 
-  out <- ggplot(data, aes(x=factor(notation),value, fill=factor(NewCondition))) +
+  out <- ggplot(data, aes(x=factor(idVar),value, fill=factor(NewCondition))) +
     geom_violin()
     #facet_grid(. ~ notation) +
     #ggtitle(plotTitle) +
