@@ -76,7 +76,7 @@ plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
 
         if(!inherits(outplot, "try-error")){
 
-          if(scaling=TRUE){
+          if(scaling==TRUE){
           outplot <- outplot + scale_x_flowJo_biexp() + scale_y_flowJo_biexp()
           }
           outplot <- ggcyto_arrange(outplot, nrow = 1)
