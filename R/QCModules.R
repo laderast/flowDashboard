@@ -124,13 +124,13 @@ qcModuleOutput <- function(input, output, session, data, annotation,
   medData <- reactive({
     order <- input$Order
 
-    subdata <- data[annotateSelect()]
+    subdata <- data[annotateSelect(), nomatch=0]
 
     medTable <- summarise(group_by(subdata,variable,idVar),med = median(value)) %>%
       group_by(variable) %>%
-      mutate(zscore = scale_this(med), uniqueID = paste0(idVar,"-",variable))
+      mutate(zscore = scale_this(med), popKey = paste0(idVar,"-",variable))
     medTable <- data.table(medTable)
-    setkey(medTable, idVar)
+    setkey(medTable, popKey)
     print(medTable)
     #medTable <- medTable[annotateSelect()]
 
@@ -220,7 +220,7 @@ qcHeatmapPlot <- function(data, annotation)
 
   data %>%
     #filter(as.character(notation) %in% domX) %>%
-    ggvis(x=~notation,y= ~variable, fill=~factor(round(zscore))) %>%
+    ggvis(x=~popKey,y= ~variable, fill=~factor(round(zscore))) %>%
     layer_rects(height = band(), width = band(), key:=~uniqueID) %>%
     scale_ordinal('fill',range = pal) %>%
     add_axis("x", properties = axis_props(labels = list(angle = 270)), orient="top",
