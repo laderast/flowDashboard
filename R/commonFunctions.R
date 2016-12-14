@@ -202,9 +202,11 @@ returnMeltedData <- function(fS, selectMarkers =NULL,
                              returnCellNum=FALSE){
 
   pD <- pData(parameters(fS[[1]]))
+  markers <- pD$desc
 
   listExprs <- lapply(sampleNames(fS), function(x){
     out <- exprs(fS[[x]])
+    colnames(out) <- pD$desc
   #don't replace name entry with desc where desc is NA (for example, SSC-A)
     #dontReplace <- which(!is.na(pD$desc))
 
@@ -222,8 +224,8 @@ returnMeltedData <- function(fS, selectMarkers =NULL,
 
   cellFrame <- do.call(rbind,listExprs)
 
-  print(head(cellFrame))
-  print(dim(cellFrame))
+  #print(head(cellFrame))
+  #print(dim(cellFrame))
 
   #print(colnames(cellFrame))
 
@@ -252,6 +254,11 @@ returnMeltedData <- function(fS, selectMarkers =NULL,
 
   #cellMelt <- cellMelt %>% arrange(idVar)
   cellMelt <- melt(cellFrame, id.vars=idVars)
+  print(head(cellMelt))
+  print(tail(cellMelt))
+  levels(cellMelt$variable) <- levels(pD$desc)
+  print(head(cellMelt))
+  print(tail(cellMelt))
 
   return(cellMelt)
 
