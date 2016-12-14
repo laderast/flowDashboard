@@ -128,7 +128,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
     medTable <- summarise(group_by(subdata,variable,idVar),med = median(value)) %>%
       group_by(variable) %>%
-      mutate(zscore = scale_this(med), popKey = paste0(idVar,"-",variable))
+      mutate(zscore = scale_this(med))
     medTable <- data.table(medTable)
     setkey(medTable, popKey)
     print(medTable)
