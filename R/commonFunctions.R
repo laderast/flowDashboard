@@ -1,3 +1,58 @@
+
+#make a file friendly population name
+makePopulationName <- function(popName){
+  popName <- gsub("\\.","", x=popName)
+  popName <- gsub("\\-","neg",x = popName)
+  popName <- gsub("\\+", "pos", x= popName)
+  return(popName)
+}
+
+
+#' Plot all Populations
+#'
+#' Given a gatingSet, plot the provenance for each sample and each population.
+#'
+#'
+#' @param gateSet - a gatingSet with attached populations
+#' @param imagePath - directory to write population images
+#'
+#' @return nothing. Side effect is images written to the imagePath.
+#' @export
+#'
+#' @examples
+plotAllPopulationsOld <- function(gateSet, pipelineFile = "panel1",
+                               imagePath= "images/", delimiter="+"){
+  if(!dir.exists(imagePath)){
+    dir.create(imagePath)
+  }
+  require(flowWorkspace)
+
+  #for each node in the gatingTemplate, plot complete path
+  for(i in 1:length(gateSet)){
+    #samp <- gateSet[[i]]
+    sampName <- sampleNames(gateSet)[i]
+    print(sampName)
+    for(node in getNodes(gateSet[[i]], path="full")){
+      print(node)
+      if(node != "root"){
+        outnodes <- strsplit(x = node, split="/")[[1]]
+        outnodes <- setdiff(outnodes, c(""))
+        outPop <- outnodes[length(outnodes)]
+        outPop <- makePopulationName(outPop)
+        #outnodes <- unlist(outnodes)
+        fileId <- paste0(imagePath, sampName, delimiter, outPop, delimiter, pipelineFile, ".png")
+        png(fileId, width=200*length(outnodes), height=200)
+        try(plotGate(gateSet[[i]], y=outnodes, default.y="Cell_length",checkName=FALSE,
+                     marker.only=TRUE, raw.scale=FALSE,
+                     gpar = list(nrow=1, ncol=length(outnodes))))
+        dev.off()
+      }
+    }
+  }
+}
+
+
+
 #' Plot all Populations
 #'
 #' Given a gatingSet, plot the provenance for each sample and each population.
@@ -63,7 +118,7 @@ plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
         #outnodes <- node
         outnodes <- setdiff(outnodes, c(""))
         outPop <- outnodes[length(outnodes)]
-        outPop <- make.names(outPop)
+        outPop <- makePopulationName(outPop)
         outPop <- gsub(pattern = "\\.$", replacement = "",outPop)
         #outnodes <- unlist(outnodes)
         fileId <- paste0(imagePath, sampName, delimiter, outPop, delimiter, pipelineFile, ".png")
@@ -103,11 +158,12 @@ getPopulationsAndZscores <- function(gateSet, pipelineFile="panel1", delimiter="
   #popTable$Population <- make.names(popTable$Population)
   #popTable$Parent <- make.names(popTable$Population)
 
-  popTable$Population <- gsub(pattern = "\\.$", replacement = "", popTable$Population)
-  popTable$Parent <- gsub(pattern = "\\.$", replacement = "", popTable$Parent)
+  #popTable$Population <- gsub(pattern = "\\.$", replacement = "", popTable$Population)
+  #popTable$Parent <- gsub(pattern = "\\.$", replacement = "", popTable$Parent)
 
-  popTable <- popTable %>% mutate(idVar = paste0(name,delimiter,Population,delimiter,pipelineFile),
-                                  percentPop =(Count/ParentCount)*100)
+  popTable <- popTable %>% mutate(idVar = paste0(name,delimiter,makePopulationName(Population),delimiter,pipelineFile),
+                                  percentPop =(Count/ParentCount)*100) %>%
+
   #popMat <- acast(popTable, name~Population, value.var = "percentPop")
   popTable <- popTable %>%
     group_by(Population) %>%
