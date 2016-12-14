@@ -254,11 +254,11 @@ returnMeltedData <- function(fS, selectMarkers =NULL,
 
   #cellMelt <- cellMelt %>% arrange(idVar)
   cellMelt <- melt(cellFrame, id.vars=idVars)
-  print(head(cellMelt))
-  print(tail(cellMelt))
-  levels(cellMelt$variable) <- levels(pD$desc)
-  print(head(cellMelt))
-  print(tail(cellMelt))
+  #print(head(cellMelt))
+  #print(tail(cellMelt))
+  #levels(cellMelt$variable) <- levels(pD$desc)
+  #print(head(cellMelt))
+  #print(tail(cellMelt))
 
   return(cellMelt)
 
