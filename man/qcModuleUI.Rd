@@ -5,7 +5,7 @@
 \title{Title}
 \usage{
 qcModuleUI(id, label = "qcViolin", markers, sortConditions, colorConditions,
-  subsetCondition, annotation)
+  annotation)
 }
 \arguments{
 \item{annotation}{}

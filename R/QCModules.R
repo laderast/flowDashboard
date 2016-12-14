@@ -117,7 +117,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     #print(subsetVar)
     annotate2 <- annotation %>% dplyr::filter(patientID %in% subsetVar)
     }
-    print(annotate2)
+    #print(annotate2)
     annotate2
   })
 
@@ -220,8 +220,8 @@ qcHeatmapPlot <- function(data, annotation)
 
   data %>%
     #filter(as.character(notation) %in% domX) %>%
-    ggvis(x=~popKey,y= ~variable, fill=~factor(round(zscore))) %>%
-    layer_rects(height = band(), width = band(), key:=~uniqueID) %>%
+    ggvis(x=~idVar,y= ~variable, fill=~factor(round(zscore))) %>%
+    layer_rects(height = band(), width = band(), key:=~popKey) %>%
     scale_ordinal('fill',range = pal) %>%
     add_axis("x", properties = axis_props(labels = list(angle = 270)), orient="top",
              title_offset = 90, tick_padding=40, title="Sample/Panel") %>%

@@ -4,7 +4,7 @@
 \alias{waterfallOutputUI}
 \title{Title}
 \usage{
-waterfallOutputUI(id, label = "waterfall")
+waterfallOutputUI(id, label = "waterfall", populationChoices, colorColumns)
 }
 \arguments{
 \item{label}{}

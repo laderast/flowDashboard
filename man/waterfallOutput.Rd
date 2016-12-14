@@ -2,15 +2,21 @@
 % Please edit documentation in R/waterfallModules.R
 \name{waterfallOutput}
 \alias{waterfallOutput}
-\title{Title}
+\title{Waterfall plot output module}
 \usage{
 waterfallOutput(input, output, session, data, annotation, populationChoices,
-  colorColumns, subsetVariables = NULL)
+  colorColumns, covariateChoices = NULL, subsetVariables = NULL)
 }
 \arguments{
+\item{input}{- normal shiny input object}
+
+\item{output}{- normal shiny output object}
+
+\item{session}{- normal shiny session}
+
 \item{subsetVariables}{}
 }
 \description{
-Title
+Waterfall plot output module
 }
 

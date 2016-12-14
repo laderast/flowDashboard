@@ -5,7 +5,7 @@
 \title{Title}
 \usage{
 qcModuleOutput(input, output, session, data, annotation,
-  idColumn = "patientID")
+  idColumn = "patientID", subsetChoices = NULL, sortConditions)
 }
 \arguments{
 \item{idColumn}{}
