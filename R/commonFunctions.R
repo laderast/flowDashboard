@@ -11,7 +11,7 @@
 #'
 #' @examples
 plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
-                               imagePath= "images/", cytof=TRUE){
+                               imagePath= "images/", cytof=TRUE, delimiter="+"){
   if(!dir.exists(imagePath)){
     dir.create(imagePath)
   }
@@ -66,7 +66,7 @@ plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
         outPop <- make.names(outPop)
         outPop <- gsub(pattern = "\\.$", replacement = "",outPop)
         #outnodes <- unlist(outnodes)
-        fileId <- paste0(imagePath, sampName, "...", outPop, "...", pipelineFile, ".png")
+        fileId <- paste0(imagePath, sampName, delimiter, outPop, delimiter, pipelineFile, ".png")
         png(fileId, width=200*length(outnodes), height=200)
 
         #        try(plotGate(gateSet[[i]], y=outnodes, default.y=defaultChan,checkName=FALSE,
@@ -98,7 +98,7 @@ plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
 #' @export
 #'
 #' @examples
-getPopulationsAndZscores <- function(gateSet, pipelineFile="panel1"){
+getPopulationsAndZscores <- function(gateSet, pipelineFile="panel1", delimiter="+"){
   popTable <- getPopStats(gateSet)
   popTable$Population <- make.names(popTable$Population)
   popTable$Parent <- make.names(popTable$Population)
@@ -115,7 +115,7 @@ getPopulationsAndZscores <- function(gateSet, pipelineFile="panel1"){
 
   #popScale <- scale(popMat)
   popScaleMelt <- melt(popScale,value.name="zscore")
-  popScaleMelt <- popScaleMelt %>% mutate(idVar=paste0(Var1,"...",Var2,"...",pipelineFile)) %>%
+  popScaleMelt <- popScaleMelt %>% mutate(idVar=paste(Var1,Var2,pipelineFile,sep = delimiter)) %>%
     select(idVar, zscore)
 
   #popTable %>% inner_join(y=popScaleMelt, by=c("idVar"="idVar"))
