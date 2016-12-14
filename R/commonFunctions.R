@@ -8,6 +8,11 @@ makePopulationName <- function(popName){
 }
 
 
+makePopulationIdentifier <- function(popName, name, pipelineFile="Panel1", delimiter="+"){
+    popName <- makePopulationName(popName)
+    outName <- paste0(name, delimiter, popName, delimiter, pipelineFile)
+}
+
 #' Plot all Populations
 #'
 #' Given a gatingSet, plot the provenance for each sample and each population.
@@ -40,7 +45,10 @@ plotAllPopulationsOld <- function(gateSet, pipelineFile = "panel1",
         outPop <- outnodes[length(outnodes)]
         outPop <- makePopulationName(outPop)
         #outnodes <- unlist(outnodes)
-        fileId <- paste0(imagePath, sampName, delimiter, outPop, delimiter, pipelineFile, ".png")
+        popID <- makePopulationIdentifier(popName=outPop, name = sampName, pipelineFile = pipelineFile,
+                                          delimiter=delimiter)
+
+        fileId <- paste0(imagePath, popID, ".png")
         png(fileId, width=200*length(outnodes), height=200)
         try(plotGate(gateSet[[i]], y=outnodes, default.y="Cell_length",checkName=FALSE,
                      marker.only=TRUE, raw.scale=FALSE,
@@ -51,49 +59,6 @@ plotAllPopulationsOld <- function(gateSet, pipelineFile = "panel1",
   }
 }
 
-
-
-#' Plot all Populations
-#'
-#' Given a gatingSet, plot the provenance for each sample and each population.
-#'
-#'
-#' @param gateSet - a gatingSet with attached populations
-#' @param imagePath - directory to write population images
-#'
-#' @return nothing. Side effect is images written to the imagePath.
-#' @export
-#'
-#' @examples
-plotAllPopulationsOld <- function(gateSet, pipelineFile = "panel1",
-                               imagePath= "images/", delimiter="+"){
-  if(!dir.exists(imagePath)){
-    dir.create(imagePath)
-  }
-  require(flowWorkspace)
-
-  #for each node in the gatingTemplate, plot complete path
-  for(i in 1:length(gateSet)){
-    #samp <- gateSet[[i]]
-    sampName <- sampleNames(gateSet)[i]
-    print(sampName)
-    for(node in getNodes(gateSet[[i]], path="full")){
-      print(node)
-      if(node != "root"){
-        outnodes <- strsplit(x = node, split="/")[[1]]
-        outnodes <- setdiff(outnodes, c(""))
-        outPop <- outnodes[length(outnodes)]
-        #outnodes <- unlist(outnodes)
-        fileId <- paste0(imagePath, sampName, delimiter, outPop, delimiter, pipelineFile, ".png")
-        png(fileId, width=150*length(outnodes), height=150)
-        try(plotGate(gateSet[[i]], y=outnodes, default.y="Cell_length",checkName=FALSE,
-                     marker.only=TRUE, raw.scale=FALSE,
-                     gpar = list(nrow=1, ncol=length(outnodes))))
-        dev.off()
-      }
-    }
-  }
-}
 
 
 
@@ -165,7 +130,11 @@ plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
         outPop <- makePopulationName(outPop)
         outPop <- gsub(pattern = "\\.$", replacement = "",outPop)
         #outnodes <- unlist(outnodes)
-        fileId <- paste0(imagePath, sampName, delimiter, outPop, delimiter, pipelineFile, ".png")
+        popID <- makePopulationIdentifier(popName=outPop, name = sampName, pipelineFile = pipelineFile,
+                                          delimiter=delimiter)
+
+        fileId <- paste0(imagePath, popID, ".png")
+
         png(fileId, width=200*length(outnodes), height=200)
 
         #        try(plotGate(gateSet[[i]], y=outnodes, default.y=defaultChan,checkName=FALSE,
@@ -205,7 +174,12 @@ getPopulationsAndZscores <- function(gateSet, pipelineFile="panel1", delimiter="
   #popTable$Population <- gsub(pattern = "\\.$", replacement = "", popTable$Population)
   #popTable$Parent <- gsub(pattern = "\\.$", replacement = "", popTable$Parent)
 
-  popTable <- popTable %>% mutate(idVar = paste0(name,delimiter,makePopulationName(Population),delimiter,pipelineFile),
+  scale_this <- function(x){
+    as.vector(scale(x))
+  }
+
+
+  popTable <- popTable %>% mutate(idVar = makePopulationIdentifier(name,delimiter,Population,delimiter,pipelineFile),
                                   percentPop =(Count/ParentCount)*100) %>%
 
   #popMat <- acast(popTable, name~Population, value.var = "percentPop")
