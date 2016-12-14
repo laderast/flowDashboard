@@ -100,8 +100,8 @@ plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
 #' @examples
 getPopulationsAndZscores <- function(gateSet, pipelineFile="panel1", delimiter="+"){
   popTable <- getPopStats(gateSet)
-  popTable$Population <- make.names(popTable$Population)
-  popTable$Parent <- make.names(popTable$Population)
+  #popTable$Population <- make.names(popTable$Population)
+  #popTable$Parent <- make.names(popTable$Population)
 
   popTable$Population <- gsub(pattern = "\\.$", replacement = "", popTable$Population)
   popTable$Parent <- gsub(pattern = "\\.$", replacement = "", popTable$Parent)
