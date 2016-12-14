@@ -1,5 +1,7 @@
 
 #make a file friendly population name
+#need to avoid "-" and "+" in population names so they
+#will be compatible with filenames
 makePopulationName <- function(popName){
   popName <- gsub("\\.","", x=popName)
   popName <- gsub("\\-","neg",x = popName)
@@ -8,6 +10,17 @@ makePopulationName <- function(popName){
 }
 
 
+#' Title
+#'
+#' @param popName
+#' @param name
+#' @param pipelineFile
+#' @param delimiter
+#'
+#' @return
+#' @export
+#'
+#' @examples
 makePopulationIdentifier <- function(popName, name, pipelineFile="Panel1", delimiter="+"){
     popName <- makePopulationName(popName)
     outName <- paste0(name, delimiter, popName, delimiter, pipelineFile)

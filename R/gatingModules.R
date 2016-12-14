@@ -9,19 +9,16 @@
 #' @export
 #'
 #' @examples
-gatingModuleUI <- function(id, label = "qcViolin", sortConditions, subsetCondition, annotation){
+gatingModuleUI <- function(id, label = "qcViolin", sortConditions,
+                           subsetCondition=NULL, annotation){
 
     ns <- NS(id)
-    subsetChoices <- unique(as.character(annotation[[subsetCondition]]))
 
     tagList(
     h4("Filter Samples"),
     # checkboxGroupInput("panelDisplayPop", label="Show Panel",
     #                    choices=c("1", "3"), selected=c("1","3")),
-    selectInput(ns("subset"), paste0("Select ", subsetCondition, " to display"), choices=subsetChoices,
-                selected = subsetChoices[1]),
-    selectInput(ns('colSortPop'), "Order Samples", choices= sortConditions,
-                selected=sortConditions[1]),
+    uiOutput(ns("gatingDynamicUI")),
     absolutePanel(id=ns("heatmap"), h4("Population Heatmap (Click on box to see provenance)"),
                   ggvisOutput(ns("populationHeatmap")), top=250, left=0),
     # absolutePanel(id="scheme",imageOutput(ns("pipelineHierarchy")), top=250, left=650),
@@ -51,7 +48,8 @@ gatingModuleUI <- function(id, label = "qcViolin", sortConditions, subsetConditi
 #'
 #' @examples
 gatingModuleOutput <- function(input, output, session,
-                               imageDir, popTable, displayNodes, annotation, plotObj){
+                               imageDir, popTable, displayNodes, annotation, plotObj,
+                               subsetChoices){
 
   ns <- session$ns
 
@@ -64,6 +62,23 @@ gatingModuleOutput <- function(input, output, session,
     annotate2
   })
 
+  gatingDynamicUI <- renderUI({
+    outList <- list()
+
+    if(!is.null(subsetCondition)){
+    outList <- c(outList,
+                 selectInput(ns("subset"), paste0("Select ", subsetCondition,
+                                                  " to display"), choices=subsetChoices,
+                selected = subsetChoices[1]))
+    }
+
+    outList <- c(outList, selectInput(ns('colSortPop'), "Order Samples", choices= sortConditions,
+                selected=sortConditions[1]))
+
+    outList <- tagList(outList)
+
+    return(outList)
+  })
 
   # displayNodes <- reactive({
   #   if(is.null(displayNodes)){
