@@ -181,7 +181,7 @@ getPopulationsAndZscores <- function(gateSet, pipelineFile="panel1", delimiter="
 
 
   popTable <- popTable %>% mutate(idVar = makePopulationIdentifier(Population,name,pipelineFile,delimiter),
-                                  percentPop =(Count/ParentCount)*100) %>%
+                                  percentPop =(Count/ParentCount)*100)
 
   #popMat <- acast(popTable, name~Population, value.var = "percentPop")
   popTable <- popTable %>%
