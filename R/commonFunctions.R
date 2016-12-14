@@ -11,7 +11,7 @@
 #'
 #' @examples
 plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
-                               imagePath= "images/", cytof=TRUE, delimiter="+"){
+                               imagePath= "images/", cytof=TRUE, delimiter="+", scaling=FALSE){
   if(!dir.exists(imagePath)){
     dir.create(imagePath)
   }
