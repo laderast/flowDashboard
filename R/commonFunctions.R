@@ -222,8 +222,8 @@ returnMeltedData <- function(fS, selectMarkers =NULL,
 
   cellFrame <- do.call(rbind,listExprs)
 
-  print(head(cellFrame))
-  print(dim(cellFrame))
+  #print(head(cellFrame))
+  #print(dim(cellFrame))
 
   #print(colnames(cellFrame))
 
@@ -252,6 +252,11 @@ returnMeltedData <- function(fS, selectMarkers =NULL,
 
   #cellMelt <- cellMelt %>% arrange(idVar)
   cellMelt <- melt(cellFrame, id.vars=idVars)
+  print(head(cellMelt))
+  print(tail(cellMelt))
+  levels(cellMelt$variable) <- levels(pD$desc)
+  print(head(cellMelt))
+  print(tail(cellMelt))
 
   return(cellMelt)
 
