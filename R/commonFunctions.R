@@ -118,6 +118,7 @@ getPopulationsAndZscores <- function(gateSet, pipelineFile="panel1", delimiter="
   #popScaleMelt <- popScaleMelt %>% mutate(idVar=paste(Var1,Var2,pipelineFile,sep = delimiter)) %>%
   #  select(idVar, zscore)
 
+
   #popTable %>% inner_join(y=popScaleMelt, by=c("idVar"="idVar"))
   #popTable <- merge(popTable, popScaleMelt, by="idVar")
 
