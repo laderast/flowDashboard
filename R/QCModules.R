@@ -103,14 +103,16 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     colors <- input$Color
     marker <- input$Marker
 
-    outData <- data[annotateSelect()]
+    outData <- data[annotateSelect(),nomatch=0]
     outData <- outData[variable %in% marker]
+    print(outData)
 
     qcViolinOut(outData, marker, colors)
   })
 
   annotateSelect <- reactive({
     annotate2 <- annotation
+    ord <- input$order
 
     if(!is.null(subsetChoices)){
     subsetVar <- input$subset
@@ -118,20 +120,20 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     annotate2 <- annotation %>% dplyr::filter(patientID %in% subsetVar)
     }
     #print(annotate2)
-    annotate2
+    annotate2 <- annotate2 %>% arrange_(ord)
   })
 
   medData <- reactive({
-    order <- input$Order
-
+    ord <- input$Order
     subdata <- data[annotateSelect(), nomatch=0]
 
     medTable <- summarise(group_by(subdata,variable,idVar),med = median(value)) %>%
       group_by(variable) %>%
-      mutate(zscore = scale_this(med), popKey=paste0(idVar, "-", variable))
+      mutate(zscore = scale_this(med), popKey=paste0(idVar, "-", variable)) %>%
+      arrange_(ord)
     medTable <- data.table(medTable)
     setkey(medTable, popKey)
-    print(medTable)
+    #print(medTable)
     #medTable <- medTable[annotateSelect()]
 
     #  inner_join(y=annotateSelect(), by=c("idVar"="FCSFiles"))
@@ -187,7 +189,7 @@ qcHeatmapPlot <- function(data, annotation)
   #print(head(data))
 
   namesDomX <- unique(data$notation)
-  domX <- paste0(data$patientID, "-", data$NewCondition)
+  domX <- data$idVar
   names(domX) <- namesDomX
   domY <- unique(as.character(data$variable))
 
