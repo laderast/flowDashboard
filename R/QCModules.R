@@ -128,7 +128,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
     medTable <- summarise(group_by(subdata,variable,idVar),med = median(value)) %>%
       group_by(variable) %>%
-      mutate(zscore = scale_this(med))
+      mutate(zscore = scale_this(med), popKey=paste0(idVar, "-", variable))
     medTable <- data.table(medTable)
     setkey(medTable, popKey)
     print(medTable)
@@ -221,7 +221,7 @@ qcHeatmapPlot <- function(data, annotation)
   data %>%
     #filter(as.character(notation) %in% domX) %>%
     ggvis(x=~idVar,y= ~variable, fill=~factor(round(zscore))) %>%
-    layer_rects(height = band(), width = band(), key:=~popKey) %>%
+    layer_rects(height = band(), width = band(), key:=~idVar) %>%
     scale_ordinal('fill',range = pal) %>%
     add_axis("x", properties = axis_props(labels = list(angle = 270)), orient="top",
              title_offset = 90, tick_padding=40, title="Sample/Panel") %>%
