@@ -105,6 +105,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
     outData <- data[annotateSelect()]
     outData <- outData[variable %in% marker]
+    print(outData)
 
     qcViolinOut(outData, marker, colors)
   })
@@ -187,7 +188,7 @@ qcHeatmapPlot <- function(data, annotation)
   #print(head(data))
 
   namesDomX <- unique(data$notation)
-  domX <- paste0(data$patientID, "-", data$NewCondition)
+  domX <- data$idVar
   names(domX) <- namesDomX
   domY <- unique(as.character(data$variable))
 
