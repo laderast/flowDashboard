@@ -105,7 +105,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
     outData <- data[annotateSelect(),nomatch=0]
     outData <- outData[variable %in% marker]
-    print(outData)
+    #print(outData)
 
     qcViolinOut(outData, marker, colors)
   })
@@ -119,7 +119,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     #print(subsetVar)
     annotate2 <- annotation %>% dplyr::filter(patientID %in% subsetVar)
     }
-    #print(annotate2)
+    print(annotate2)
     annotate2 <- annotate2 %>% arrange_(ord)
   })
 
