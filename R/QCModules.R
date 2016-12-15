@@ -5,7 +5,6 @@
 #' @param markers
 #' @param sortConditions
 #' @param colorConditions
-#' @param subsetCondition
 #' @param annotation
 #'
 #' @return
@@ -33,8 +32,8 @@ qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
   #print(subsetChoices)
 
   tagList(
-    ggvisOutput("qcHeatmap"),
     uiOutput(ns("qcMarkerUI")),
+    ggvisOutput("qcHeatmap"),
     #selectInput(ns("markers"), "Select Marker for Violin Plots", choices=markers, selected = markers[1]),
     selectInput(ns("Color"), "Select Condition to Color", choices=colorConditions, selected=colorConditions[1]),
     plotOutput(ns("qcViolinPlot"))
@@ -67,7 +66,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     #validate(need(input$Marker, message = FALSE))
     #validate(need(input$Population, message= FALSE))
     dataOut <- data[annotateSelect()]
-    #dataOut <- dataOut %>% dplyr::filter(variable %in% input$Marker) #%>% arrange_(input$Order)
+    dataOut <- dataOut %>% dplyr::filter(variable %in% input$Marker) %>% arrange_(input$Order)
     dataOut
   })
 
@@ -103,11 +102,9 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     colors <- input$Color
     marker <- input$Marker
 
-    outData <- data[annotateSelect(),nomatch=0]
-    outData <- outData[variable %in% marker]
-    print(outData)
+    #print(outData)
 
-    qcViolinOut(outData, marker, colors)
+    qcViolinOut(violData(), marker, colors)
   })
 
   annotateSelect <- reactive({
@@ -119,8 +116,8 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     #print(subsetVar)
     annotate2 <- annotation %>% dplyr::filter(patientID %in% subsetVar)
     }
-    #print(annotate2)
-    annotate2 <- annotate2 %>% arrange_(ord)
+    print(annotate2)
+    #annotate2 <- annotate2 %>% arrange_(ord)
   })
 
   medData <- reactive({
@@ -129,8 +126,8 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
     medTable <- summarise(group_by(subdata,variable,idVar),med = median(value)) %>%
       group_by(variable) %>%
-      mutate(zscore = scale_this(med), popKey=paste0(idVar, "-", variable)) %>%
-      arrange_(ord)
+      mutate(zscore = scale_this(med), popKey=paste0(idVar, "-", variable)) #%>%
+      #arrange_(ord)
     medTable <- data.table(medTable)
     setkey(medTable, popKey)
     #print(medTable)
@@ -192,6 +189,7 @@ qcHeatmapPlot <- function(data, annotation)
   domX <- data$idVar
   names(domX) <- namesDomX
   domY <- unique(as.character(data$variable))
+  print(domY)
 
   noSamples <- length(unique(data$idVar))
   #print(paste0("number samples: ",noSamples))
@@ -232,7 +230,8 @@ qcHeatmapPlot <- function(data, annotation)
     add_axis("y", orient="left", title_offset = 80, title = "Marker") %>%
     #add_tooltip(heatmapTooltip,on="hover") %>%
     scale_nominal("y", padding = 0, points = FALSE, domain = domY) %>%
-    scale_nominal("x", padding = 0, points = FALSE, domain = namesDomX) %>%
+   # scale_nominal("x", padding = 0, points = FALSE, domain = namesDomX) %>%
+    scale_nominal("x", padding = 0, points = FALSE) %>%
     layer_text(text:=~signif(med,digits=2), stroke:="darkgrey", align:="left",
                baseline:="top", dx := 10, dy:=10) %>%
     set_options(width = 60 * (noSamples), height = 50 * (noMarkers))
