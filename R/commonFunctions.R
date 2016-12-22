@@ -457,9 +457,8 @@ returnMeltedDataFromGS <- function(gS, population, removeMarkers = NULL, sampleP
   grepRes <- sapply(removeMarkers, function(x){grep(x, descFrame$desc)})
   nodeIDs <- do.call("c", grepRes)
 
+
   #markersToInterrogate <- descFrame[!descFrame$desc %in% removeMarkers,]
-
-
 
   mCAList <- as(amlList, "list")
 
@@ -467,7 +466,9 @@ returnMeltedDataFromGS <- function(gS, population, removeMarkers = NULL, sampleP
 
   filteredExprList <- lapply(exprList, function(x){colnames(x) <- descFrame$desc
   #x <- x[,colnames(x) %in% markersToInterrogate$desc]
-  x <- x[,-nodeIDs]
+  if(length(nodeIDs)>0){
+    x <- x[,-nodeIDs]
+    }
   return(x)
   })
 
