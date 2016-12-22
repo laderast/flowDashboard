@@ -117,12 +117,14 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     annotate2 <- annotation %>% dplyr::filter(patientID %in% subsetVar)
     }
     print(annotate2)
+    annotate2
     #annotate2 <- annotate2 %>% arrange_(ord)
   })
 
   medData <- reactive({
     ord <- input$Order
     subdata <- data[annotateSelect(), nomatch=0]
+    #print(subdata)
 
     medTable <- summarise(group_by(subdata,variable,idVar),med = median(value)) %>%
       group_by(variable) %>%
@@ -147,7 +149,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
   qcHeatmapReact <- reactive({
     #print(medData())
-    qcHeatmapPlot(medData())
+    qcHeatmapPlot(medData(), annotation=annotation)
   })
 
   qcHeatmapReact %>% bind_shiny("qcHeatmap")
@@ -185,9 +187,11 @@ qcHeatmapPlot <- function(data, annotation)
   {
   #print(head(data))
 
-  namesDomX <- unique(data$notation)
+  print(data)
+
+  #namesDomX <- unique(data$notation)
   domX <- data$idVar
-  names(domX) <- namesDomX
+  #names(domX) <- namesDomX
   domY <- unique(as.character(data$variable))
   print(domY)
 
@@ -223,10 +227,10 @@ qcHeatmapPlot <- function(data, annotation)
   data %>%
     #filter(as.character(notation) %in% domX) %>%
     ggvis(x=~idVar,y= ~variable, fill=~factor(round(zscore))) %>%
-    layer_rects(height = band(), width = band(), key:=~idVar) %>%
+    layer_rects(height = band(), width = band(), key:=~popKey) %>%
     scale_ordinal('fill',range = pal) %>%
     add_axis("x", properties = axis_props(labels = list(angle = 270)), orient="top",
-             title_offset = 90, tick_padding=40, title="Sample/Panel") %>%
+             title_offset = 120, tick_padding=40, title="Sample/Panel") %>%
     add_axis("y", orient="left", title_offset = 80, title = "Marker") %>%
     #add_tooltip(heatmapTooltip,on="hover") %>%
     scale_nominal("y", padding = 0, points = FALSE, domain = domY) %>%

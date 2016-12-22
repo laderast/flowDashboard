@@ -454,7 +454,7 @@ returnMeltedDataFromGS <- function(gS, population, removeMarkers = NULL, sampleP
   #exprList <- fsApply(amlList, return, use.exprs = TRUE)
 
   descFrame <- pData(parameters(amlList[[1]]))
-  grepRes <- sapply(removeMarkers, function(x){grep(x, pd$desc)})
+  grepRes <- sapply(removeMarkers, function(x){grep(x, descFrame$desc)})
   nodeIDs <- do.call("c", grepRes)
 
   #markersToInterrogate <- descFrame[!descFrame$desc %in% removeMarkers,]

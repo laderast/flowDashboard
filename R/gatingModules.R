@@ -49,14 +49,19 @@ gatingModuleUI <- function(id, label = "qcViolin", sortConditions,
 #' @examples
 gatingModuleOutput <- function(input, output, session,
                                imageDir, popTable, displayNodes, annotation, plotObj,
-                               subsetChoices){
+                               subsetChoices=NULL){
 
   ns <- session$ns
 
   annotateSelect <- reactive({
-    subsetVar <- input$subset
-    #print(subsetVar)
-    annotate2 <- annotation[patientID %in% subsetVar] #%>% dplyr::filter(patientID %in% subsetVar)
+
+    annotate2 <- annotation
+
+    if(!is.null(subsetChoices)){
+      subsetVar <- input$subset
+      #print(subsetVar)
+      annotate2 <- annotate %>% dplyr::filter(idVar %in% subsetVar)
+    }
     #annotate2 <- data.table(annotate2)
     #setkey(annotate2, FCSFiles)
     annotate2
@@ -65,7 +70,7 @@ gatingModuleOutput <- function(input, output, session,
   gatingDynamicUI <- renderUI({
     outList <- list()
 
-    if(!is.null(subsetCondition)){
+    if(!is.null(subsetChoices)){
     outList <- c(outList,
                  selectInput(ns("subset"), paste0("Select ", subsetCondition,
                                                   " to display"), choices=subsetChoices,
