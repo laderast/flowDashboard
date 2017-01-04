@@ -181,7 +181,7 @@ plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
 #'
 #' @examples
 getPopulationsAndZscores <- function(gateSet, pipelineFile="panel1", delimiter="+"){
-  popTable <- getPopStats(gateSet)
+  popTable <- getPopStats(gateSet, path=1)
   #popTable$Population <- make.names(popTable$Population)
   #popTable$Parent <- make.names(popTable$Population)
 

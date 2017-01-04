@@ -4,8 +4,8 @@
 \alias{gatingModuleUI}
 \title{Title}
 \usage{
-gatingModuleUI(id, label = "qcViolin", sortConditions, subsetCondition,
-  annotation)
+gatingModuleUI(id, label = "qcViolin", sortConditions,
+  subsetCondition = NULL, annotation)
 }
 \arguments{
 \item{label}{}
