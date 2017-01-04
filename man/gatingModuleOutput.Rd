@@ -5,7 +5,7 @@
 \title{Title}
 \usage{
 gatingModuleOutput(input, output, session, imageDir, popTable, displayNodes,
-  annotation, plotObj)
+  annotation, plotObj, subsetChoices = NULL)
 }
 \arguments{
 \item{imageDir}{- relative directory location of "images/" directory generated

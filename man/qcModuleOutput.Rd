@@ -5,12 +5,19 @@
 \title{Title}
 \usage{
 qcModuleOutput(input, output, session, data, annotation,
-  idColumn = "patientID", subsetChoices = NULL, sortConditions)
+  idColumn = "patientID", subsetCondition = NULL, subsetChoices = NULL,
+  sortConditions, markers)
 }
 \arguments{
+\item{annotation}{}
+
 \item{idColumn}{}
 }
 \description{
 Title
+}
+\examples{
+Title
+
 }
 
