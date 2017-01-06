@@ -108,7 +108,7 @@ plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
     else{defaultChan <- "SSC-A"}
 
     gNs <- getNodes(gateSet, path="full")
-    sNodes <- getNodes(gateSet, path="auto")
+    sNodes <- getNodes(gateSet, path=1)
 
 
     if(!is.null(nodeList)){
@@ -154,6 +154,8 @@ plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
         #        try(plotGate(gateSet[[i]], y=outnodes, default.y=defaultChan,checkName=FALSE,
         #                    marker.only=TRUE, raw.scale=FALSE,
         #                   gpar = list(nrow=1, ncol=length(outnodes))))
+        colnames(gateSet[[i]]) <- pD$desc
+
         outplot <- try(autoplot(gateSet[[i]], outnodes, y=NULL))
 
         if(!inherits(outplot, "try-error")){

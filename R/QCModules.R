@@ -136,6 +136,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
   })
 
 
+
   #' Title
   #'
   #' @param data
@@ -271,10 +272,11 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     data$idVar <- factor(data$idVar)
 
     out <- ggplot(data, aes_string(x="idVar",y="value", fill=colors)) +
-      geom_violin()
+      geom_violin() +
     #facet_grid(. ~ notation) +
     #ggtitle(plotTitle) +
-    theme(axis.text.x=element_text(angle=90, hjust=1))
+    theme(axis.text.x=element_text(angle=90, hjust=1)) #+
+      #scale_x_discrete(labels = notation)
 
     transFun <- getOption("scaleTrans")
     if(transFun == "biexp"){
