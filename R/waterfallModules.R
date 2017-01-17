@@ -72,7 +72,7 @@ waterfallOutput <- function(input, output, session, data, annotation,
     dataOut <- dataOut[Population == pop]
     dataOut$popKey <- factor(dataOut$popKey, levels=unique(dataOut$popKey))
 
-    print(dataOut)
+    #print(dataOut)
 
     #dataOut <- dataOut[eval(call("==", as.name("Population"), pop))]
 

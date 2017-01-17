@@ -554,6 +554,47 @@ scale_this <- function(x){
 }
 
 
+#' Title
+#'
+#' @param subsetChoices
+#' @param annotation
+#' @param input
+#'
+#' @return
+#' @export
+#'
+#' @examples
+makeAnnotationReactive <- function(subsetList=NULL, annotation, input){
 
+  expr <- {
+    annotate2 <- annotation
+#   ord <- input$order
 
+    if(!is.null(subsetList)){
+      subsetVar <- names(subsetList)[1]
+      subsetValues <- subsetList[[subsetVar]]
+      #print(subsetVar)
+      annotate2 <- annotation %>% dplyr::filter(as.name(subsetVar) %in% subsetValues)
+    }
+    #print(annotate2)
+    annotate2
 
+  }
+
+  substitute(expr)
+
+  #expr <- lazyeval::interp(expr, annotation = annotation)
+
+  return(expr)
+  #return(reactive(expr))
+}
+
+makePopTableReactive <- function(popTable, input){
+
+  return(reactive(expr))
+}
+
+makeMarkerDataReactive <- function(markerData, annotation){
+
+  return(reactive(expr))
+}

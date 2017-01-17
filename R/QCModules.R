@@ -30,7 +30,7 @@ qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
   #print(subsetChoices)
 
   tagList(
-    uiOutput(ns("qcHeatmapUI")),
+    #uiOutput(ns("qcHeatmapUI")),
     ggvisOutput(ns("qcHeatmap")),
     uiOutput(ns("qcViolinUI")),
     plotOutput(ns("qcViolinPlot"))#,
@@ -100,17 +100,16 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
     if(is.null(input$subset)){subsetVar <- subsetChoices[1]}
 
-    #print(subsetVar)
-    #annotate2 <- annotation %>% dplyr::filter(patientID %in% subsetVar)
+
+      #annotate2 <- annotation %>% dplyr::filter(patientID %in% subsetVar)
     }
     #print(annotate2)
     annotate2
-    #annotate2 <- annotate2 %>% arrange_(ord)
   })
 
   medData <- reactive({
     ord <- input$Order
-    subdata <- data[annotateSelect(), nomatch=0]
+    subdata <- data[annotateSelect(), on=c("idVar"="FCSFiles"), nomatch=0]
     #print(subdata)
 
     medTable <- summarise(group_by(subdata,variable,idVar),med = median(value)) %>%
