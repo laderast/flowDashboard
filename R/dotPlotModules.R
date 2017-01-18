@@ -37,7 +37,7 @@ dotPlotUI <- function(id, populationList, facetList) {
 #' @export
 #'
 #' @examples
-dotPlotOutput <- function(input, output, session, data, annotation){
+dotPlotOutput <- function(input, output, session, data, annotation, mapVar=c("name"="FCSFiles")){
 
   # dotPlotDynamicUI <- renderUI({
   #   ns <- session$ns
@@ -64,7 +64,12 @@ dotPlotOutput <- function(input, output, session, data, annotation){
 
     #orderVariable <- input$ConditionVariable
 
-    dataOut <- data[annotation]
+    annotation <- data.table(annotation)
+#    if(nrow(annotation) == 0){
+#      annotation <- TRUE
+#    }
+
+    dataOut <- data[annotation(), on=mapVar]
     dataOut <- dataOut[Population %in% input$Population]
 
     dataOut <- dataOut[!is.na(dataOut$percentPop)]

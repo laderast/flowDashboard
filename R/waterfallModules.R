@@ -16,7 +16,7 @@ waterfallOutputUI <- function(id, label="waterfall", populationChoices, colorCol
                 selected = populationChoices[1]),
     selectInput(ns("colorVar"), "Select Outcome to Color", choices=colorColumns,
                 selected = colorColumns[1]),
-    uiOutput(ns("waterfallDynamicUI")),
+    #uiOutput(ns("waterfallDynamicUI")),
     plotOutput(ns("waterfallPlot"), hover = hoverOpts(ns("plotHover"), delay = 100, delayType = "debounce")),
     uiOutput(ns("hoverTip"))
 
@@ -40,7 +40,8 @@ waterfallOutputUI <- function(id, label="waterfall", populationChoices, colorCol
 #'
 #' @examples
 waterfallOutput <- function(input, output, session, data, annotation,
-                            populationChoices, colorColumns, covariateChoices=NULL, subsetVariables = NULL){
+                            populationChoices, colorColumns, covariateChoices=NULL, subsetVariables = NULL,
+                            mapVar = c("name"="FCSFiles")){
 
   output$waterfallDynamicUI <- renderUI({
 
@@ -63,24 +64,10 @@ waterfallOutput <- function(input, output, session, data, annotation,
     key <- key(data)
 
     #annotOut <- annotation[, .SD, .SDcols = covariates]
-    annotOut <- annotation
+    #annotOut <- annotation
     #sort data
-    dataOut <- data[!is.na(percentPop)]
-    dataOut <- dataOut[order(-percentPop)]
-    #print(dataOut)
-
-    dataOut <- dataOut[Population == pop]
+    dataOut <- data[annotation(), on=mapVar][!is.na(percentPop)][order(-percentPop)][Population == pop]
     dataOut$popKey <- factor(dataOut$popKey, levels=unique(dataOut$popKey))
-
-    #print(dataOut)
-
-    #dataOut <- dataOut[eval(call("==", as.name("Population"), pop))]
-
-    #print(dataOut)
-    #dataOut <- annotOut[dataOut]
-    #print(dataOut)
-    #setkeyv(dataOut,key)
-    #print(dataOut)
 
     return(dataOut)
 

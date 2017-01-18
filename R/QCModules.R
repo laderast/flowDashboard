@@ -57,7 +57,8 @@ qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
 #' @examples
 qcModuleOutput <- function(input, output, session, data, annotation,
                            idColumn = "patientID", subsetCondition=NULL,
-                           subsetChoices=NULL, sortConditions, markers, colorConditions) {
+                           subsetChoices=NULL, sortConditions, markers,
+                           colorConditions, mapVar = c("idVar"="FCSFiles")) {
 
   #require(dplyr)
   # The selected file, if any
@@ -109,7 +110,10 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
   medData <- reactive({
     ord <- input$Order
-    subdata <- data[annotateSelect(), on=c("idVar"="FCSFiles"), nomatch=0]
+    #subdata <- data[annotateSelect(), on=c("idVar"="FCSFiles"), nomatch=0]
+
+    subdata <- data[annotation(), on=mapVar, nomatch=0]
+
     #print(subdata)
 
     medTable <- summarise(group_by(subdata,variable,idVar),med = median(value)) %>%
@@ -217,7 +221,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     # showInfo <- c("BeatAML ID"="patientID", "Panel"="Panel", "Run Date"="runDate",
     #               "PanelSampleID"="notation", "FCS File Name" = "FCSFileName", "Number of Cells"="NumberCells")
     #print(IDRow)
-    outRow <- annotation[annotation$idVar == IDRow,]
+    outRow <- annotation()[annotation()$idVar == IDRow,]
     #print(outRow)
 
     #print(IDRow)
@@ -247,15 +251,27 @@ qcModuleOutput <- function(input, output, session, data, annotation,
   })
 
   violData <- reactive({
+
+    validate(need(input$Marker, "Marker not specified"))
     Marker <- input$Marker
 
     # If no file is selected, don't do anything
     #validate(need(input$Marker, message = FALSE))
     #validate(need(input$Population, message= FALSE))
-    dataOut <- data[annotateSelect(), nomatch=0]
+    #dataOut <- data[annotateSelect(), nomatch=0]
+
+    dataOut <- data[annotation(), nomatch=0, on=mapVar][variable %in% Marker]
+
+    #print(dataOut)
+
+    #dataOut <- dataOut[variable %in% Marker]
+
+    #print(dataOut)
+
     #dataOut <- dataOut %>% dplyr::filter(variable %in% input$Marker) %>% arrange_(input$Order)
 
-    dataOut[variable %in% Marker]
+    #dataOut[variable %in% Marker]
+    dataOut
   })
 
   # Return the reactive that yields the data frame

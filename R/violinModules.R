@@ -19,16 +19,16 @@ violinUI <- function(id, label = "qcViolin", markers, sortConditions,
   subsetChoices <- unique(as.character(annotation[[subsetCondition]]))
 
   tagList(
-    selectInput(ns("subset"), paste0("Select ", subsetCondition, " to display"), choices=subsetChoices,
-                selected = subsetChoices[1]),
+    #selectInput(ns("subset"), paste0("Select ", subsetCondition, " to display"), choices=subsetChoices,
+    #            selected = subsetChoices[1]),
 #    selectInput(ns('colSortPop'), "Order Samples", choices= sortConditions,
 #                selected=sortConditions[1]),
     selectInput(ns("populations"), "Select Population", choices=populations, selected = populations[[1]]),
     uiOutput(ns("violinMarkerUI")),
     #selectInput(ns("markers"), "Select Marker to Display", choices=markers, selected = markers[1]),
     #selectInput("condition1", "Select Condition", choices= condition1, selected= condition1[1]),
-    selectInput(ns("facet1"), "Select Condition to Sort on",
-                choices=sortConditions, selected=sortConditions[2]),
+    #selectInput(ns("facet1"), "Select Condition to Sort on",
+    #            choices=sortConditions, selected=sortConditions[2]),
     plotOutput(ns("qcViolinPlot"))
 
     #selectInput(ns("markerID"), "Select Marker", choices=c("test","test2","test3"))
@@ -48,24 +48,23 @@ violinUI <- function(id, label = "qcViolin", markers, sortConditions,
 #' @export
 #'
 #' @examples
-violinOutput <- function(input, output, session, data, annotation) {
+violinOutput <- function(input, output, session, data, annotation, mapVar=c("sample"="FCSFiles")) {
 
   output$violinMarkerUI <- renderUI({
     ns <- session$ns
-    markers <- unique(as.character(data[annotateSelect()]$variable))
-
+    markers <- sort(unique(as.character(data[annotation(), on=mapVar]$variable)),decreasing = TRUE)
         selectInput(ns("markers"), "Select Markers", choices = markers,
                     selected = markers[1])
   })
 
-  annotateSelect <- reactive({
-    subsetVar <- input$subset
-    #print(subsetVar)
-    annotate2 <- annotation[patientID %in% subsetVar] #%>% dplyr::filter(patientID %in% subsetVar)
-    #annotate2 <- data.table(annotate2)
-    #setkey(annotate2, FCSFiles)
-    annotate2
-  })
+  # annotateSelect <- reactive({
+  #   subsetVar <- input$subset
+  #   #print(subsetVar)
+  #   annotate2 <- annotation[patientID %in% subsetVar] #%>% dplyr::filter(patientID %in% subsetVar)
+  #   #annotate2 <- data.table(annotate2)
+  #   #setkey(annotate2, FCSFiles)
+  #   annotate2
+  # })
 
 
 
@@ -84,8 +83,7 @@ violinOutput <- function(input, output, session, data, annotation) {
     facets <- input$facet1
     marker <- input$markers
 
-    dataOut <- data[annotateSelect()]
-    dataOut <- dataOut[variable %in% marker]
+    dataOut <- data[annotation(), on=mapVar][variable %in% marker]
 
     violinOut(dataOut, marker, facets)
   })
