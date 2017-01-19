@@ -60,60 +60,16 @@ qcModuleOutput <- function(input, output, session, data, annotation,
                            subsetChoices=NULL, sortConditions, markers,
                            colorConditions, mapVar = c("idVar"="FCSFiles")) {
 
-  #require(dplyr)
-  # The selected file, if any
-
-  output$qcHeatmapUI <- renderUI({
-    ns <- session$ns
-    #markers <- unique(as.character(data[annotateSelect()]$variable))
-
-    #print(markers)
-
-    out <- list()
-
-    if(!is.null(subsetChoices)){
-
-       out <- list(out, checkboxGroupInput(ns("subset"), paste0("Select ",
-                                                                subsetCondition, " to display"),
-                                           choices = subsetChoices,
-                                           selected=subsetChoices, inline=TRUE, width='400px')
-       )
-    }
-
-     #out <- list(out, selectInput(ns("Marker"), "Select Markers", choices = markers,
-    #            selected = markers[1]))
-
-     out <- list(out,selectInput(ns("Order"), "Select Condition to Sort on", choices=sortConditions,
-                 selected=sortConditions[1]))
-
-     out <- tagList(out)
-
-     out
-  })
-
-
-  annotateSelect <- reactive({
-    annotate2 <- annotation
-    ord <- input$order
-
-    if(!is.null(subsetChoices)){
-    subsetVar <- input$subset
-
-    if(is.null(input$subset)){subsetVar <- subsetChoices[1]}
-
-
-      #annotate2 <- annotation %>% dplyr::filter(patientID %in% subsetVar)
-    }
-    #print(annotate2)
-    annotate2
-  })
 
   medData <- reactive({
     ord <- input$Order
     #subdata <- data[annotateSelect(), on=c("idVar"="FCSFiles"), nomatch=0]
 
+    print(class(annotation()))
+
     subdata <- data[annotation(), on=mapVar, nomatch=0]
 
+    #levels(subdata$NewConditi) <- subsetChoices
     #print(subdata)
 
     medTable <- summarise(group_by(subdata,variable,idVar),med = median(value)) %>%
@@ -121,7 +77,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
       mutate(zscore = scale_this(med), popKey=paste0(idVar, "-", variable)) #%>%
       #arrange_(ord)
     medTable <- data.table(medTable)
-    setkey(medTable, popKey)
+    #setkey(medTable, popKey)
     #print(medTable)
     #medTable <- medTable[annotateSelect()]
 
@@ -133,6 +89,9 @@ qcModuleOutput <- function(input, output, session, data, annotation,
       #dplyr::filter(patientID %in% subsetVar)
       #dplyr::filter_(interp(~v==patientID, v=as.name(subsetVar)))#%>% arrange_(input$order)
     #print(medTable)
+
+    #upd.cols = sapply(medTable, is.factor)
+    #medTable[, names(medTable)[upd.cols] := lapply(.SD, factor), .SDcols = upd.cols]
 
     medTable
   })
@@ -160,7 +119,9 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     #print(data)
 
     #namesDomX <- unique(data$notation)
-    domX <- data$idVar
+
+
+    domX <- unique(data$idVar)
     #names(domX) <- namesDomX
     domY <- unique(as.character(data$variable))
     print(domY)
@@ -205,7 +166,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
       add_tooltip(heatmapTooltip,on="hover") %>%
       scale_nominal("y", padding = 0, points = FALSE, domain = domY) %>%
       # scale_nominal("x", padding = 0, points = FALSE, domain = namesDomX) %>%
-      scale_nominal("x", padding = 0, points = FALSE) %>%
+      scale_nominal("x", padding = 0, points = FALSE, domain=domX) %>%
       layer_text(text:=~signif(med,digits=2), stroke:="darkgrey", align:="left",
                  baseline:="top", dx := 10, dy:=10) %>%
       set_options(width = 60 * (noSamples), height = 50 * (noMarkers))

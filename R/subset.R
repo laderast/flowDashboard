@@ -14,7 +14,7 @@ subsetModuleUI <- function(id, subsetOptions, sortOptions){
     selectInput(ns("categoryNameSubset"), "Select Variable to Subset On", choices=names(subsetOptions),
                 selected=names(subsetOptions)[1]),
     selectInput(ns("subgroup"), "Select Subset", choices =subsetOptions[[1]],
-                       selected=subsetOptions[[1]], multiple=TRUE, width="50%"),
+                       selected=subsetOptions[[1]], multiple=TRUE, width="100%"),
     selectInput(ns("sortVariable"), label="Select Sort Condition", choices=sortOptions)
   )
 

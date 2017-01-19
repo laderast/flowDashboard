@@ -18,7 +18,7 @@ gatingModuleUI <- function(id, label = "qcViolin", sortConditions,
     h4("Filter Samples"),
     # checkboxGroupInput("panelDisplayPop", label="Show Panel",
     #                    choices=c("1", "3"), selected=c("1","3")),
-    uiOutput(ns("gatingDynamicUI")),
+    #uiOutput(ns("gatingDynamicUI")),
     absolutePanel(id=ns("heatmap"), h4("Population Heatmap (Click on box to see provenance)"),
                   ggvisOutput(ns("populationHeatmap")), top=250, left=0),
     # absolutePanel(id="scheme",imageOutput(ns("pipelineHierarchy")), top=250, left=650),
@@ -53,37 +53,37 @@ gatingModuleOutput <- function(input, output, session,
 
   ns <- session$ns
 
-  annotateSelect <- reactive({
-
-    annotate2 <- annotation
-
-    if(!is.null(subsetChoices)){
-      subsetVar <- input$subset
-      #print(subsetVar)
-      annotate2 <- annotate %>% dplyr::filter(idVar %in% subsetVar)
-    }
-    #annotate2 <- data.table(annotate2)
-    #setkey(annotate2, FCSFiles)
-    annotate2
-  })
-
-  gatingDynamicUI <- renderUI({
-    outList <- list()
-
-    if(!is.null(subsetChoices)){
-    outList <- c(outList,
-                 selectInput(ns("subset"), paste0("Select ", subsetCondition,
-                                                  " to display"), choices=subsetChoices,
-                selected = subsetChoices[1]))
-    }
-
-    outList <- c(outList, selectInput(ns('colSortPop'), "Order Samples", choices= sortConditions,
-                selected=sortConditions[1]))
-
-    outList <- tagList(outList)
-
-    return(outList)
-  })
+  # annotateSelect <- reactive({
+  #
+  #   annotate2 <- annotation
+  #
+  #   if(!is.null(subsetChoices)){
+  #     subsetVar <- input$subset
+  #     #print(subsetVar)
+  #     annotate2 <- annotate %>% dplyr::filter(idVar %in% subsetVar)
+  #   }
+  #   #annotate2 <- data.table(annotate2)
+  #   #setkey(annotate2, FCSFiles)
+  #   annotate2
+  # })
+  #
+  # gatingDynamicUI <- renderUI({
+  #   outList <- list()
+  #
+  #   if(!is.null(subsetChoices)){
+  #   outList <- c(outList,
+  #                selectInput(ns("subset"), paste0("Select ", subsetCondition,
+  #                                                 " to display"), choices=subsetChoices,
+  #               selected = subsetChoices[1]))
+  #   }
+  #
+  #   outList <- c(outList, selectInput(ns('colSortPop'), "Order Samples", choices= sortConditions,
+  #               selected=sortConditions[1]))
+  #
+  #   outList <- tagList(outList)
+  #
+  #   return(outList)
+  # })
 
   # displayNodes <- reactive({
   #   if(is.null(displayNodes)){
@@ -160,7 +160,7 @@ gatingModuleOutput <- function(input, output, session,
 
   populationHeatmap <- reactive({
 
-    data <- na.omit(popTable[annotateSelect()])
+    data <- na.omit(popTable[annotation()])
     #print(displayNodes)
     domY <- unique(as.character(data[["Population"]]))
     displayNodes <- displayNodes[displayNodes %in% domY]

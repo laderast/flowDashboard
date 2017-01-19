@@ -467,6 +467,8 @@ returnMeltedDataFromGS <- function(gS, population, removeMarkers = NULL, sampleP
   exprList <- lapply(mCAList, exprs)
 
   filteredExprList <- lapply(exprList, function(x){colnames(x) <- descFrame$desc
+
+  print(descFrame$desc)
   #x <- x[,colnames(x) %in% markersToInterrogate$desc]
   if(!is.null(nodeIDs) & length(nodeIDs)>0){
     x <- x[,-nodeIDs]
@@ -597,4 +599,16 @@ makePopTableReactive <- function(popTable, input){
 makeMarkerDataReactive <- function(markerData, annotation){
 
   return(reactive(expr))
+}
+
+changeDataFrameLevels <- function(df){
+  classList <- lapply(df, class)
+  names(classList) <- colnames(df)
+
+  outFrame <- lapply(names(classList), function(x){
+    if(classList[[x]] == "factor"){
+      df[[x]] <- factor(as.character(df[[x]]))
+      }
+    })
+
 }
