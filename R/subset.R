@@ -7,12 +7,12 @@
 #' @export
 #'
 #' @examples
-subsetModuleUI <- function(id, subsetOptions, sortOptions){
+subsetModuleUI <- function(id, subsetOptions, sortOptions, subsetAlias){
   ns <- NS(id)
 
   tagList(
-    selectInput(ns("categoryNameSubset"), "Select Variable to Subset On", choices=names(subsetOptions),
-                selected=names(subsetOptions)[1]),
+    selectInput(ns("categoryNameSubset"), "Select Variable to Subset On", choices=subsetAlias,
+                selected=subsetAlias[1]),
     selectInput(ns("subgroup"), "Select Subset", choices =subsetOptions[[1]],
                        selected=subsetOptions[[1]], multiple=TRUE, width="100%"),
     selectInput(ns("sortVariable"), label="Select Sort Condition", choices=sortOptions)
