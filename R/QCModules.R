@@ -253,7 +253,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
 
     out <- ggplot(data, aes_string(x="idVar",y="value", fill=colors)) +
-      geom_violin() + scale_y_continuous(limits = c(-2, NA)) +
+    geom_violin() + scale_y_continuous(limits = c(-2, NA)) +
     #facet_grid(. ~ notation) +
     #ggtitle(plotTitle) +
     theme(axis.text.x=element_text(angle=90, hjust=1)) #+
