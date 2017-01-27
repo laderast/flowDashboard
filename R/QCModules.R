@@ -244,7 +244,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
     #print(head(violData()))
 
-    #print(violData()$idVar)
+    print(violData()$idVar)
 
     qcViolinOut(violData(), marker, colors)
   })
