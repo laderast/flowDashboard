@@ -244,7 +244,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
     #print(head(violData()))
 
-    print(violData()$idVar)
+    #print(violData()$idVar)
 
     qcViolinOut(violData(), marker, colors)
   })
@@ -256,7 +256,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     data$idVar <- factor(data$idVar)
 
     out <- ggplot(data, aes_string(x="idVar",y="value", fill=colors)) +
-      geom_violin() + scale_y_continuous(limits = c(-2, NA)) +
+      geom_violin() + scale_y_continuous(limits = c(-2, NA), breaks=c(1,2.5,5.0,7.5)) +
       theme(axis.text.x=element_text(angle=90, hjust=1)) #+
       #scale_x_discrete(labels = notation)
 
