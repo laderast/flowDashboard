@@ -70,7 +70,10 @@ subsetModule <- function(input, output, session, subsetOptions, annotation){
 
     #annotationSubset <- annotation[as.name(categoryName) %in% input$subgroup][order(as.name(categoryName))]
     #print(head(annotationSubset))
-    return(data.table(annotationSubset))
+    outTable <- data.table(annotationSubset)
+    setkeyv(outTable, c(sortVariable, "FCSFiles"))
+
+    return(outTable)
   })
 
   return(annotationOut)

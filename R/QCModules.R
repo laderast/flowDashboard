@@ -65,7 +65,8 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     ord <- input$Order
     #subdata <- data[annotateSelect(), on=c("idVar"="FCSFiles"), nomatch=0]
 
-    print(class(annotation()))
+    #print(class(annotation()))
+
 
     subdata <- data[annotation(), on=mapVar, nomatch=0]
 
@@ -120,6 +121,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
     #namesDomX <- unique(data$notation)
 
+    if(is.null(data) | nrow(data) == 0){return(NULL)}
 
     domX <- unique(data$idVar)
     #names(domX) <- namesDomX
@@ -223,9 +225,19 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
     dataOut <- data[annotation(), nomatch=0, on=mapVar][variable %in% Marker]
 
+    #grab sort variable (used as key)
+    dataOut$idVar <- droplevels(dataOut$idVar)
+    levels(dataOut$idVar) <- unique(as.character(annotation()$FCSFiles))
+
+    #reorder levels of idVar using sort variable
+    #dataOut$idVar <- relevel(dataOut$idVar, as.symbol(sortVariable))
+
+    #setkeyv()
+
     #facetOrder
 
-    #print(dataOut)
+    print(head(dataOut))
+    print(levels(dataOut$idVar))
 
     #dataOut <- dataOut[variable %in% Marker]
 
