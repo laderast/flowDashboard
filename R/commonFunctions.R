@@ -70,7 +70,7 @@ plotAllPopulationsOld <- function(gateSet, nodeList=NULL, pipelineFile = "panel1
         fileId <- paste0(imagePath, popID, ".png")
         png(fileId, width=200*length(outnodes), height=200)
         try(flowWorkspace::plotGate(gateSet[[i]], y=outnodes, default.y="Cell_length",checkName=FALSE,
-                     marker.only=TRUE, raw.scale=TRUE,
+                     marker.only=TRUE, raw.scale=FALSE,
                      gpar = list(nrow=1, ncol=length(outnodes))))
         dev.off()
       }
