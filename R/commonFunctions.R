@@ -39,7 +39,7 @@ makePopulationIdentifier <- function(popName, name, pipelineFile="Panel1", delim
 #' @export
 #'
 #' @examples
-plotAllPopulationsOld <- function(gateSet, nodeList, pipelineFile = "panel1",
+plotAllPopulationsOld <- function(gateSet, nodeList=NULL, pipelineFile = "panel1",
                                imagePath= "images/", delimiter="+"){
   if(!dir.exists(imagePath)){
     dir.create(imagePath)
@@ -69,7 +69,7 @@ plotAllPopulationsOld <- function(gateSet, nodeList, pipelineFile = "panel1",
 
         fileId <- paste0(imagePath, popID, ".png")
         png(fileId, width=200*length(outnodes), height=200)
-        try(plotGate(gateSet[[i]], y=outnodes, default.y="Cell_length",checkName=FALSE,
+        try(flowWorkspace::plotGate(gateSet[[i]], y=outnodes, default.y="Cell_length",checkName=FALSE,
                      marker.only=TRUE, raw.scale=FALSE,
                      gpar = list(nrow=1, ncol=length(outnodes))))
         dev.off()
