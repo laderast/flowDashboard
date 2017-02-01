@@ -159,7 +159,7 @@ plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
         #        try(plotGate(gateSet[[i]], y=outnodes, default.y=defaultChan,checkName=FALSE,
         #                    marker.only=TRUE, raw.scale=FALSE,
         #                   gpar = list(nrow=1, ncol=length(outnodes))))
-        colnames(gateSet[[i]]) <- pD$desc
+        #colnames(gateSet[[i]]) <- pD$desc
 
         outplot <- try(autoplot(gateSet[[i]], outnodes, y=NULL))
 
