@@ -45,11 +45,11 @@ plotAllPopulationsOld <- function(gateSet, nodeList=NULL, pipelineFile = "panel1
     dir.create(imagePath)
   }
   require(flowWorkspace)
+  require(lattice)
 
   if(is.null(nodeList)){
     nodeList <- getNodes(gateSet, path="full")
   }
-
 
   #for each node in the gatingTemplate, plot complete path
   for(i in 1:length(gateSet)){
@@ -70,7 +70,7 @@ plotAllPopulationsOld <- function(gateSet, nodeList=NULL, pipelineFile = "panel1
         fileId <- paste0(imagePath, popID, ".png")
         png(fileId, width=200*length(outnodes), height=200)
         try(flowWorkspace::plotGate(gateSet[[i]], y=outnodes, default.y="Cell_length",checkName=FALSE,
-                     marker.only=TRUE, raw.scale=FALSE,
+                     marker.only=TRUE, raw.scale=TRUE,
                      gpar = list(nrow=1, ncol=length(outnodes))))
         dev.off()
       }
