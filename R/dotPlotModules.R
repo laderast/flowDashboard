@@ -8,14 +8,14 @@
 #' @export
 #'
 #' @examples
-dotPlotUI <- function(id, populationList, facetList) {
+dotPlotUI <- function(id, populationList, facetConditions) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
   tagList(
     selectInput(ns("Population"), label="Select Population to Compare", choices=displayNodes,
                 displayNodes[1]),
-    selectInput(ns("xFacet"),label="Select X Facet", choices=facetList, selected=facetList[1]),
+    selectInput(ns("xFacet"),label="Select X Facet", choices=facetConditions, selected=facetConditions[1]),
     #selectInput(ns("yFacet"), "Select Y Facet", choices=facetList, selected=facetList),
     plotOutput(ns("dotPlot"), hover= hoverOpts(ns("plotHover"), delay = 100, delayType = "debounce")),
     uiOutput(ns("hoverTip"))
@@ -37,7 +37,8 @@ dotPlotUI <- function(id, populationList, facetList) {
 #' @export
 #'
 #' @examples
-dotPlotOutput <- function(input, output, session, data, annotation, mapVar=c("name"="FCSFiles")){
+dotPlotOutput <- function(input, output, session, data, annotation, mapVar=c("name"="FCSFiles"),
+                          facetOrderList){
 
   # dotPlotDynamicUI <- renderUI({
   #   ns <- session$ns
@@ -64,7 +65,7 @@ dotPlotOutput <- function(input, output, session, data, annotation, mapVar=c("na
 
     #orderVariable <- input$ConditionVariable
 
-    annotation <- data.table(annotation)
+    #annotation <- data.table(annotation)
 #    if(nrow(annotation) == 0){
 #      annotation <- TRUE
 #    }
@@ -73,6 +74,8 @@ dotPlotOutput <- function(input, output, session, data, annotation, mapVar=c("na
     dataOut <- dataOut[Population %in% input$Population]
 
     dataOut <- dataOut[!is.na(dataOut$percentPop)]
+
+    #sortVariable <- key(annotation())
 
     #%>%
     #filter_(ifelse(is.na(input$xFacet),0,input$xFacet) & ifelse(is.na(input$yFacet),0,input$yFacet))
@@ -135,14 +138,13 @@ dotPlotOutput <- function(input, output, session, data, annotation, mapVar=c("na
     #yFacet <- input$yFacet
     yFacet <- input$xFacet
 
+    facetOrder <- facetOrderList[xFacet]
+
     facetFormula <- paste0(yFacet,"~",xFacet)
 
     if(xFacet == yFacet){
       facetFormula <- paste0(".~",xFacet)
     }
-
-
-
 
     print(facetFormula)
     plotTitle <- paste("Population Comparison for", popTableReact()$Population[1])
@@ -162,6 +164,8 @@ dotPlotOutput <- function(input, output, session, data, annotation, mapVar=c("na
     upd.cols = sapply(dataNew, is.factor)
     dataNew[, names(dataNew)[upd.cols] := lapply(.SD, factor), .SDcols = upd.cols]
 
+    #set facet order here
+    #dataNew[xFacet] <- facetOrderList[xFacet]
 
     out  <- ggplot(dataNew, aes(x=Population, y=percentPop)) +
       #labs(list(x = "Subtype", y = "% Cell Population")) +

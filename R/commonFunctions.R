@@ -39,19 +39,24 @@ makePopulationIdentifier <- function(popName, name, pipelineFile="Panel1", delim
 #' @export
 #'
 #' @examples
-plotAllPopulationsOld <- function(gateSet, pipelineFile = "panel1",
+plotAllPopulationsOld <- function(gateSet, nodeList, pipelineFile = "panel1",
                                imagePath= "images/", delimiter="+"){
   if(!dir.exists(imagePath)){
     dir.create(imagePath)
   }
   require(flowWorkspace)
 
+  if(is.null(nodeList)){
+    nodeList <- getNodes(gateSet, path="full")
+  }
+
+
   #for each node in the gatingTemplate, plot complete path
   for(i in 1:length(gateSet)){
     #samp <- gateSet[[i]]
     sampName <- sampleNames(gateSet)[i]
     print(sampName)
-    for(node in getNodes(gateSet[[i]], path="full")){
+    for(node in nodeList){
       print(node)
       if(node != "root"){
         outnodes <- strsplit(x = node, split="/")[[1]]
