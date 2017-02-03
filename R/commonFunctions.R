@@ -161,7 +161,11 @@ plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
         #                   gpar = list(nrow=1, ncol=length(outnodes))))
         #colnames(gateSet[[i]]) <- pD$desc
 
-        outplot <- try(autoplot(gateSet[[i]], outnodes, y=NULL))
+        yDefault <- NULL
+
+        if(cytof){yDefault <- "Cell_length"}
+
+        outplot <- try(autoplot(gateSet[[i]], outnodes, y=yDefault))
 
         if(!inherits(outplot, "try-error")){
 
