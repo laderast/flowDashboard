@@ -66,8 +66,6 @@ subsetModule <- function(input, output, session, subsetOptions, annotation){
     annotationSubset <- annotation %>% filter_(.dots=filterExpression) %>%
       arrange_(sortVariable)
 
-
-
     #annotationSubset <- annotation[as.name(categoryName) %in% input$subgroup][order(as.name(categoryName))]
     #print(head(annotationSubset))
     outTable <- data.table(annotationSubset)

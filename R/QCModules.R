@@ -227,7 +227,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
     #grab sort variable (used as key)
     dataOut$idVar <- droplevels(dataOut$idVar)
-    levels(dataOut$idVar) <- unique(as.character(annotation()$FCSFiles))
+    dataOut$idVar <- factor(dataOut$idVar, levels=unique(as.character(annotation()$FCSFiles)))
 
     #reorder levels of idVar using sort variable
     #dataOut$idVar <- relevel(dataOut$idVar, as.symbol(sortVariable))
