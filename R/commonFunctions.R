@@ -489,9 +489,11 @@ returnMeltedDataFromGS <- function(gS, population, removeMarkers = NULL, sampleP
     #print(class(x))
     #print(head(x))
     if(class(x) == "numeric"){x <- as.matrix(t(x))}
-    if(!is.null(samplePopulation) & nrow(x) > samplePopulation){
-      sampleInd <- sample(1:nrow(x), samplePopulation)
-      x <- x[sampleInd,]
+    if(nrow(x) != 0){
+      if(!is.null(samplePopulation) & nrow(x) > samplePopulation){
+        sampleInd <- sample(1:nrow(x), samplePopulation)
+        x <- x[sampleInd,]
+      }
     }
     return(x)
     #print(dim(out))

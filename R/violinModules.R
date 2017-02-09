@@ -12,26 +12,14 @@
 #' @export
 #'
 #' @examples
-violinUI <- function(id, label = "qcViolin", markers, sortConditions,
-                     subsetCondition, populations, annotation) {
+violinUI <- function(id, label = "qcViolin") {
   # Create a namespace function using the provided id
   ns <- NS(id)
   subsetChoices <- unique(as.character(annotation[[subsetCondition]]))
 
   tagList(
-    #selectInput(ns("subset"), paste0("Select ", subsetCondition, " to display"), choices=subsetChoices,
-    #            selected = subsetChoices[1]),
-#    selectInput(ns('colSortPop'), "Order Samples", choices= sortConditions,
-#                selected=sortConditions[1]),
-    selectInput(ns("populations"), "Select Population", choices=populations, selected = populations[[1]]),
     uiOutput(ns("violinMarkerUI")),
-    #selectInput(ns("markers"), "Select Marker to Display", choices=markers, selected = markers[1]),
-    #selectInput("condition1", "Select Condition", choices= condition1, selected= condition1[1]),
-    #selectInput(ns("facet1"), "Select Condition to Sort on",
-    #            choices=sortConditions, selected=sortConditions[2]),
     plotOutput(ns("qcViolinPlot"))
-
-    #selectInput(ns("markerID"), "Select Marker", choices=c("test","test2","test3"))
   )
 }
 
@@ -48,13 +36,32 @@ violinUI <- function(id, label = "qcViolin", markers, sortConditions,
 #' @export
 #'
 #' @examples
-violinOutput <- function(input, output, session, data, annotation, mapVar=c("sample"="FCSFiles")) {
+violinOutput <- function(input, output, session, data, annotation, facetList,
+                         mapVar=c("sample"="FCSFiles")) {
 
   output$violinMarkerUI <- renderUI({
     ns <- session$ns
-    markers <- sort(unique(as.character(data[annotation(), on=mapVar]$variable)),decreasing = TRUE)
-        selectInput(ns("markers"), "Select Markers", choices = markers,
-                    selected = markers[1])
+    tL <- list()
+
+    populations <- unique(as.character(data$Population))
+
+    if(length(populations) > 1){
+      tL <- c(tL, selectInput(ns("populations"), "Select Population", choices=populations,
+                        selected = populations[[1]]))
+    }
+
+    markers <- sort(unique(as.character(data[annotation(), on=mapVar]$variable)),
+                    decreasing = TRUE)
+    tL <- c(tL, selectInput(ns("markers"), "Select Markers", choices = markers,
+                    selected = markers[1]))
+
+    if(!is.null(facetList)){
+      tL <- c(tL, selectInput(ns("facet"), "Select Variable to Facet", choices=facetList,
+                              selected=facetList[[1]]))
+    }
+
+    return(tagList(tL))
+
   })
 
   # annotateSelect <- reactive({
@@ -65,8 +72,6 @@ violinOutput <- function(input, output, session, data, annotation, mapVar=c("sam
   #   #setkey(annotate2, FCSFiles)
   #   annotate2
   # })
-
-
 
   # # The selected file, if any
   # violData <- reactive({
@@ -79,11 +84,16 @@ violinOutput <- function(input, output, session, data, annotation, mapVar=c("sam
   # })
 
   # Return the reactive that yields the data frame
-  output$qcViolinPlot <- renderPlot({
-    facets <- input$facet1
+  output$violinPlot <- renderPlot({
     marker <- input$markers
 
+    if(!is.null(facetList)) {facets <- input$facet}
+    else {facets <- NULL}
+
+
     dataOut <- data[annotation(), on=mapVar][variable %in% marker]
+
+    #dataOut$idVar <- factor(dataOut$idVar, levels = )
 
     violinOut(dataOut, marker, facets)
   })
@@ -110,9 +120,14 @@ violinOut <- function(data, marker, facets=NULL){
   #print(head(data))
 
   out <- ggplot(data, aes(sample,value, fill=NewCondition)) +
-    geom_violin() + #facet_grid(facets=facetForm, scales="free") +
+    geom_violin() + theme(axis.text.x=element_text(angle=90, hjust=1)) +
+    ggtitle(plotTitle)
+
+
+  if(facetForm != ""){
+    out <- out + facet_grid(facets=facetForm, scales="free")
+  }
     #scale_y_flowJo_biexp() +
-    theme(axis.text.x=element_text(angle=90, hjust=1)) + ggtitle(plotTitle)
 
   transFun <- getOption("scaleTrans")
   if(transFun == "biexp"){
