@@ -496,6 +496,7 @@ returnMeltedDataFromGS <- function(gS, population, removeMarkers = NULL, sampleP
           x <- x[sampleInd,]
         }
       }
+    }
 
     return(x)
     #print(dim(out))
