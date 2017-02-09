@@ -137,9 +137,9 @@ violinOut <- function(data, facets=NULL, colorVar=NULL, aggregateVar=NULL){
   }
 
   if(is.null(aggregateVar)){
-    x="sample"
+    x <- "sample"
   } else{
-    x = aggregateVar
+    x <- aggregateVar
   }
 
   y="value"
