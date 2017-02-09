@@ -37,6 +37,8 @@ violinUI <- function(id, label = "qcViolin") {
 #'
 #' @examples
 violinOutput <- function(input, output, session, data, annotation, facetList,
+                         aggregateList=NULL, markers=NULL,
+                         colorConditions=NULL,
                          mapVar=c("sample"="FCSFiles")) {
 
   output$violinMarkerUI <- renderUI({
@@ -50,10 +52,22 @@ violinOutput <- function(input, output, session, data, annotation, facetList,
                         selected = populations[[1]]))
     }
 
-    markers <- sort(unique(as.character(data[annotation(), on=mapVar]$variable)),
+    if(!is.null(markers)){
+      markers <- sort(unique(as.character(data[annotation(), on=mapVar]$variable)),
                     decreasing = TRUE)
+    }
     tL <- c(tL, selectInput(ns("markers"), "Select Markers", choices = markers,
                     selected = markers[1]))
+
+    if(!is.null(colorConditions)){
+      tL <- c(tL, selectInput(ns("colorVar"), "Select Condition to Color", choices = colorConditions,
+                              selected = colorConditions[1]))
+    }
+
+    if(!is.null(aggregateList)){
+      tL <- c(tL, selectInput(ns("aggregateVar"), "Select Condition to Aggregate On", choices =
+                                aggregateList, selected = aggregateList[1]))
+    }
 
     if(!is.null(facetList)){
       tL <- c(tL, selectInput(ns("facet"), "Select Variable to Facet", choices=facetList,
@@ -85,21 +99,25 @@ violinOutput <- function(input, output, session, data, annotation, facetList,
 
   # Return the reactive that yields the data frame
   output$violinPlot <- renderPlot({
+
+    #need to test whether these inputs exist
+
     marker <- input$markers
+    colorVar <- input$colorVar
+    aggregateVar <- input$aggregateVar
 
     if(!is.null(facetList)) {facets <- input$facet}
     else {facets <- NULL}
-
 
     dataOut <- data[annotation(), on=mapVar][variable %in% marker]
 
     #dataOut$idVar <- factor(dataOut$idVar, levels = )
 
-    violinOut(dataOut, marker, facets)
+    violinOut(dataOut, facets, colorVar, aggregateVar)
   })
 }
 
-violinOut <- function(data, marker, facets=NULL){
+violinOut <- function(data, facets=NULL, colorVar=NULL, aggregateVar=NULL){
   plotTitle <- marker
 
   facetForm <- ""
@@ -113,16 +131,27 @@ violinOut <- function(data, marker, facets=NULL){
     if(length(facets ==2)){
       facetForm <- paste0(facets[1], "~", facets[2])
       }
-    if(facetForm == ""){
-      return()
-      }
-    }
-  #print(head(data))
+    # if(facetForm == ""){
+    #   return()
+    #   }
+  }
 
-  out <- ggplot(data, aes(sample,value, fill=NewCondition)) +
+  if(is.null(aggregateVar)){
+    x="sample"
+  } else{
+    x = aggregateVar
+  }
+
+  y="value"
+
+  if(is.null(colorVar)){
+    fill <- "sample"
+  }else{
+    fill <- colorVar}
+
+  out <- ggplot(data, aes_string(x=x,y=y, fill=fill)) +
     geom_violin() + theme(axis.text.x=element_text(angle=90, hjust=1)) +
     ggtitle(plotTitle)
-
 
   if(facetForm != ""){
     out <- out + facet_grid(facets=facetForm, scales="free")
