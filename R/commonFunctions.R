@@ -353,14 +353,14 @@ returnMeltedData <- function(fS, selectMarkers =NULL,
 
 
   #cellMelt <- cellMelt %>% arrange(idVar)
-  cellMelt <- melt(cellFrame, id.vars=idVars)
+  cellMelt <- reshape2::melt(cellFrame, id.vars=idVars)
   #print(head(cellMelt))
   #print(tail(cellMelt))
   #levels(cellMelt$variable) <- levels(pD$desc)
   #print(head(cellMelt))
   #print(tail(cellMelt))
 
-  return(cellMelt)
+  return(data.table::data.table(cellMelt))
 
 }
 
@@ -446,7 +446,7 @@ setMethod("buildFileManifest", signature=c(object="flowSet"),
 }
 
 
-#' Title
+#' Returns a long data frame with population/marker data
 #'
 #' @param gS
 #' @param population
@@ -509,17 +509,16 @@ returnMeltedDataFromGS <- function(gS, population, removeMarkers = NULL, sampleP
   #print(head(x))
   if(nrow(x)==0){
     cell=NULL
-    sample=NULL
-    x <- data.frame(cell,sample,x)
+    idVar=NULL
+    x <- data.frame(cell,idVar,x)
   }
   else{
-    x <- data.frame(cell=1:nrow(x), sample=y, x)
-    x <- melt(x, id.vars=c("cell", "sample"))
+    x <- data.frame(cell=1:nrow(x), idVar=y, x)
+    x <- reshape2::melt(x, id.vars=c("cell", "idVar"))
   }
   return(x)})
 
   adultExprMelt <- do.call(rbind, filteredExprMeltList)
-
   adultExprMelt <- adultExprMelt %>% mutate(Population = population)
 
   return(adultExprMelt)

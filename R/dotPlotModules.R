@@ -25,13 +25,13 @@ dotPlotUI <- function(id, populationList, facetConditions) {
   )
 }
 
-#' Title
+#' Percent Plot Module
 #'
 #' @param input
 #' @param output
 #' @param session
-#' @param data
-#' @param annotation
+#' @param data - populationTable
+#' @param annotation - annotationTable (must be consistent with popTable)
 #'
 #' @return
 #' @export

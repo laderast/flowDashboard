@@ -36,7 +36,7 @@ violinUI <- function(id, label = "qcViolin") {
 #' @export
 #'
 #' @examples
-violinOutput <- function(input, output, session, data, annotation, facetList,
+violinOutput <- function(input, output, session, data, annotation, facetList=NULL,
                          aggregateList=NULL, markers=NULL,
                          colorConditions=NULL,
                          mapVar=c("sample"="FCSFiles")) {
@@ -56,6 +56,7 @@ violinOutput <- function(input, output, session, data, annotation, facetList,
       markers <- sort(unique(as.character(data[annotation(), on=mapVar]$variable)),
                     decreasing = TRUE)
     }
+
     tL <- c(tL, selectInput(ns("markers"), "Select Markers", choices = markers,
                     selected = markers[1]))
 
@@ -159,6 +160,7 @@ violinOut <- function(data, facets=NULL, colorVar=NULL, aggregateVar=NULL){
     #scale_y_flowJo_biexp() +
 
   transFun <- getOption("scaleTrans")
+
   if(transFun == "biexp"){
     out <- out + scale_y_continuous(trans=flowTrans)
   }
