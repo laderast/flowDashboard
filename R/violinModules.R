@@ -119,6 +119,8 @@ violinOutput <- function(input, output, session, data, annotation, facetList=NUL
 }
 
 violinOut <- function(data, facets=NULL, colorVar=NULL, aggregateVar=NULL){
+
+  marker <- unique(data$variable)[1]
   plotTitle <- marker
 
   facetForm <- ""
@@ -138,7 +140,7 @@ violinOut <- function(data, facets=NULL, colorVar=NULL, aggregateVar=NULL){
   }
 
   if(is.null(aggregateVar)){
-    x <- "sample"
+    x <- "idVar"
   } else{
     x <- aggregateVar
   }
@@ -146,7 +148,7 @@ violinOut <- function(data, facets=NULL, colorVar=NULL, aggregateVar=NULL){
   y="value"
 
   if(is.null(colorVar)){
-    fill <- "sample"
+    fill <- "idVar"
   }else{
     fill <- colorVar}
 

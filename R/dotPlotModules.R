@@ -70,10 +70,7 @@ dotPlotOutput <- function(input, output, session, data, annotation, mapVar=c("na
 #      annotation <- TRUE
 #    }
 
-    dataOut <- data[annotation(), on=mapVar]
-    dataOut <- dataOut[Population %in% input$Population]
-
-    dataOut <- dataOut[!is.na(dataOut$percentPop)]
+    dataOut <- data[annotation(), on=mapVar][Population %in% input$Population][!is.na(dataOut$percentPop)]
 
     #sortVariable <- key(annotation())
 
