@@ -19,7 +19,7 @@ coexpressionPlotUI <- function(id, subjectIDList, markerList){
     selectInput(ns("sortMarkerHeatmap"), "Select Marker To Sort By",
                 choices=markerList, selected=markerList[1]),
     sliderInput(ns("filterValueHeatmap"),min = -1, max=8,label =
-                  "Select Filter Cutoff For Marker",value = -1,step = 0.2)
+                  "Select Filter Cutoff For Marker",value = 0,step = 0.2)
 
   )
 
