@@ -19,7 +19,7 @@ coexpressionPlotUI <- function(id, subjectIDList, markerList){
     selectInput(ns("sortMarkerHeatmap"), "Select Marker To Sort By",
                 choices=markerList, selected=markerList[1]),
     sliderInput(ns("filterValueHeatmap"),min = -1, max=8,label =
-                  "Select Filter Cutoff For Marker",value = 0,step = 0.2)
+                  "Select Filter Cutoff For Marker",value = 1,step = 0.2)
 
   )
 
@@ -57,7 +57,7 @@ coexpressionPlot <- function(input, output, session, data, markerList){
   })
 
   marker <- reactive({
-    if(is.null(input$sortMarkerHeatmap)){ sortMarker <- markerList}
+    if(is.null(input$sortMarkerHeatmap)){ sortMarker <- markerList[1]}
     else{sortMarker <- input$sortMarkerHeatmap}
 
     sortMarker
@@ -69,9 +69,9 @@ coexpressionPlot <- function(input, output, session, data, markerList){
 
     #lims <- limits[variable ==input$sortMarkerHeatmap]
 
-
     lims <- limits[,marker()]
     print(lims)
+    print(marker())
     updateSliderInput(session,inputId = "filterValueHeatmap",
                       min=signif(lims[1],digits=3), max = signif(lims[2], digits=3))
   })
@@ -88,7 +88,7 @@ coexpressionPlot <- function(input, output, session, data, markerList){
     }
 
     if(is.null(input$filterValueHeatmap)){
-      filtValue <- 0
+      filtValue <- 1
     }else{
       filtValue <- input$filterValueHeatmap
     }
