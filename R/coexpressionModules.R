@@ -118,9 +118,9 @@ coexpressionPlot <- function(input, output, session, data, markerList){
     #cells <- ADT2[donor == donorID & get(sortMarker) > filtValue, cell]
 
     #cells <- ADT2[donor == donorID & CD103 < filtValue, cell]
-    colPanel <- colorpanel(60, low="black", high="white")
+    colPanel <- gplots::colorpanel(60, low="black", high="white")
 
-    image(t(as.matrix(data[cell %in% cells() & donor==donorID, eval(markerList), with=FALSE])),col = colPanel, axes=FALSE)
+    image(t(as.matrix(data[cell %in% cells() & donor==donorID, markerList, with=FALSE])),col = colPanel, axes=FALSE)
     axis(side=1, labels=markerList, at=0:(length(markerList)-1)/(length(markerList)-1), las=3)
     title(paste0(donorID, " (n=", length(cells()), ")"))
 
