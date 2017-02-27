@@ -36,7 +36,7 @@ coexpressionPlotUI <- function(id, subjectIDList, markerList){
 #' @export
 #'
 #' @examples
-coexpressionPlot <- function(input, output, session, data){
+coexpressionPlot <- function(input, output, session, data, markerList){
   output$miniHistogram <- renderPlot({
     if(is.null(input$donorIdHeatmap)){
       donorID <- "CD27"
@@ -44,7 +44,7 @@ coexpressionPlot <- function(input, output, session, data){
 
 
     if(is.null(input$sortMarkerHeatmap)){
-      sortMarker <- as.character(markersHeatmap[1])
+      sortMarker <- as.character(markerList[1])
     } else {
       sortMarker <- as.character(input$sortMarkerHeatmap)
     }
@@ -69,7 +69,7 @@ coexpressionPlot <- function(input, output, session, data){
 
 
     if(is.null(input$sortMarkerHeatmap)){
-      sortMarker <- as.character(markersHeatmap[1])
+      sortMarker <- as.character(markerList[1])
     } else {
       sortMarker <- as.character(input$sortMarkerHeatmap)
     }
@@ -91,7 +91,7 @@ coexpressionPlot <- function(input, output, session, data){
     } else{ donorID <- input$donorIdHeatmap}
 
     if(is.null(input$sortMarkerHeatmap)){
-      sortMarker <- as.character(markersHeatmap[1])
+      sortMarker <- as.character(markerList[1])
     } else {
       sortMarker <- as.character(input$sortMarkerHeatmap)
     }
@@ -103,7 +103,7 @@ coexpressionPlot <- function(input, output, session, data){
 
     setkeyv(ADT2, sortMarker)
     #markerOrder - put most similar first?
-    markerOrder <- markersHeatmap
+    markerOrder <- markerList
 
     #reactivePlot()
 
