@@ -105,6 +105,7 @@ coexpressionPlot <- function(input, output, session, data, markerList){
 
     #sort marker
     #sortMarker <- "CD103"
+    print(sortMarker)
 
     setkeyv(data, sortMarker)
     #markerOrder - put most similar first?
@@ -119,8 +120,8 @@ coexpressionPlot <- function(input, output, session, data, markerList){
     #cells <- ADT2[donor == donorID & CD103 < filtValue, cell]
     colPanel <- colorpanel(60, low="black", high="white")
 
-    image(t(as.matrix(data[cell %in% cells() & donor==donorID, eval(markersHeatmap), with=FALSE])),col = colPanel, axes=FALSE)
-    axis(side=1, labels=markersHeatmap, at=0:(length(markersHeatmap)-1)/(length(markersHeatmap)-1), las=3)
+    image(t(as.matrix(data[cell %in% cells() & donor==donorID, eval(markerList), with=FALSE])),col = colPanel, axes=FALSE)
+    axis(side=1, labels=markerList, at=0:(length(markerList)-1)/(length(markerList)-1), las=3)
     title(paste0(donorID, " (n=", length(cells()), ")"))
 
   }, height= function(x){
