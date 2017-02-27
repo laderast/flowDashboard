@@ -41,7 +41,7 @@ coexpressionPlot <- function(input, output, session, data, markerList){
 
   output$miniHistogram <- renderPlot({
     if(is.null(input$donorIdHeatmap)){
-      donorID <- "CD27"
+      donorID <- data$donor[1]
     } else{ donorID <- input$donorIdHeatmap}
 
 
@@ -70,9 +70,8 @@ coexpressionPlot <- function(input, output, session, data, markerList){
 
   cells <- reactive({
     if(is.null(input$donorIdHeatmap)){
-      donorID <- "CD27"
+      donorID <- data$donor[1]
     } else{ donorID <- input$donorIdHeatmap}
-
 
     if(is.null(input$sortMarkerHeatmap)){
       sortMarker <- as.character(markerList[1])
@@ -93,7 +92,7 @@ coexpressionPlot <- function(input, output, session, data, markerList){
 
   output$maitHeatmap <- renderPlot({
     if(is.null(input$donorIdHeatmap)){
-      donorID <- donorHeatmap[1]
+      donorID <- data$donor[1]
     } else{ donorID <- input$donorIdHeatmap}
 
     if(is.null(input$sortMarkerHeatmap)){
