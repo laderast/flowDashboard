@@ -56,16 +56,21 @@ coexpressionPlot <- function(input, output, session, data, markerList){
 
   })
 
+  marker <- reactive({
+    if(is.null(input$sortMarkerHeatmap)){ sortMarker <- markerList}
+    else{sortMarker <- input$sortMarkerHeatmap}
+
+    sortMarker
+  })
 
   observe({
 
     limits <- apply(data[,-c(1:2)], 2, range)
 
     #lims <- limits[variable ==input$sortMarkerHeatmap]
-    if(is.null(input$sortMarkerHeatmap)){ sortMarker <- markerList}
-    else{sortMarker <- input$sortMarkerHeatmap}
 
-    lims <- limits[,sortMarker]
+
+    lims <- limits[,marker()]
     print(lims)
     updateSliderInput(session,inputId = "filterValueHeatmap",
                       min=signif(lims[1],digits=3), max = signif(lims[2], digits=3))
