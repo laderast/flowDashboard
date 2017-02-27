@@ -36,7 +36,9 @@ coexpressionPlotUI <- function(id, subjectIDList, markerList){
 #' @export
 #'
 #' @examples
-coexpressionPlot <- function(input, output, session, data, markerList){
+coexpressionPlot <- function(input, output, session, data, markerList, limits){
+
+
   output$miniHistogram <- renderPlot({
     if(is.null(input$donorIdHeatmap)){
       donorID <- "CD27"
@@ -56,10 +58,14 @@ coexpressionPlot <- function(input, output, session, data, markerList){
 
 
   observe({
-    lims <- limits[variable ==input$sortMarkerHeatmap]
+
+    limits <- apply(data[,-c(1:2)], 2, range)
+
+    #lims <- limits[variable ==input$sortMarkerHeatmap]
+    lims <- limits[,input$sortMarkerHeatmap]
     #print(lims)
     updateSliderInput(session,inputId = "filterValueHeatmap",
-                      min=signif(lims$min,digits=3), max = signif(lims$max, digits=3))
+                      min=signif(lims[1],digits=3), max = signif(lims[2], digits=3))
   })
 
   cells <- reactive({
@@ -101,7 +107,7 @@ coexpressionPlot <- function(input, output, session, data, markerList){
     #sort marker
     #sortMarker <- "CD103"
 
-    setkeyv(ADT2, sortMarker)
+    setkeyv(data, sortMarker)
     #markerOrder - put most similar first?
     markerOrder <- markerList
 
