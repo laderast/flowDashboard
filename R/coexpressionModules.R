@@ -36,7 +36,7 @@ coexpressionPlotUI <- function(id, subjectIDList, markerList){
 #' @export
 #'
 #' @examples
-coexpressionPlot <- function(input, output, session, data, markerList, limits){
+coexpressionPlot <- function(input, output, session, data, markerList){
 
 
   output$miniHistogram <- renderPlot({
