@@ -63,7 +63,7 @@ coexpressionPlot <- function(input, output, session, data, markerList){
 
     #lims <- limits[variable ==input$sortMarkerHeatmap]
     lims <- limits[,input$sortMarkerHeatmap]
-    #print(lims)
+    print(lims)
     updateSliderInput(session,inputId = "filterValueHeatmap",
                       min=signif(lims[1],digits=3), max = signif(lims[2], digits=3))
   })
@@ -80,7 +80,7 @@ coexpressionPlot <- function(input, output, session, data, markerList){
     }
 
     if(is.null(input$filterValueHeatmap)){
-      filtValue <- -1
+      filtValue <- 0
     }else{
       filtValue <- input$filterValueHeatmap
     }
