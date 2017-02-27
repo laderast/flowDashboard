@@ -41,7 +41,7 @@ coexpressionPlot <- function(input, output, session, data, markerList){
 
   output$miniHistogram <- renderPlot({
     if(is.null(input$donorIdHeatmap)){
-      donorID <- data$donor[1]
+      donorID <- data$sample[1]
     } else{ donorID <- input$donorIdHeatmap}
 
 
@@ -51,7 +51,7 @@ coexpressionPlot <- function(input, output, session, data, markerList){
       sortMarker <- as.character(input$sortMarkerHeatmap)
     }
 
-    hist(data[donor == donorID, get(sortMarker)], main = paste0(sortMarker, " - ", donorID),
+    hist(data[sample == donorID, get(sortMarker)], main = paste0(sortMarker, " - ", donorID),
          xlab = sortMarker, ylab=NULL,breaks = 30)
 
   })
@@ -62,7 +62,10 @@ coexpressionPlot <- function(input, output, session, data, markerList){
     limits <- apply(data[,-c(1:2)], 2, range)
 
     #lims <- limits[variable ==input$sortMarkerHeatmap]
-    lims <- limits[,input$sortMarkerHeatmap]
+    if(is.null(input$sortMarkerHeatmap)){ sortMarker <- markerList}
+    else{sortMarker <- input$sortMarkerHeatmap}
+
+    lims <- limits[,sortMarker]
     print(lims)
     updateSliderInput(session,inputId = "filterValueHeatmap",
                       min=signif(lims[1],digits=3), max = signif(lims[2], digits=3))
@@ -70,7 +73,7 @@ coexpressionPlot <- function(input, output, session, data, markerList){
 
   cells <- reactive({
     if(is.null(input$donorIdHeatmap)){
-      donorID <- data$donor[1]
+      donorID <- data$sample[1]
     } else{ donorID <- input$donorIdHeatmap}
 
     if(is.null(input$sortMarkerHeatmap)){
@@ -85,14 +88,15 @@ coexpressionPlot <- function(input, output, session, data, markerList){
       filtValue <- input$filterValueHeatmap
     }
 
+    print(filtValue)
 
-    cells <- data[donor == donorID & get(sortMarker) > filtValue, cell]
+    cells <- data[sample == donorID & get(sortMarker) > filtValue, cell]
     cells
   })
 
   output$maitHeatmap <- renderPlot({
     if(is.null(input$donorIdHeatmap)){
-      donorID <- data$donor[1]
+      donorID <- data$sample[1]
     } else{ donorID <- input$donorIdHeatmap}
 
     if(is.null(input$sortMarkerHeatmap)){
@@ -120,7 +124,7 @@ coexpressionPlot <- function(input, output, session, data, markerList){
     #cells <- ADT2[donor == donorID & CD103 < filtValue, cell]
     colPanel <- gplots::colorpanel(60, low="black", high="white")
 
-    image(t(as.matrix(data[cell %in% cells() & donor==donorID, markerList, with=FALSE])),col = colPanel, axes=FALSE)
+    image(t(as.matrix(data[cell %in% cells() & sample==donorID, markerList, with=FALSE])),col = colPanel, axes=FALSE)
     axis(side=1, labels=markerList, at=0:(length(markerList)-1)/(length(markerList)-1), las=3)
     title(paste0(donorID, " (n=", length(cells()), ")"))
 
