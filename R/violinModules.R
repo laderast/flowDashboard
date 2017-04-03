@@ -118,6 +118,17 @@ violinOutput <- function(input, output, session, data, annotation, facetList=NUL
   })
 }
 
+#' Title
+#'
+#' @param data
+#' @param facets
+#' @param colorVar
+#' @param aggregateVar
+#'
+#' @return
+#' @export
+#'
+#' @examples
 violinOut <- function(data, facets=NULL, colorVar=NULL, aggregateVar=NULL){
 
   marker <- unique(data$variable)[1]

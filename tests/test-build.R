@@ -2,8 +2,12 @@ library(testthat)
 library(flowCore)
 library(flowWorkspace)
 library(flowWorkspaceData)
+library(ggplot2)
 source("R/commonFunctions.R")
 source("R/gatingModules.R")
+source("R/violinModules.R")
+options("scaleTrans"=FALSE)
+
 
 testDir <- system.file("extdata",package="flowWorkspaceData")
 fcsFiles <- list.files(testDir, pattern = "a2004",full.names = TRUE)
@@ -56,6 +60,15 @@ test_that("returnMeltedData tests", {
   #
   # nodeList <- getNodes(gs[[1]],path="full")
   # plotAllPopulations(gs, nodeList=nodeList, pipelineFile = "A2004")
+
+})
+
+test_that("violinModules tests", {
+
+  fsSample <- buildSampledDataList(fs, controlSize = 100)
+  meltData <- returnMeltedData(fsSample)
+  meltData <- meltData[variable == "CD123"]
+  expect_silent(violinOut(meltData))
 
 })
 
