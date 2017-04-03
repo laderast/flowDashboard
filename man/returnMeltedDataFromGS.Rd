@@ -2,7 +2,7 @@
 % Please edit documentation in R/commonFunctions.R
 \name{returnMeltedDataFromGS}
 \alias{returnMeltedDataFromGS}
-\title{Title}
+\title{Returns a long data frame with population/marker data}
 \usage{
 returnMeltedDataFromGS(gS, population, removeMarkers = NULL,
   samplePopulation = NULL)
@@ -11,6 +11,6 @@ returnMeltedDataFromGS(gS, population, removeMarkers = NULL,
 \item{samplePopulation}{}
 }
 \description{
-Title
+Returns a long data frame with population/marker data
 }
 

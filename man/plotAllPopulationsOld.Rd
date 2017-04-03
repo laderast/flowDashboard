@@ -4,7 +4,7 @@
 \alias{plotAllPopulationsOld}
 \title{Plot all Populations}
 \usage{
-plotAllPopulationsOld(gateSet, pipelineFile = "panel1",
+plotAllPopulationsOld(gateSet, nodeList = NULL, pipelineFile = "panel1",
   imagePath = "images/", delimiter = "+")
 }
 \arguments{

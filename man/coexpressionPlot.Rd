@@ -4,7 +4,7 @@
 \alias{coexpressionPlot}
 \title{Title}
 \usage{
-coexpressionPlot(input, output, session, data)
+coexpressionPlot(input, output, session, data, markerList)
 }
 \arguments{
 \item{data}{}

@@ -6,7 +6,7 @@
 \usage{
 qcModuleOutput(input, output, session, data, annotation,
   idColumn = "patientID", subsetCondition = NULL, subsetChoices = NULL,
-  sortConditions, markers, colorConditions)
+  sortConditions, markers, colorConditions, mapVar = c(idVar = "FCSFiles"))
 }
 \arguments{
 \item{annotation}{}

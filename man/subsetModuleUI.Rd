@@ -4,7 +4,7 @@
 \alias{subsetModuleUI}
 \title{Title}
 \usage{
-subsetModuleUI(id, subsetOptions, sortOptions)
+subsetModuleUI(id, subsetOptions, sortOptions, subsetAlias)
 }
 \arguments{
 \item{subsetOptions}{}

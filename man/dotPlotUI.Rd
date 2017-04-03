@@ -4,7 +4,7 @@
 \alias{dotPlotUI}
 \title{Title}
 \usage{
-dotPlotUI(id, populationList, facetList)
+dotPlotUI(id, populationList, facetConditions)
 }
 \arguments{
 \item{facetList}{}

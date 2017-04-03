@@ -4,7 +4,9 @@
 \alias{violinOutput}
 \title{Title}
 \usage{
-violinOutput(input, output, session, data, annotation)
+violinOutput(input, output, session, data, annotation, facetList = NULL,
+  aggregateList = NULL, markers = NULL, colorConditions = NULL,
+  mapVar = c(sample = "FCSFiles"))
 }
 \arguments{
 \item{annotation}{}

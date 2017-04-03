@@ -4,7 +4,7 @@
 \alias{subsetModule}
 \title{Title}
 \usage{
-subsetModule(input, output, session, subsetOptions)
+subsetModule(input, output, session, subsetOptions, annotation)
 }
 \arguments{
 \item{subsetOptions}{}

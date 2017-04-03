@@ -8,7 +8,7 @@ gatingModuleUI(id, label = "qcViolin", sortConditions,
   subsetCondition = NULL, annotation)
 }
 \arguments{
-\item{label}{}
+\item{annotation}{}
 }
 \description{
 Title

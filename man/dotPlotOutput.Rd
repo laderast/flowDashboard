@@ -2,14 +2,17 @@
 % Please edit documentation in R/dotPlotModules.R
 \name{dotPlotOutput}
 \alias{dotPlotOutput}
-\title{Title}
+\title{Percent Plot Module}
 \usage{
-dotPlotOutput(input, output, session, data, annotation)
+dotPlotOutput(input, output, session, data, annotation, mapVar = c(name =
+  "FCSFiles"), facetOrderList)
 }
 \arguments{
-\item{annotation}{}
+\item{data}{- populationTable}
+
+\item{annotation}{- annotationTable (must be consistent with popTable)}
 }
 \description{
-Title
+Percent Plot Module
 }
 

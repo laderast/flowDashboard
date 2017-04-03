@@ -5,7 +5,8 @@
 \title{Waterfall plot output module}
 \usage{
 waterfallOutput(input, output, session, data, annotation, populationChoices,
-  colorColumns, covariateChoices = NULL, subsetVariables = NULL)
+  colorColumns, covariateChoices = NULL, subsetVariables = NULL,
+  mapVar = c(name = "FCSFiles"))
 }
 \arguments{
 \item{input}{- normal shiny input object}
