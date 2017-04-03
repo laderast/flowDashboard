@@ -129,10 +129,14 @@ violinOutput <- function(input, output, session, data, annotation, facetList=NUL
 #' @export
 #'
 #' @examples
-violinOut <- function(data, facets=NULL, colorVar=NULL, aggregateVar=NULL){
+violinOut <- function(data, facets=NULL, colorVar=NULL, aggregateVar=NULL, population=NULL){
 
   marker <- unique(data$variable)[1]
   plotTitle <- marker
+
+  if(!is.null(population)){
+    plotTitle <- paste0(plotTitle, " (", population, ")")
+  }
 
   facetForm <- ""
 
