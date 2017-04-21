@@ -35,6 +35,7 @@ subsetModule <- function(input, output, session, subsetOptions, annotation){
     ns <- session$ns
     observe({
 
+    validate(need(input$categoryNameSubset, "needs category"))
     categoryName <- input$categoryNameSubset
     subsetChoice <- subsetOptions[[categoryName]]
 
