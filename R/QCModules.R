@@ -33,7 +33,7 @@ qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
     #uiOutput(ns("qcHeatmapUI")),
     ggvisOutput(ns("qcHeatmap")),
     uiOutput(ns("qcViolinUI")),
-    plotOutput(ns("qcViolinPlot"))#,
+    plotOutput(ns("qcViolinPlot"), width = )#,
           #hover= hoverOpts(ns("plotHover"),
           #delay = 500, delayType = "debounce")),
     #uiOutput(ns("hoverTip"))
@@ -157,6 +157,8 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     #print(pal)
     #print(nrow(data))
 
+    #if(nrow(data)==0){return NULL}else{
+
     data %>%
       #filter(as.character(notation) %in% domX) %>%
       ggvis(x=~idVar,y= ~variable, fill=~factor(round(zscore))) %>%
@@ -172,6 +174,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
       layer_text(text:=~signif(med,digits=2), stroke:="darkgrey", align:="left",
                  baseline:="top", dx := 10, dy:=10) %>%
       set_options(width = 60 * (noSamples), height = 50 * (noMarkers))
+    #}
 
   }
 

@@ -625,3 +625,24 @@ changeDataFrameLevels <- function(df){
     })
 
 }
+
+#' Title
+#'
+#' @param annotation
+#' @param data
+#' @param mapVar
+#'
+#' @return
+#' @export
+#'
+#' @examples
+reconcileDataAndAnnotation<- function(annotation, data, mapVar){
+
+  data[annotation, on=mapVar, nomatch=0]
+
+  dataColName <- names(mapVar)
+  annotationColName <- mapVar
+
+
+
+}
