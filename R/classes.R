@@ -24,20 +24,15 @@ populationExpressionObj <- setRefClass("populationExpressionObj",
                                        joinVar="character")
 
 #need init objects for each
-
-initSO <- function(){
-
-}
-
-initQFO <- function(){
+initGO <- function(annotation, popTable, imageDir=NULL, checkIntegrity=TRUE){
 
 }
 
-initGO <- function(){
+initQFO <- function(annotation, qcData, checkIntegrity=TRUE){
 
 }
 
-initPEO <- function(){
+initPEO <- function(annotation, expressionData, checkIntegrity=TRUE){
 
 }
 
@@ -54,17 +49,39 @@ checkPEOIntegrity <- function(obj){
 
 }
 
+changeAnnotation <- function(obj){
+
+
+}
+
+
 setSubsetOptions <- function(subsetOptions, sortOptions, checkIntegrity = TRUE){
+
+  annotation <- self$annotation
+
   #need to check that options agree (Columns are in annotation)
   if(checkIntegrity){
-    soNotInAnnotation <- subsetOptions[subsetOptions %in% colnames(self$annotation)]
-    sortNotInAnnotation <- sortOptions[sortOptions %in% colnames(self$annotation)]
+    soNotInAnnotation <- subsetOptions[subsetOptions %in% colnames(annotation)]
+    sortNotInAnnotation <- sortOptions[sortOptions %in% colnames(annotation)]
+
+    if(length(soNotInAnnotation) > 0 | length(sortNotInAnnotation) > 0){
+
+
+    }
   }
+
+  subsetOptionList <- as.list(annotation[,subsetConditions, with=FALSE])
+  subsetOptionList <- lapply(subsetOptionList, function(x){unique(as.character(x))})
+
+  sortOptionList <- as.list(annotation[,sortConditions, with=FALSE])
+  subsetOptionList <- lapply(subsetOptionList, function(x){unique(as.character(x))})
 
   self$subsetOptions <- subsetOptions
   self$subsetOptionList <- subsetOptionList
   self$sortOptions <- sortOptions
   self$sortOptionList <- sortOptionList
+
+  invisible(self)
 }
 
 #subsetOptions$methods(setSubsetOptions=setSubsetOptions)
