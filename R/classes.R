@@ -28,8 +28,8 @@ reconcileData <- function(annotation, data, mapVar, idsInBoth){
 
 #' Check integrity of data objects
 #'
-#' @param annotation
-#' @param data
+#' @param annotation - file manifest and annotations
+#' @param data - data.table
 #' @param mapVar
 #' @param reconcile - LOGICAL - reconcile ids in both annotation and data
 #'
@@ -44,6 +44,7 @@ checkIntegrity <- function(annotation, data, mapVar, reconcile=TRUE){
 
   dataClass <- class(data)[1]
 
+  #print(dataClass)
 
   if(dataClass != "data.table"){
     stop("data is not in data.table format")
@@ -69,10 +70,12 @@ checkIntegrity <- function(annotation, data, mapVar, reconcile=TRUE){
   if(length(idsInBoth)==0){
     stop("data and annotation ids do not match")
   }
+
   if(length(idsNotInAnnotation) > 0){
     warning(paste0("These IDs not in Annotation:\n",
                    paste(idsNotInAnnotation, collapse = "\n")))
   }
+
   if(length(idsNotInData) > 0){
     warning(paste0("These IDs not in Data:", paste(idsNotInData, collapse = "\n")))
   }
@@ -94,44 +97,51 @@ commonDataObj <-
   R6Class("commonDataObj",
           public=list(
             annotation=NULL,
-            subsetOptionsList=list(),
-            setSubsetOptionsList =
+            subsetOptions=NULL,
+            subsetOptionList=NULL,
+            sortOptions=NULL,
+            sortOptionList=NULL,
+            setSubsetAndSortOptions =
                 function(subsetOptions, sortOptions,
                          checkIntegrity = TRUE){
                            annotation <- self$annotation
+
+                           #print(head(annotation))
                            #need to check that options agree (Columns are in annotation)
 
+                           annotationCols <- colnames(annotation)
+                           #print(annotationCols)
                            if(checkIntegrity){
                              soNotInAnnotation <-
-                               subsetOptions[subsetOptions %in%
-                                               colnames(annotation)]
+                               subsetOptions[!subsetOptions %in%
+                                               annotationCols]
                              sortNotInAnnotation <-
-                               sortOptions[sortOptions %in%
-                                             colnames(annotation)]
+                               sortOptions[!sortOptions %in%
+                                             annotationCols]
 
-                          if(length(soNotInAnnotation) > 0){
-                            warning(
-                              paste("annotation and subset options don't match:",
-                                                   soNotInAnnotation)
-                              )
-                            }
-                          if(length(sortNotInAnnotation) > 0){
-                            warning(
-                              paste("annotation and sort options don't match:",
-                                    sortNotInAnnotation)
-                              )
-                            }
+                            if(length(soNotInAnnotation) > 0){
+                              stop(
+                                paste("annotation and subset options don't match:",
+                                                   soNotInAnnotation, collapse="\n")
+                                )
+                              }
+                            if(length(sortNotInAnnotation) > 0){
+                              stop(
+                                paste("annotation and sort options don't match:",
+                                    sortNotInAnnotation, collapse="\n")
+                                )
+                              }
                         }
 
                         subsetOptionList <- as.list(
-                                annotation[,subsetConditions, with=FALSE])
+                                annotation[,subsetOptions, with=FALSE])
                         subsetOptionList <- lapply(
                                 subsetOptionList, function(x)
                                   {unique(as.character(x))}
                                 )
 
                         sortOptionList <- as.list(
-                                annotation[,sortConditions, with=FALSE])
+                                annotation[,sortOptions, with=FALSE])
                         subsetOptionList <- lapply(
                                 subsetOptionList, function(x)
                                   {unique(as.character(x))}
@@ -146,57 +156,56 @@ commonDataObj <-
 
                         },
 
-                        checkIntegrityObj =
-                              function(reconcile=FALSE){
-                                  classObj <- class(self)
-                                  mapVar <- self$mapVar
-                                  annotation <- self$annotation
+            checkIntegrity =
+              function(reconcile=FALSE){
+                        classObj <- class(self)
+                        mapVar <- self$mapVar
+                        annotation <- self$annotation
 
-                                  if(classObj == "commonDataObj"){
-                                      stop("commonDataObj cannot be used; use children")
-                                      }
+                        if(classObj == "commonDataObj"){
+                              stop("commonDataObj cannot be used; use children")
+                          }
 
-                                  if(classObj == "populationExpressionObj"){
-                                      data <- self$expressionData
-                                      }
+                        if(classObj == "populationExpressionObj"){
+                              data <- self$expressionData
+                          }
 
-                                  if(classObj == "gatingObj"){
-                                      data <- self$popTable
-                                      }
+                        if(classObj == "gatingObj"){
+                              data <- self$popTable
+                          }
 
-                                   if(classObj == "qcFlowObj"){
-                                      data <- self$expressionData
-                                   }
+                        if(classObj == "qcFlowObj"){
+                              data <- self$qcData
+                          }
 
+                        outList <- checkIntegrity(annotation,
+                                  ata, mapVar, reconcile=reconcile)
 
+                        data <- outList$data
+                        self$annotation <- outList$annotation
 
-                                    outList <- checkIntegrity(annotation,
-                                            data, mapVar, reconcile=reconcile)
+                        if(classObj == "populationExpressionObj"){
+                                  self$expressionData <- data
+                          }
 
-                                    data <- outList$data
-                                    self$annotation <- outList$annotation
+                        if(classObj == "gatingObj"){
+                                  self$popTable <- data
+                          }
 
-                                    if(classObj == "populationExpressionObj"){
-                                            self$expressionData <- data
-                                            }
+                        if(classObj == "qcFlowObj"){
+                                  self$qcData <- data
+                          }
 
-                                    if(classObj == "gatingObj"){
-                                            self$popTable <- data
-                                            }
+                        invisible(self)
+                  },
 
-                                    if(classObj == "qcFlowObj"){
-                                            self$expressionData <- data
-                                            }
-                                    invisible(self)
-                                },
+              subsetAnnotation = function(ids){
+                    self$checkIntegrity(idsInBoth = ids, reconcile=TRUE)
+                    invisible(self)
+                    }
 
-                          subsetAnnotation = function(ids){
-                              self$checkIntegrityObj(idsInBoth = ids, reconcile=TRUE)
-                              invisible(self)
-                              }
-
-                        )
-              )
+                  )
+        )
 
 #Define R6 objects - basically are self-describing data objects for use
 #by flowDashboard
@@ -221,10 +230,12 @@ qcFlowObj <- R6Class(
 
                             self$annotation <- annotation
                             self$qcData <- qcData
+                            self$mapVar <- mapVar
+                            self$markers <- unique(qcData$variable)
 
                           },
-                          qcData = NULL,
-                          joinVar=NULL)
+                          qcData = NULL, markers=NULL,
+                          mapVar=NULL)
 
   )
 
@@ -252,6 +263,7 @@ gatingObj <- R6Class(
                               self$popTable <- popTable
                               self$imageDir <- imageDir
                               self$gates <- gates
+                              self$mapVar <- mapVar
 
                             },
       getPopulations = function(){
@@ -272,7 +284,7 @@ populationExpressionObj <-
   R6Class("populationExpressionObj", inherit=commonDataObj,
            public=list(
              initialize = function(annotation, expressionData, mapVar,
-                                   checkIntegrity=TRUE, reconcile=TRUE, self){
+                                   checkIntegrity=TRUE, reconcile=TRUE){
 
                                        if(checkIntegrity){
                                          outList <- checkIntegrity(annotation,
@@ -283,11 +295,15 @@ populationExpressionObj <-
 
                                        self$annotation <- annotation
                                        self$popTable <- expressionData
+                                       self$mapVar <- mapVar
+                                       self$markers <- unique(expressionData$variable)
 
                                      },
 
                                      expressionData = NULL,
-                                     joinVar=NULL,
+                                     mapVar=NULL,
+                                     markers=NULL,
                                      population=NULL)
-                                   )
+
+          )
 
