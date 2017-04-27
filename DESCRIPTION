@@ -17,7 +17,8 @@ Depends:
     dtplyr,
     ggvis,
     lazyeval,
-    gplots
+    gplots,
+    R6
 Suggests:
     flowCore,
     flowWorkspace,
