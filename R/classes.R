@@ -20,6 +20,22 @@ reconcileData <- function(annotation, data, mapVar, idsInBoth){
   annotation <- annotation[eval(mapColAnnotation) %in% idsInBoth]
   data <- data[eval(mapColData) %in% idsInBoth]
 
+  if(class(annotation[[mapVar]])=="character"){
+    annotation[[mapVar]] <- factor(annotation[[mapVar]])
+  }
+  if(class(annotation[[mapVar]])== "factor"){
+    annotation[[mapVar]] <- droplevels(annotation[[mapVar]])
+  }
+
+  if(class(data[[names(mapVar)]])== "character"){
+    data[[names(mapVar)]] <- factor(data[[names(mapVar)]])
+  }
+
+  if(class(data[[names(mapVar)]])== "factor"){
+    data[[names(mapVar)]] <- droplevels(data[[names(mapVar)]])
+  }
+
+
   return(list(annotation=annotation, data=data))
 
 }
@@ -61,9 +77,9 @@ checkIntegrity <- function(annotation, data, mapVar, reconcile=TRUE){
     stop(paste("map annotation column not in annotation:", mapColAnnotation))
   }
 
-  idsData <- unique(data[[mapColData]])
-  idsAnnotation <- unique(annotation[[mapColAnnotation]])
-  idsInBoth <- union(idsData, idsAnnotation)
+  idsData <- unique(as.character(data[[mapColData]]))
+  idsAnnotation <- unique(as.character(annotation[[mapColAnnotation]]))
+  idsInBoth <- intersect(idsData, idsAnnotation)
   idsNotInAnnotation <- setdiff(idsData, idsAnnotation)
   idsNotInData <- setdiff(idsAnnotation, idsData)
 
@@ -162,37 +178,43 @@ commonDataObj <-
                         mapVar <- self$mapVar
                         annotation <- self$annotation
 
-                        if(classObj == "commonDataObj"){
+                        if(classObj[1] == "commonDataObj"){
                               stop("commonDataObj cannot be used; use children")
                           }
 
-                        if(classObj == "populationExpressionObj"){
+                        if(classObj[1] == "populationExpressionObj"){
                               data <- self$expressionData
                           }
 
-                        if(classObj == "gatingObj"){
+                        if(classObj[1] == "gatingObj"){
                               data <- self$popTable
                           }
 
-                        if(classObj == "qcFlowObj"){
+                        if(classObj[1] == "qcFlowObj"){
                               data <- self$qcData
                           }
 
+                        #main check Integrity routine
                         outList <- checkIntegrity(annotation,
-                                  ata, mapVar, reconcile=reconcile)
+                                 data, mapVar, reconcile=reconcile)
 
                         data <- outList$data
                         self$annotation <- outList$annotation
 
-                        if(classObj == "populationExpressionObj"){
+                        if(classObj[1] == "populationExpressionObj"){
                                   self$expressionData <- data
                           }
 
-                        if(classObj == "gatingObj"){
+                        if(classObj[1] == "gatingObj"){
                                   self$popTable <- data
+                                  if(!is.null(imageDir)){
+                                    if(!dir.exists(self$imageDir)){
+                                      warning("image dir doesn't exist")
+                                    }
+                                  }
                           }
 
-                        if(classObj == "qcFlowObj"){
+                        if(classObj[1] == "qcFlowObj"){
                                   self$qcData <- data
                           }
 
@@ -256,7 +278,7 @@ gatingObj <- R6Class(
                               if(checkIntegrity){
                                 outList <- checkIntegrity(annotation, popTable, mapVar, reconcile)
                                 annotation <- outList$annotation
-                                popTable <- outList$popTable
+                                popTable <- outList$data
                               }
 
                               self$annotation <- annotation
@@ -265,13 +287,15 @@ gatingObj <- R6Class(
                               self$gates <- gates
                               self$mapVar <- mapVar
 
+                              invisible(self)
+
                             },
       getPopulations = function(){
           return(self$popTable$Population)},
 
       popTable = NULL,
       imageDir = NULL,
-      joinVar=NULL,
+      mapVar=NULL,
       gates=NULL)
       )
 
