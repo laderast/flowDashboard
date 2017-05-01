@@ -6,7 +6,7 @@ annotation <- fread("data/FCSFileInfo.txt")
 load("data/controlMelt.RData")
 qcData <- data.table(controlMelt)
 popTable <- fread("data/cleanupPopulations.txt")
-#expressionData
+load("data/expressionData.RData")
 
 #mapVar = c("idVar"="FCSFiles")
 #peo <- populationExpressionObj$new(annotation=annotation,expressionData=expressionData)
@@ -33,7 +33,7 @@ test_that("testQCO", {
 
   expect_warning(checkIntegrity(annotation[1:5,],qcData,
                                 mapVar=c("idVar"="FCSFiles")))
-  expect_warning(checkIntegrity(annotation,qcData[1:10,],
+  expect_error(checkIntegrity(annotation,qcData[1:10,],
                                 mapVar=c("idVar"="FCSFiles")))
   expect_warning(qco2$checkIntegrity(reconcile=FALSE))
   expect_warning(qco2$checkIntegrity(reconcile=TRUE))
@@ -55,11 +55,24 @@ test_that("testGO",{
   expect_silent(gatingObj$new(go$annotation, go$popTable, mapVar,
                                imageDir= ".",reconcile=FALSE))
 
+  subsetOptions = c("patientID", "Gender", "Source")
+  expect_error(go$setSubsetAndSortOptions(subsetOptions, subsetOptions))
+  subsetOptions = c("fileName"="FCSFiles", "Gender", "Source")
+  expect_silent(go$setSubsetAndSortOptions(subsetOptions, subsetOptions))
 
 })
 
-test_that("testPEO"{
+test_that("testPEO",{
+  mapVar <- c("idVar"="FCSFiles")
+  PEO <- populationExpressionObj$new(annotation, expressionData, mapVar)
 
+  expect_warning(populationExpressionObj$new(annotation, expressionData, mapVar, reconcile=FALSE))
+  expect_silent(populationExpressionObj$new(PEO$annotation, PEO$expressionData, mapVar))
+
+  subsetOptions = c("patientID", "Gender", "Source")
+  expect_error(PEO$setSubsetAndSortOptions(subsetOptions, subsetOptions))
+  subsetOptions = c("fileName"="FCSFiles", "Gender", "Source")
+  expect_silent(PEO$setSubsetAndSortOptions(subsetOptions, subsetOptions))
 
 })
 

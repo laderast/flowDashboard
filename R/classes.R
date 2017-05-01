@@ -117,6 +117,7 @@ commonDataObj <-
             subsetOptionList=NULL,
             sortOptions=NULL,
             sortOptionList=NULL,
+            contextID = NULL,
             setSubsetAndSortOptions =
                 function(subsetOptions, sortOptions,
                          checkIntegrity = TRUE){
@@ -254,6 +255,7 @@ qcFlowObj <- R6Class(
                             self$qcData <- qcData
                             self$mapVar <- mapVar
                             self$markers <- unique(qcData$variable)
+                            invisible(self)
 
                           },
                           qcData = NULL, markers=NULL,
@@ -318,9 +320,11 @@ populationExpressionObj <-
                                        }
 
                                        self$annotation <- annotation
-                                       self$popTable <- expressionData
+                                       self$expressionData <- expressionData
                                        self$mapVar <- mapVar
-                                       self$markers <- unique(expressionData$variable)
+                                       self$markers <- unique(expressionData$variable)]
+
+                                       invisible(self)
 
                                      },
 
