@@ -18,7 +18,8 @@ Depends:
     ggvis,
     lazyeval,
     gplots,
-    R6
+    R6,
+    stringi
 Suggests:
     flowCore,
     flowWorkspace,

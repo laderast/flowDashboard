@@ -157,17 +157,11 @@ commonDataObj <-
                                   {unique(as.character(x))}
                                 )
 
-                        sortOptionList <- as.list(
-                                annotation[,sortOptions, with=FALSE])
-                        subsetOptionList <- lapply(
-                                subsetOptionList, function(x)
-                                  {unique(as.character(x))}
-                                )
-
                         self$subsetOptions <- subsetOptions
                         self$subsetOptionList <- subsetOptionList
                         self$sortOptions <- sortOptions
-                        self$sortOptionList <- sortOptionList
+
+                        #add colorOptions
 
                         invisible(self)
 
@@ -237,8 +231,8 @@ commonDataObj <-
 ##annotation = "data.table"
 ##qcData = "data.table"
 ##subsetOptions = "list"
-##joinVar = character
-
+##mapVar = character
+#' @export
 qcFlowObj <- R6Class(
   "qcFlowObj", inherit=commonDataObj,
 
@@ -270,7 +264,7 @@ qcFlowObj <- R6Class(
 ##subsetOptions = list()
 ##joinVar = character
 
-
+#' @export
 gatingObj <- R6Class(
   "gatingObj", inherit=commonDataObj,
   public=list(
@@ -305,7 +299,7 @@ gatingObj <- R6Class(
 #expressionData = "data.table",
 #subsetOptions="subsetOptionsObj",
 # joinVar="character"
-
+#' @export
 populationExpressionObj <-
   R6Class("populationExpressionObj", inherit=commonDataObj,
            public=list(

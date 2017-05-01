@@ -41,6 +41,32 @@ qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
   )
 }
 
+#' Title
+#'
+#' @param id
+#' @param QCO
+#'
+#' @return
+#' @export
+#'
+#' @examples
+qcModuleUIFromQCO <- function(id, QCO){
+
+    qcModuleUI(id, label = "qcViolin", QCO$markers, sortConditions=QCO$sortOptions,
+                         colorConditions=QCO$sortOptions, annotation)
+
+}
+
+qcModuleFromQCO <- function(input, output, session, QCO){
+
+  qcModuleOutput(input, output, session, data=QCO$qcData, annotation=QCO$annotation,
+                             subsetCondition=QCO$subsetOptions,
+                             subsetChoices=QCO$subsetOptionList,
+                             sortConditions=QCO$sortOptions,
+                             markers=QCO$markers,
+                             colorConditions=QCO$sortOptions, mapVar = QCO$mapVar)
+
+}
 
 #' Title
 #'
@@ -56,7 +82,7 @@ qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
 #'
 #' @examples
 qcModuleOutput <- function(input, output, session, data, annotation,
-                           idColumn = "patientID", subsetCondition=NULL,
+                           subsetCondition=NULL,
                            subsetChoices=NULL, sortConditions, markers,
                            colorConditions, mapVar = c("idVar"="FCSFiles")) {
 

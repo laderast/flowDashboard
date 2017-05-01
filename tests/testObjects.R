@@ -20,6 +20,14 @@ test_that("testCheckIntegrity", {
   expect_warning(checkIntegrity(annotation, popTable,
                                 mapVar=c("name"="FCSFiles"), reconcile=TRUE))
 
+  expect_warning(checkIntegrity(annotation, expressionData, mapVar = c("idVar"="FCSFiles"),
+                                reconcile = TRUE))
+
+
+  test <- checkIntegrity(annotation, popTable,
+                 mapVar=c("name"="FCSFiles"), reconcile=TRUE)
+
+
 })
 
 test_that("testQCO", {
