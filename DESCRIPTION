@@ -18,6 +18,7 @@ Depends:
     ggvis,
     lazyeval,
     gplots,
+    ggplot2,
     R6,
     stringi
 Suggests:

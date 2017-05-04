@@ -1,20 +1,36 @@
 #' Title
 #'
-#' @param id
-#' @param subsetOptions
+#' @param dataObj
 #'
 #' @return
 #' @export
 #'
 #' @examples
-subsetModuleUI <- function(id, subsetOptions, sortOptions, subsetAlias){
+subsetModuleUICDO <-function(dataObj){
+
+  subsetModuleUI(id=dataObj$id, subsetOptionList = dataObj$subsetOptionList,
+                 sortOptions = dataObj$sortOptions,
+                 subsetOptions= dataObj$subsetOptions)
+}
+
+
+#' Title
+#'
+#' @param id
+#' @param subsetOptionList
+#'
+#' @return
+#' @export
+#'
+#' @examples
+subsetModuleUI <- function(id, subsetOptionList, sortOptions, subsetOptions){
   ns <- NS(id)
 
   tagList(
-    selectInput(ns("categoryNameSubset"), "Select Variable to Subset On", choices=subsetAlias,
-                selected=subsetAlias[1]),
-    selectInput(ns("subgroup"), "Select Subset", choices =subsetOptions[[1]],
-                       selected=subsetOptions[[1]], multiple=TRUE, width="100%"),
+    selectInput(ns("categoryNameSubset"), "Select Variable to Subset On", choices=subsetOptions,
+                selected=subsetOptions[1]),
+    selectizeInput(ns("subgroup"), "Select Subset", choices = subsetOptionList[[1]],
+                       selected=subsetOptionList[[1]], multiple=TRUE),
     selectInput(ns("sortVariable"), label="Select Sort Condition", choices=sortOptions)
   )
 
@@ -25,22 +41,42 @@ subsetModuleUI <- function(id, subsetOptions, sortOptions, subsetAlias){
 #' @param input
 #' @param output
 #' @param session
-#' @param subsetOptions
+#' @param dataObj
 #'
 #' @return
 #' @export
 #'
 #' @examples
-subsetModule <- function(input, output, session, subsetOptions, annotation){
+subsetModuleDCO <- function(input, output, session, dataObj){
+
+  callModule(subsetModule, id=dataObj$id, subsetOptionList=dataObj$subsetOptionList,
+               annotation=dataObj$annotation, session=session)
+}
+
+
+#' Title
+#'
+#' @param input
+#' @param output
+#' @param session
+#' @param subsetOptionList
+#'
+#' @return
+#' @export
+#'
+#' @examples
+subsetModule <- function(input, output, session, subsetOptionList, annotation){
     ns <- session$ns
     observe({
 
     validate(need(input$categoryNameSubset, "needs category"))
     categoryName <- input$categoryNameSubset
-    subsetChoice <- subsetOptions[[categoryName]]
+    #print(categoryName)
+    subsetChoice <- subsetOptionList[categoryName]
 
-    updateSelectInput(session, "subgroup", label="",
-                             choices= subsetChoice, selected= subsetChoice)
+    updateSelectizeInput(session, "subgroup",
+                             choices= subsetChoice,
+                      selected= subsetChoice)
   })
 
 

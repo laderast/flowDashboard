@@ -50,21 +50,37 @@ qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
 #' @export
 #'
 #' @examples
-qcModuleUIFromQCO <- function(id, QCO){
+qcModuleUIFromQCO <- function(QCO){
 
-    qcModuleUI(id, label = "qcViolin", QCO$markers, sortConditions=QCO$sortOptions,
+    qcModuleUI(id=QCO$id, label = "qcViolin", QCO$markers, sortConditions=QCO$sortOptions,
                          colorConditions=QCO$sortOptions, annotation)
 
 }
 
-qcModuleFromQCO <- function(input, output, session, QCO){
+#' Title
+#'
+#' @param input
+#' @param output
+#' @param session
+#' @param QCO
+#'
+#' @return
+#' @export
+#'
+#' @examples
+qcModuleFromQCO <- function(input, output, session, QCO, annotationReact){
 
-  qcModuleOutput(input, output, session, data=QCO$qcData, annotation=QCO$annotation,
-                             subsetCondition=QCO$subsetOptions,
-                             subsetChoices=QCO$subsetOptionList,
-                             sortConditions=QCO$sortOptions,
-                             markers=QCO$markers,
-                             colorConditions=QCO$sortOptions, mapVar = QCO$mapVar)
+  callModule(qcModuleOutput, id=QCO$id, data=QCO$qcData, annotation=annotationReact,
+              markers=QCO$markers,
+              colorConditions=QCO$sortOptions,
+              mapVar = QCO$mapVar, session=session)
+
+  # qcModuleOutput(input=input, output=output, session=session, data=QCO$qcData, annotation=QCO$annotation,
+  #                            subsetCondition=QCO$subsetOptions,
+  #                            subsetChoices=QCO$subsetOptionList,
+  #                            sortConditions=QCO$sortOptions,
+  #                            markers=QCO$markers,
+  #                            colorConditions=QCO$sortOptions, mapVar = QCO$mapVar)
 
 }
 
@@ -82,10 +98,10 @@ qcModuleFromQCO <- function(input, output, session, QCO){
 #'
 #' @examples
 qcModuleOutput <- function(input, output, session, data, annotation,
-                           subsetCondition=NULL,
-                           subsetChoices=NULL, sortConditions, markers,
+                           #subsetCondition=NULL,
+                           #subsetChoices=NULL, sortConditions,
+                           markers,
                            colorConditions, mapVar = c("idVar"="FCSFiles")) {
-
 
   medData <- reactive({
     ord <- input$Order
@@ -95,6 +111,10 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
 
     subdata <- data[annotation(), on=mapVar, nomatch=0]
+
+    if(nrow(annotation())==0){
+      subdata <- data
+    }
 
     #levels(subdata$NewConditi) <- subsetChoices
     #print(subdata)
@@ -119,13 +139,15 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
     #upd.cols = sapply(medTable, is.factor)
     #medTable[, names(medTable)[upd.cols] := lapply(.SD, factor), .SDcols = upd.cols]
+    #print(head(medTable))
 
     medTable
   })
 
   qcHeatmapReact <- reactive({
     #print(medData())
-    qcHeatmapPlot(medData(), annotation=annotation)
+    fakeData <- data[1:10]
+    qcHeatmapPlot(medData(), annotation=annotation, fakeData=data[1:10,])
   })
 
 
@@ -139,20 +161,19 @@ qcModuleOutput <- function(input, output, session, data, annotation,
   #' @export
   #'
   #' @examples
-  qcHeatmapPlot <- function(data, annotation)
+  qcHeatmapPlot <- function(data, annotation, fakeData)
   {
-    #print(head(data))
-
     #print(data)
 
     #namesDomX <- unique(data$notation)
 
-    if(is.null(data) | nrow(data) == 0){return(NULL)}
+    if(is.null(data)){data <- fakeData}
+    if( nrow(data) == 0){data <- fakeData}
 
     domX <- unique(data$idVar)
     #names(domX) <- namesDomX
     domY <- unique(as.character(data$variable))
-    print(domY)
+    #print(domY)
 
     noSamples <- length(unique(data$idVar))
     #print(paste0("number samples: ",noSamples))
@@ -180,10 +201,6 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     aboveAverage <- length(which(levs > 0))
 
     pal <- c(Blue(belowAverage), "#E5E5E5", Orange(aboveAverage))
-    #print(pal)
-    #print(nrow(data))
-
-    #if(nrow(data)==0){return NULL}else{
 
     data %>%
       #filter(as.character(notation) %in% domX) %>%
@@ -229,7 +246,10 @@ qcModuleOutput <- function(input, output, session, data, annotation,
   }
 
   ns <- session$ns
+
+  if(!is.null(qcHeatmapReact)){
   qcHeatmapReact %>% bind_shiny(ns("qcHeatmap"))
+  }
 
   ##Viol code here
 
@@ -282,11 +302,6 @@ qcModuleOutput <- function(input, output, session, data, annotation,
   output$qcViolinPlot <- renderPlot({
     colors <- input$Color
     marker <- input$Marker
-
-    #print(head(violData()))
-
-    #print(violData()$idVar)
-
     qcViolinOut(violData(), marker, colors)
   })
 
@@ -302,6 +317,10 @@ qcModuleOutput <- function(input, output, session, data, annotation,
       #scale_x_discrete(labels = notation)
 
     transFun <- getOption("scaleTrans")
+
+    if(is.null(transFun))
+      {transFun <- "none"}
+
     if(transFun == "biexp"){
       out <- out + scale_y_continuous(trans=flowTrans)
     }

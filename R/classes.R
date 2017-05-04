@@ -118,6 +118,7 @@ commonDataObj <-
             sortOptions=NULL,
             sortOptionList=NULL,
             contextID = NULL,
+            id=NULL,
             setSubsetAndSortOptions =
                 function(subsetOptions, sortOptions,
                          checkIntegrity = TRUE){
@@ -136,6 +137,7 @@ commonDataObj <-
                                sortOptions[!sortOptions %in%
                                              annotationCols]
 
+
                             if(length(soNotInAnnotation) > 0){
                               stop(
                                 paste("annotation and subset options don't match:",
@@ -152,10 +154,12 @@ commonDataObj <-
 
                         subsetOptionList <- as.list(
                                 annotation[,subsetOptions, with=FALSE])
+
                         subsetOptionList <- lapply(
                                 subsetOptionList, function(x)
                                   {unique(as.character(x))}
                                 )
+                        names(subsetOptionList) <- subsetOptions
 
                         self$subsetOptions <- subsetOptions
                         self$subsetOptionList <- subsetOptionList
@@ -287,7 +291,7 @@ gatingObj <- R6Class(
 
                             },
       getPopulations = function(){
-          return(self$popTable$Population)},
+          return(unique(self$popTable$Population))},
 
       popTable = NULL,
       imageDir = NULL,
@@ -316,7 +320,7 @@ populationExpressionObj <-
                                        self$annotation <- annotation
                                        self$expressionData <- expressionData
                                        self$mapVar <- mapVar
-                                       self$markers <- unique(expressionData$variable)]
+                                       self$markers <- unique(expressionData$variable)
 
                                        invisible(self)
 
