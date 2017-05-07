@@ -1,3 +1,9 @@
+violinUIFromCDO<- function(dataObj){
+
+  violinUI(id=dataObj$id, label="violin")
+
+}
+
 #' Title
 #'
 #' @param id
@@ -15,7 +21,7 @@
 violinUI <- function(id, label = "qcViolin") {
   # Create a namespace function using the provided id
   ns <- NS(id)
-  subsetChoices <- unique(as.character(annotation[[subsetCondition]]))
+  #subsetChoices <- unique(as.character(annotation[[subsetCondition]]))
 
   tagList(
     uiOutput(ns("violinMarkerUI")),
@@ -23,6 +29,11 @@ violinUI <- function(id, label = "qcViolin") {
   )
 }
 
+
+violinOutputFromPEO <- function(input, output, session, dataObj){
+
+
+}
 
 #' Title
 #'

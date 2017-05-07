@@ -52,7 +52,7 @@ qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
 #' @examples
 qcModuleUIFromQCO <- function(QCO){
 
-    qcModuleUI(id=QCO$id, label = "qcViolin", QCO$markers, sortConditions=QCO$sortOptions,
+    qcModuleUI(id=QCO$objId, label = "qcViolin", QCO$markers, sortConditions=QCO$sortOptions,
                          colorConditions=QCO$sortOptions, annotation)
 
 }
@@ -70,10 +70,10 @@ qcModuleUIFromQCO <- function(QCO){
 #' @examples
 qcModuleFromQCO <- function(input, output, session, QCO, annotationReact){
 
-  callModule(qcModuleOutput, id=QCO$id, data=QCO$qcData, annotation=annotationReact,
+  callModule(qcModuleOutput, id=QCO$objId, data=QCO$qcData, annotation=annotationReact,
               markers=QCO$markers,
               colorConditions=QCO$sortOptions,
-              mapVar = QCO$mapVar, session=session)
+              mapVar = QCO$mapVar)
 
   # qcModuleOutput(input=input, output=output, session=session, data=QCO$qcData, annotation=QCO$annotation,
   #                            subsetCondition=QCO$subsetOptions,

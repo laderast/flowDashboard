@@ -6,9 +6,13 @@
 #' @export
 #'
 #' @examples
-subsetModuleUICDO <-function(dataObj){
+subsetModuleUICDO <-function(dataObj, objId=NULL){
 
-  subsetModuleUI(id=dataObj$id, subsetOptionList = dataObj$subsetOptionList,
+  if(is.null(objId)){
+    objId <- dataObj$objId
+  }
+
+  subsetModuleUI(id=objId, subsetOptionList = dataObj$subsetOptionList,
                  sortOptions = dataObj$sortOptions,
                  subsetOptions= dataObj$subsetOptions)
 }
@@ -27,9 +31,11 @@ subsetModuleUI <- function(id, subsetOptionList, sortOptions, subsetOptions){
   ns <- NS(id)
 
   tagList(
-    selectInput(ns("categoryNameSubset"), "Select Variable to Subset On", choices=subsetOptions,
+    selectInput(ns("categoryNameSubset"), "Select Variable to Subset On",
+                choices=subsetOptions,
                 selected=subsetOptions[1]),
-    selectizeInput(ns("subgroup"), "Select Subset", choices = subsetOptionList[[1]],
+    selectInput(ns("subgroup"), "Select Subset", choices =
+                     subsetOptionList[[1]], selectize = TRUE,
                        selected=subsetOptionList[[1]], multiple=TRUE),
     selectInput(ns("sortVariable"), label="Select Sort Condition", choices=sortOptions)
   )
@@ -47,10 +53,14 @@ subsetModuleUI <- function(id, subsetOptionList, sortOptions, subsetOptions){
 #' @export
 #'
 #' @examples
-subsetModuleDCO <- function(input, output, session, dataObj){
+subsetModuleDCO <- function(input, output, dataObj, objId=NULL){
 
-  callModule(subsetModule, id=dataObj$id, subsetOptionList=dataObj$subsetOptionList,
-               annotation=dataObj$annotation, session=session)
+  if(is.null(objId)){
+    objId <- dataObj$objId
+  }
+
+  callModule(subsetModule, id=objId, subsetOptionList=dataObj$subsetOptionList,
+               annotation=dataObj$annotation)
 }
 
 
@@ -74,9 +84,9 @@ subsetModule <- function(input, output, session, subsetOptionList, annotation){
     #print(categoryName)
     subsetChoice <- subsetOptionList[categoryName]
 
-    updateSelectizeInput(session, "subgroup",
+    updateSelectInput(session, "subgroup",
                              choices= subsetChoice,
-                      selected= subsetChoice)
+                    selected= subsetChoice)
   })
 
 

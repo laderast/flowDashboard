@@ -4,9 +4,8 @@
 \alias{qcModuleOutput}
 \title{Title}
 \usage{
-qcModuleOutput(input, output, session, data, annotation,
-  idColumn = "patientID", subsetCondition = NULL, subsetChoices = NULL,
-  sortConditions, markers, colorConditions, mapVar = c(idVar = "FCSFiles"))
+qcModuleOutput(input, output, session, data, annotation, markers,
+  colorConditions, mapVar = c(idVar = "FCSFiles"))
 }
 \arguments{
 \item{annotation}{}

@@ -4,10 +4,10 @@
 \alias{subsetModule}
 \title{Title}
 \usage{
-subsetModule(input, output, session, subsetOptions, annotation)
+subsetModule(input, output, session, subsetOptionList, annotation)
 }
 \arguments{
-\item{subsetOptions}{}
+\item{subsetOptionList}{}
 }
 \description{
 Title

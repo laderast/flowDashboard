@@ -118,7 +118,7 @@ commonDataObj <-
             sortOptions=NULL,
             sortOptionList=NULL,
             contextID = NULL,
-            id=NULL,
+            objId=NULL,
             setSubsetAndSortOptions =
                 function(subsetOptions, sortOptions,
                          checkIntegrity = TRUE){

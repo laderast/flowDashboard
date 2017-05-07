@@ -1,3 +1,4 @@
+
 #' Title
 #'
 #' @param id
@@ -13,8 +14,8 @@ dotPlotUI <- function(id, populationList, facetConditions) {
   ns <- NS(id)
 
   tagList(
-    selectInput(ns("Population"), label="Select Population to Compare", choices=displayNodes,
-                displayNodes[1]),
+    selectInput(ns("Population"), label="Select Population to Compare", choices=populationList,
+                populationList[1]),
     selectInput(ns("xFacet"),label="Select X Facet", choices=facetConditions, selected=facetConditions[1]),
     #selectInput(ns("yFacet"), "Select Y Facet", choices=facetList, selected=facetList),
     plotOutput(ns("dotPlot"), hover= hoverOpts(ns("plotHover"), delay = 100, delayType = "debounce")),
@@ -23,6 +24,51 @@ dotPlotUI <- function(id, populationList, facetConditions) {
     #            choices=orderList)
 
   )
+}
+
+
+
+#' Title
+#'
+#' @param GO
+#'
+#' @return
+#' @export
+#'
+#' @examples
+dotPlotUIFromGO <- function(GO, objId=NULL){
+
+  if(is.null(objId)){
+    objId=GO$objId
+  }
+  dotPlotUI(id=objId, populationList = GO$getPopulations(),
+            facetConditions = GO$subsetOptions)
+
+}
+
+
+#' Title
+#'
+#' @param input
+#' @param output
+#' @param session
+#' @param GO
+#' @param annotation
+#'
+#' @return
+#' @export
+#'
+#' @examples
+dotplotOutputFromGO <- function(input, output, GO, objId=NULL, annotation){
+
+  if(is.null(objId)){
+    objId=GO$objId
+  }
+
+  #print(id)
+
+  callModule(dotPlotOutput, id=objId, data=GO$popTable, annotation=annotation,
+             facetOrderList = GO$subsetOptionList, mapVar = GO$mapVar)
 }
 
 #' Percent Plot Module
@@ -37,51 +83,20 @@ dotPlotUI <- function(id, populationList, facetConditions) {
 #' @export
 #'
 #' @examples
-dotPlotOutput <- function(input, output, session, data, annotation, mapVar=c("name"="FCSFiles"),
+dotPlotOutput <- function(input, output, session, data, annotation,
+                          mapVar=c("name"="FCSFiles"),
                           facetOrderList){
 
-  # dotPlotDynamicUI <- renderUI({
-  #   ns <- session$ns
-  #   displayNodes <- displayNodes[displayNodes %in% popTableReact()$Population]
-  #   print(displayNodes)
-  #
-  #
-  #   tagList(
-  #   selectInput(ns("Population"), "Select Population to Compare", choices=displayNodes,
-  #               displayNodes[1]),
-  #   selectInput(ns("xFacet"),"Select X Facet", choices=facetList, selected=facetList[1])
-  #   )
-  #
-  # })
-
-
-
   popTableReact <- reactive({
-    #validate(need(input$Population))
+    validate(need(input$Population, "Population Var not here"))
     #validate(input$ConditionVariable, FALSE)
 
-    #PopList <- input$PopulationList
-    #print(input$PopulationList)
+    #print(head(annotation()))
 
-    #orderVariable <- input$ConditionVariable
+    dataOut <-
+      data[annotation(), on=mapVar][Population %in% input$Population][!is.na(percentPop)]
 
-    #annotation <- data.table(annotation)
-#    if(nrow(annotation) == 0){
-#      annotation <- TRUE
-#    }
-
-    dataOut <- data[annotation(), on=mapVar][Population %in% input$Population][!is.na(dataOut$percentPop)]
-
-    #sortVariable <- key(annotation())
-
-    #%>%
-    #filter_(ifelse(is.na(input$xFacet),0,input$xFacet) & ifelse(is.na(input$yFacet),0,input$yFacet))
-
-    #print(dataOut)
-
-    #%>%
-    #arrange_(orderVariable)
-
+    #print(head(dataOut))
     return(dataOut)
   })
 
@@ -135,49 +150,73 @@ dotPlotOutput <- function(input, output, session, data, annotation, mapVar=c("na
     #yFacet <- input$yFacet
     yFacet <- input$xFacet
 
-    facetOrder <- facetOrderList[xFacet]
+    out <- dotPlot(popTableReact(), xFacet = xFacet,
+                   facetOrderList = facetOrderList)
 
-    facetFormula <- paste0(yFacet,"~",xFacet)
-
-    if(xFacet == yFacet){
-      facetFormula <- paste0(".~",xFacet)
-    }
-
-    print(facetFormula)
-    plotTitle <- paste("Population Comparison for", popTableReact()$Population[1])
-
-    #out <-
-
-    completeFun <- function(data, desiredCols) {
-      completeVec <- complete.cases(data[, desiredCols])
-      return(data[completeVec, ])
-    }
-
-    #remove entries in popTableReact that have no value for faceting variable
-    #xInd <- is.na(popTableReact()[[xFacet]])
-
-    dataNew <- completeFun(popTableReact(),xFacet)
-
-    upd.cols = sapply(dataNew, is.factor)
-    dataNew[, names(dataNew)[upd.cols] := lapply(.SD, factor), .SDcols = upd.cols]
-
-    #set facet order here
-    #dataNew[xFacet] <- facetOrderList[xFacet]
-
-    out  <- ggplot(dataNew, aes(x=Population, y=percentPop)) +
-      #labs(list(x = "Subtype", y = "% Cell Population")) +
-      theme(axis.title.x = element_text(face="bold"), axis.text.x = element_blank()) +
-      theme(axis.title.y = element_text(face="bold"), axis.text.y = element_text(face="bold")) +
-      ggtitle(plotTitle)
-    #theme() +
-
-    out <- out + geom_dotplot(binaxis='y', stackdir='center', method="dotdensity", binwidth=1) +
-      stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median,
-                   geom = "crossbar", width = 0.5, colour="red") +
-    facet_grid(facets = facetFormula, scales = "free")
-
-    return(out)
+    out
   })
 
+
+}
+
+#' Title
+#'
+#' @param data
+#' @param aesList
+#' @param xFacet
+#'
+#' @return
+#' @export
+#'
+#' @examples
+dotPlot <- function(data, aesList=aes_string(x="Population",y="percentPop"), xFacet, facetOrderList){
+
+  facetOrder <- facetOrderList[xFacet]
+  facetFormula <- paste0(".~",xFacet)
+  if(is.null(xFacet)){
+
+    facetFormula <- NULL
+  }
+
+  plotTitle <- paste("Population Comparison for", data$Population[1])
+
+  #function to remove missing values for facet
+  completeFun <- function(data, desiredCols) {
+    completeVec <- complete.cases(data[, desiredCols, with=FALSE])
+    return(data[completeVec, ])
+  }
+
+  dataNew <- completeFun(data,xFacet)
+
+  dataNew[[xFacet]] <- factor(dataNew[[xFacet]])
+
+  #drop levels if necessary
+  #upd.cols = sapply(dataNew, is.factor)
+  #dataNew[, names(dataNew)[upd.cols] := lapply(.SD, factor), .SDcols = upd.cols]
+
+  #print(head(dataNew))
+
+  #set facet order here
+  #dataNew[xFacet] <- facetOrderList[xFacet]
+
+  lowLim <- min(dataNew$popPercent) - 10
+
+  out  <- ggplot(dataNew, aesList) +
+    #labs(list(y = "% Parent Population")) +
+    theme(axis.title.x = element_text(face="bold"), axis.text.x = element_blank()) +
+    theme(axis.title.y = element_text(face="bold"), axis.text.y = element_text(face="bold")) +
+    scale_y_continuous(limits= c(lowLim,100)) +
+    ggtitle(plotTitle)
+  #theme() +
+
+  out <- out + geom_dotplot(binaxis='y', stackdir='center', method="dotdensity", binwidth=1) +
+    stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median,
+                 geom = "crossbar", width = 0.5, colour="red")
+
+  if(!is.null(facetFormula)){
+    out <- out + facet_grid(facets = facetFormula, scales = "free")
+  }
+
+  return(out)
 
 }

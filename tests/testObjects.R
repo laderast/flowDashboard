@@ -2,11 +2,11 @@ library(testthat)
 library(data.table)
 source("R/classes.R")
 
-annotation <- fread("data/FCSFileInfo.txt")
-load("data/controlMelt.RData")
+annotation <- fread("inst/extdata/FCSFileInfo.txt")
+load("inst/extdata/controlMelt.RData")
 qcData <- data.table(controlMelt)
-popTable <- fread("data/cleanupPopulations.txt")
-load("data/expressionData.RData")
+popTable <- fread("inst/extdata/cleanupPopulations.txt")
+load("inst/extdata/expressionData.RData")
 
 #mapVar = c("idVar"="FCSFiles")
 #peo <- populationExpressionObj$new(annotation=annotation,expressionData=expressionData)
@@ -94,5 +94,12 @@ test_that("setSubsetOptions",{
   expect_error(qco$setSubsetAndSortOptions(subsetOptions, subsetOptions))
   subsetOptions = c("FCSFiles", "Gender", "Source")
   expect_silent(qco$setSubsetAndSortOptions(subsetOptions, subsetOptions))
+
+})
+
+test_that("dotPlotTests",{
+
+  dat <- GO$popTable[GO$annotation, on=GO$mapVar, nomatch=0][Population == "CD45+"]
+  flowDashboard::dotPlot(dat,xFacet = "Gender",facetOrderList = GO$sortOptionList)
 
 })
