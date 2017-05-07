@@ -1,7 +1,6 @@
 library(data.table)
 library(R6)
 
-
 #' Reconcile annotation and data tables in object
 #'
 #' @param annotation
@@ -228,6 +227,28 @@ commonDataObj <-
                   )
         )
 
+
+setMarkers <- function(markers, data, oldMarkers){
+
+  if(is.null(oldMarkers)){
+    oldMarkers <- unique(data[["variable"]])
+  }
+
+  notInMarkers <- markers[!markers %in% oldMarkers]
+  if(length(notInMarkers) > 0){
+    errorMsg <- paste0("These markers not in qcData:\n",
+                       paste(notInMarkers, collapse="\n")
+    )
+    stop(errorMsg)
+  }
+  newMarkers <- droplevels(oldMarkers[oldMarkers %in% markers])
+  newData <- data[variable %in% newMarkers]
+  data$variable <- droplevels(data$variable)
+
+  return(list(markers = newMarkers, data=newData))
+
+}
+
 #Define R6 objects - basically are self-describing data objects for use
 #by flowDashboard
 
@@ -239,14 +260,16 @@ commonDataObj <-
 #' @export
 qcFlowObj <- R6Class(
   "qcFlowObj", inherit=commonDataObj,
-
   public=list(
-    initialize= function(annotation, qcData, mapVar,
+    initialize= function(annotation, qcData, mapVar=NULL,
                          checkIntegrity=TRUE, reconcile=TRUE){
                             if(checkIntegrity){
                               outList <- checkIntegrity(annotation, qcData, mapVar, reconcile)
                               annotation <- outList$annotation
                               qcData <- outList$data
+                            }
+                            if(is.null(mapVar)){
+                              mapVar=c("idVar"="FCSFiles")
                             }
 
                             self$annotation <- annotation
@@ -257,9 +280,20 @@ qcFlowObj <- R6Class(
 
                           },
                           qcData = NULL, markers=NULL,
-                          mapVar=NULL)
+                          mapVar=NULL,
+    setMarkers = function(markers){
+      oldMarkers <- self$markers
+
+      outList <- setMarkers(markers, data=self$qcData,
+                            oldMarkers=oldMarkers)
+
+      self$markers <- outList$markers
+      self$qcData <- outList$data
+      invisible(self)
+    }
 
   )
+)
 
 ##gatingObj
 ##annotation = "data.table"
@@ -267,18 +301,22 @@ qcFlowObj <- R6Class(
 ##imageDir = "list"
 ##subsetOptions = list()
 ##joinVar = character
-
 #' @export
-gatingObj <- R6Class(
+gatingObj <-
+  R6Class(
   "gatingObj", inherit=commonDataObj,
   public=list(
-        initialize = function(annotation, popTable, mapVar, gates=NULL,
-                              imageDir=NULL, checkIntegrity=TRUE, reconcile=TRUE){
+        initialize = function(annotation, popTable, mapVar=NULL,
+                              gates=NULL, imageDir=NULL,
+                              checkIntegrity=TRUE, reconcile=TRUE){
 
                               if(checkIntegrity){
                                 outList <- checkIntegrity(annotation, popTable, mapVar, reconcile)
                                 annotation <- outList$annotation
                                 popTable <- outList$data
+                              }
+                              if(is.null(mapVar)){
+                                mapVar <- c("name"="FCSFiles")
                               }
 
                               self$annotation <- annotation
@@ -286,18 +324,36 @@ gatingObj <- R6Class(
                               self$imageDir <- imageDir
                               self$gates <- gates
                               self$mapVar <- mapVar
+                              self$populations <-
+                                self$popTable$Population
 
                               invisible(self)
-
                             },
-      getPopulations = function(){
-          return(unique(self$popTable$Population))},
+      setPopulations = function(popList){
+          popTable <- self$popTable
+          populations <- self$populations
+          notInPopulations <- popList[popList %in% populations]
 
+          if(length(notInPopulations)>0){
+            errorMsg <- paste0("These populations not in data:\n",
+                               paste(notInPopulations, collapse="\n"))
+            stop(errorMsg)
+          }
+
+          newPop <- populations[populations %in% popList]
+          popTable <- popTable[Population %in% newPop]
+
+          self$populations <- newPop
+          self$popTable <- popTable
+          invisible(self)
+      },
+      populations = NULL,
       popTable = NULL,
       imageDir = NULL,
       mapVar=NULL,
-      gates=NULL)
+      gates=NULL
       )
+  )
 
 # annotation="data.table",
 #expressionData = "data.table",
@@ -307,7 +363,7 @@ gatingObj <- R6Class(
 populationExpressionObj <-
   R6Class("populationExpressionObj", inherit=commonDataObj,
            public=list(
-             initialize = function(annotation, expressionData, mapVar,
+             initialize = function(annotation, expressionData, mapVar=NULL,
                                    checkIntegrity=TRUE, reconcile=TRUE){
 
                                        if(checkIntegrity){
@@ -316,6 +372,9 @@ populationExpressionObj <-
                                          annotation <- outList$annotation
                                          expressionData <- outList$data
                                        }
+                                      if(is.null(mapVar)){
+                                        mapVar <- c("idVar"="FCSFiles")
+                                      }
 
                                        self$annotation <- annotation
                                        self$expressionData <- expressionData
@@ -325,11 +384,22 @@ populationExpressionObj <-
                                        invisible(self)
 
                                      },
+                  setMarkers = function(markers){
+                    expData <- self$expressionData
+                    oldMarkers <- unique(expData[["variable"]])
 
-                                     expressionData = NULL,
-                                     mapVar=NULL,
-                                     markers=NULL,
-                                     population=NULL)
+                    outList <- setMarkers(expData,markers = markers,
+                               oldMarkers=oldMarkers)
+                    self$markers <- outList$markers
+                    self$expressionData <- outList$data
+
+                    invisible(self)
+                  },
+
+                  expressionData = NULL,
+                  mapVar=NULL,
+                  markers=NULL,
+                  population=NULL)
 
           )
 

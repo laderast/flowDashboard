@@ -194,12 +194,12 @@ dotPlot <- function(data, aesList=aes_string(x="Population",y="percentPop"), xFa
   #upd.cols = sapply(dataNew, is.factor)
   #dataNew[, names(dataNew)[upd.cols] := lapply(.SD, factor), .SDcols = upd.cols]
 
-  #print(head(dataNew))
+  print(head(dataNew))
 
   #set facet order here
   #dataNew[xFacet] <- facetOrderList[xFacet]
 
-  lowLim <- min(dataNew$popPercent) - 10
+  lowLim <- min(dataNew$percentPop) - 10
 
   out  <- ggplot(dataNew, aesList) +
     #labs(list(y = "% Parent Population")) +

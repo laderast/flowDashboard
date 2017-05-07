@@ -3,8 +3,8 @@ library(data.table)
 source("R/classes.R")
 
 annotation <- fread("inst/extdata/FCSFileInfo.txt")
-load("inst/extdata/controlMelt.RData")
-qcData <- data.table(controlMelt)
+load("inst/extdata/qcData.RData")
+qcData <- data.table(qcData)
 popTable <- fread("inst/extdata/cleanupPopulations.txt")
 load("inst/extdata/expressionData.RData")
 
@@ -48,6 +48,9 @@ test_that("testQCO", {
 
   expect_error(qcFlowObj$new(annotation=annotation, qcData=qcData, mapVar=c("blah"="blah")))
 
+  expect_error(qco$setMarkers(markers=c("Not","In","Data")))
+  expect_silent(qco$setMarkers(markers=c("CD4", "CD8")))
+
   #expect_error()
 })
 
@@ -68,6 +71,8 @@ test_that("testGO",{
   subsetOptions = c("fileName"="FCSFiles", "Gender", "Source")
   expect_silent(go$setSubsetAndSortOptions(subsetOptions, subsetOptions))
 
+
+
 })
 
 test_that("testPEO",{
@@ -82,6 +87,10 @@ test_that("testPEO",{
   subsetOptions = c("fileName"="FCSFiles", "Gender", "Source")
   expect_silent(PEO$setSubsetAndSortOptions(subsetOptions, subsetOptions))
 
+  expect_silent(PEO$setMarkers(markers=c("CD14", "OX40","CD3")))
+  expect_error(PEO$setMarkers(markers=c("Not", "A","Marker")))
+
+
 })
 
 
@@ -90,7 +99,7 @@ test_that("setSubsetOptions",{
   mapVar=c("idVar"="FCSFiles")
   qco <- qcFlowObj$new(annotation=annotation, qcData=qcData, mapVar=mapVar)
 
-  subsetOptions = c("patientID", "Gender", "Source")
+  subsetOptions = c("Blah", "Gender", "Source")
   expect_error(qco$setSubsetAndSortOptions(subsetOptions, subsetOptions))
   subsetOptions = c("FCSFiles", "Gender", "Source")
   expect_silent(qco$setSubsetAndSortOptions(subsetOptions, subsetOptions))
@@ -99,7 +108,7 @@ test_that("setSubsetOptions",{
 
 test_that("dotPlotTests",{
 
-  dat <- GO$popTable[GO$annotation, on=GO$mapVar, nomatch=0][Population == "CD45+"]
-  flowDashboard::dotPlot(dat,xFacet = "Gender",facetOrderList = GO$sortOptionList)
+  #dat <- GO$popTable[GO$annotation, on=GO$mapVar, nomatch=0][Population == "CD45+"]
+  #flowDashboard::dotPlot(dat,xFacet = "Gender",facetOrderList = GO$sortOptionList)
 
 })
