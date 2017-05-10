@@ -311,7 +311,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 #' @export
 #'
 #' @examples
-qcHeatmapPlot <- function(data, annotation, fakeData)
+qcHeatmapPlot <- function(data)
 {
   #print(data)
 
