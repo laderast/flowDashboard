@@ -152,74 +152,6 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
 
 
-  #' Title
-  #'
-  #' @param data
-  #' @param annotation
-  #'
-  #' @return
-  #' @export
-  #'
-  #' @examples
-  qcHeatmapPlot <- function(data, annotation, fakeData)
-  {
-    #print(data)
-
-    #namesDomX <- unique(data$notation)
-
-    if(is.null(data)){data <- fakeData}
-    if( nrow(data) == 0){data <- fakeData}
-
-    domX <- unique(data$idVar)
-    #names(domX) <- namesDomX
-    domY <- unique(as.character(data$variable))
-    #print(domY)
-
-    noSamples <- length(unique(data$idVar))
-    #print(paste0("number samples: ",noSamples))
-    #noMarkers <- length(unique(MedTable()$Var1))
-    noMarkers <- length(unique(data$variable))
-    #domX <- Samples()
-    #medNotation <- as.character(unique(data$idVar))
-    #domX <- domX[domX %in% medNotation]
-    #print(medNotation)
-    #print(domX)
-    #print(setdiff(medNotation, domX))
-    #print(setdiff(domX, medNotation))
-    #print(domX)
-
-    Blue <- colorRampPalette(c("darkblue","lightblue"))
-    Orange <- colorRampPalette(c("orange","darkorange3"))
-    #pal <- c(Blue(5), "#E5E5E5", Orange(5))
-
-
-    levs <- sort(unique(round(data$zscore)))
-
-    #print(levs)
-
-    belowAverage <- length(which(levs < 0))
-    aboveAverage <- length(which(levs > 0))
-
-    pal <- c(Blue(belowAverage), "#E5E5E5", Orange(aboveAverage))
-
-    data %>%
-      #filter(as.character(notation) %in% domX) %>%
-      ggvis(x=~idVar,y= ~variable, fill=~factor(round(zscore))) %>%
-      layer_rects(height = band(), width = band(), key:=~popKey) %>%
-      scale_ordinal('fill',range = pal) %>%
-      add_axis("x", properties = axis_props(labels = list(angle = 270)), orient="top",
-               title_offset = 120, tick_padding=40, title="Sample/Panel") %>%
-      add_axis("y", orient="left", title_offset = 80, title = "Marker") %>%
-      add_tooltip(heatmapTooltip,on="hover") %>%
-      scale_nominal("y", padding = 0, points = FALSE, domain = domY) %>%
-      # scale_nominal("x", padding = 0, points = FALSE, domain = namesDomX) %>%
-      scale_nominal("x", padding = 0, points = FALSE, domain=domX) %>%
-      layer_text(text:=~signif(med,digits=2), stroke:="darkgrey", align:="left",
-                 baseline:="top", dx := 10, dy:=10) %>%
-      set_options(width = 60 * (noSamples), height = 50 * (noMarkers))
-    #}
-
-  }
 
   heatmapTooltip <- function(x,annotation){
     if(is.null(x)){return(NULL)}
@@ -370,6 +302,74 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 }
 
 
+#' Title
+#'
+#' @param data
+#' @param annotation
+#'
+#' @return
+#' @export
+#'
+#' @examples
+qcHeatmapPlot <- function(data, annotation, fakeData)
+{
+  #print(data)
+
+  #namesDomX <- unique(data$notation)
+
+  if(is.null(data)){data <- fakeData}
+  if( nrow(data) == 0){data <- fakeData}
+
+  domX <- unique(data$idVar)
+  #names(domX) <- namesDomX
+  domY <- unique(as.character(data$variable))
+  #print(domY)
+
+  noSamples <- length(unique(data$idVar))
+  #print(paste0("number samples: ",noSamples))
+  #noMarkers <- length(unique(MedTable()$Var1))
+  noMarkers <- length(unique(data$variable))
+  #domX <- Samples()
+  #medNotation <- as.character(unique(data$idVar))
+  #domX <- domX[domX %in% medNotation]
+  #print(medNotation)
+  #print(domX)
+  #print(setdiff(medNotation, domX))
+  #print(setdiff(domX, medNotation))
+  #print(domX)
+
+  Blue <- colorRampPalette(c("darkblue","lightblue"))
+  Orange <- colorRampPalette(c("orange","darkorange3"))
+  #pal <- c(Blue(5), "#E5E5E5", Orange(5))
+
+
+  levs <- sort(unique(round(data$zscore)))
+
+  #print(levs)
+
+  belowAverage <- length(which(levs < 0))
+  aboveAverage <- length(which(levs > 0))
+
+  pal <- c(Blue(belowAverage), "#E5E5E5", Orange(aboveAverage))
+
+  data %>%
+    #filter(as.character(notation) %in% domX) %>%
+    ggvis(x=~idVar,y= ~variable, fill=~factor(round(zscore))) %>%
+    layer_rects(height = band(), width = band(), key:=~popKey) %>%
+    scale_ordinal('fill',range = pal) %>%
+    add_axis("x", properties = axis_props(labels = list(angle = 270)), orient="top",
+             title_offset = 120, tick_padding=40, title="Sample/Panel") %>%
+    add_axis("y", orient="left", title_offset = 80, title = "Marker") %>%
+    add_tooltip(heatmapTooltip,on="hover") %>%
+    scale_nominal("y", padding = 0, points = FALSE, domain = domY) %>%
+    # scale_nominal("x", padding = 0, points = FALSE, domain = namesDomX) %>%
+    scale_nominal("x", padding = 0, points = FALSE, domain=domX) %>%
+    layer_text(text:=~signif(med,digits=2), stroke:="darkgrey", align:="left",
+               baseline:="top", dx := 10, dy:=10) %>%
+    set_options(width = 60 * (noSamples), height = 50 * (noMarkers))
+  #}
+
+}
 
 
 

@@ -331,7 +331,7 @@ gatingObj <-
                             },
       setPopulations = function(popList){
           popTable <- self$popTable
-          populations <- self$populations
+          populations <- unique(self$populations)
           notInPopulations <- popList[popList %in% populations]
 
           if(length(notInPopulations)>0){
