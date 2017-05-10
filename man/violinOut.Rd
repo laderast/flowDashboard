@@ -4,8 +4,7 @@
 \alias{violinOut}
 \title{Title}
 \usage{
-violinOut(data, facets = NULL, colorVar = NULL, aggregateVar = NULL,
-  population = NULL)
+violinOut(data, facets = NULL, colorVar = NULL, aggregateVar = NULL)
 }
 \arguments{
 \item{aggregateVar}{}

@@ -8,15 +8,9 @@ qcModuleOutput(input, output, session, data, annotation, markers,
   colorConditions, mapVar = c(idVar = "FCSFiles"))
 }
 \arguments{
-\item{annotation}{}
-
 \item{idColumn}{}
 }
 \description{
 Title
-}
-\examples{
-Title
-
 }
 
