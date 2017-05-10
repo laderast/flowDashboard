@@ -4,7 +4,7 @@
 \alias{subsetModuleDCO}
 \title{Title}
 \usage{
-subsetModuleDCO(input, output, session, dataObj, objId = NULL)
+subsetModuleDCO(input, output, dataObj, objId = NULL)
 }
 \arguments{
 \item{dataObj}{}

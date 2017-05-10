@@ -4,7 +4,7 @@
 \alias{dotplotOutputFromGO}
 \title{Title}
 \usage{
-dotplotOutputFromGO(input, output, session, GO, annotation)
+dotplotOutputFromGO(input, output, GO, objId = NULL, annotation)
 }
 \arguments{
 \item{annotation}{}

@@ -166,59 +166,10 @@ gatingModuleOutput <- function(input, output, session,
 
   populationHeatmap <- reactive({
 
-    data <- na.omit(popTable[annotation()])
-    #print(displayNodes)
-    domY <- unique(as.character(data[["Population"]]))
-    displayNodes <- displayNodes[displayNodes %in% domY]
-    #print(displayNodes)
+    popHeatmap(popTable, annotation, mapVar=c("name"="FCSFiles")) %>%
+      #add interactive tooltip
+      add_tooltip(popTooltip,on="click")
 
-
-    #noSamples <- length(unique(data$notation))
-    #print(noSamples)
-    #noMarkers <- length(unique(PopTable()$Population))
-    noMarkers <- length(displayNodes)
-    #domX <- Samples()
-    print(noMarkers)
-
-    domX <- unique(as.character(data[["notation"]]))
-    noSamples <- length(domX)
-    print(noSamples)
-    #print(domX)
-    #popNotation <- as.character(unique(data$notation))
-    #domX <- domX[domX %in% popNotation]
-    #print(domX)
-
-    Blue <- colorRampPalette(c("darkblue","lightblue"))
-    Orange <- colorRampPalette(c("orange","darkorange3"))
-
-    levs <- sort(unique(round(data$zscore)))
-
-    #print(levs)
-
-    belowAverage <- length(which(levs < 0))
-    aboveAverage <- length(which(levs > 0))
-
-    pal <- c(Blue(belowAverage), "#E5E5E5", Orange(aboveAverage))
-
-
-    #pal <- c(Blue(3), "#E5E5E5", Orange(6))
-
-    data[Population %in% displayNodes] %>%
-      #filter(as.character(Population) %in% displayNodes) %>%
-      ggvis(x=~notation,y= ~Population, fill=~factor(round(zscore))) %>%
-      #ggvis(x=~name,y= ~Population, fill=~factor(round(Count))) %>%
-      layer_rects(height = band(), width = band(), key:=~idVar) %>%
-      scale_ordinal('fill',range = pal) %>%
-      add_axis("x", properties = axis_props(labels = list(angle = 270)), orient="top",
-               title_offset = 120, tick_padding=40, title="Sample") %>%
-      add_axis("y", orient="left", title_offset = 100) %>%
-      add_tooltip(popTooltip,on="click") %>%
-      #add_tooltip(popInfoTooltip, on="hover") %>%
-      scale_nominal("y", padding = 0, points = FALSE, domain = displayNodes) %>%
-      scale_nominal("x", padding = 0, points = FALSE, domain = domX) %>%
-      layer_text(text:=~signif(percentPop,digits=2), stroke:="darkgrey", align:="left",
-                 baseline:="top", dx := 5, dy:=5) %>%
-      set_options(width= 60 * (noSamples), height= 60 * (noMarkers))
   })
 
   populationHeatmap %>%
@@ -233,3 +184,59 @@ padMissingValues <- function(popTable){
 
 }
 
+#' Title
+#'
+#' @param data
+#' @param annotation
+#' @param mapVar
+#'
+#' @return
+#' @export
+#'
+#' @examples
+popHeatmap <- function(data, annotation, mapVar=c("name"="FCSFiles")){
+
+  dataNew <- data[annotation, on=mapVar]
+  dataNew <- data[!is.na(percentPop)]
+
+  domY <- unique(as.character(data[["Population"]]))
+  displayNodes <- domY
+  noMarkers <- length(displayNodes)
+
+  domX <- unique(as.character(data[["name"]]))
+  noSamples <- length(domX)
+
+  Green <- colorRampPalette(c("green","green4"))
+  Red <- colorRampPalette(c("red4","red"))
+
+  levs <- sort(unique(round(data$zscore)))
+
+  #print(levs)
+
+  belowAverage <- length(which(levs < 0))
+  aboveAverage <- length(which(levs > 0))
+
+  pal <- c(Green(belowAverage), "000000", Red(aboveAverage))
+
+  #pal <- c(Blue(3), "#E5E5E5", Orange(6))
+
+  data[Population %in% displayNodes] %>%
+    #mutate()
+    #filter(as.character(Population) %in% displayNodes) %>%
+    ggvis(x=~name,y= ~Population, fill=~factor(round(zscore))) %>%
+    #ggvis(x=~name,y= ~Population, fill=~factor(round(Count))) %>%
+    layer_rects(height = band(), width = band(), key:=~idVar) %>%
+    scale_ordinal('fill',range = pal) %>%
+    add_axis("x", properties = axis_props(labels = list(angle = 270)), orient="top",
+             title_offset = 120, tick_padding=40, title="Sample") %>%
+    add_axis("y", orient="left", title_offset = 100) %>%
+    #add_tooltip(popTooltip,on="click") %>%
+    #add_tooltip(popInfoTooltip, on="hover") %>%
+    scale_nominal("y", padding = 0, points = FALSE, domain = displayNodes) %>%
+    #scale_nominal("x", padding = 0, points = FALSE, domain = domX) %>%
+    scale_nominal("x", padding = 0, points = FALSE) %>%
+    layer_text(text:=~signif(percentPop,digits=2), stroke:="darkgrey", align:="left",
+               baseline:="top", dx := 5, dy:=5) %>%
+    set_options(width= max(c(60 * (noSamples), 600)), height= 60 * (noMarkers))
+
+}

@@ -41,7 +41,7 @@ dotPlotUIFromGO <- function(GO, objId=NULL){
   if(is.null(objId)){
     objId=GO$objId
   }
-  dotPlotUI(id=objId, populationList = GO$getPopulations(),
+  dotPlotUI(id=objId, populationList = GO$populations,
             facetConditions = GO$subsetOptions)
 
 }

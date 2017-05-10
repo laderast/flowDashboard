@@ -140,7 +140,7 @@ violinOutput <- function(input, output, session, data, annotation, facetList=NUL
 #' @export
 #'
 #' @examples
-violinOut <- function(data, facets=NULL, colorVar=NULL, aggregateVar=NULL, population=NULL){
+violinOut <- function(data, facets=NULL, colorVar=NULL, aggregateVar=NULL){
 
   marker <- unique(data$variable)[1]
   plotTitle <- marker
@@ -183,14 +183,19 @@ violinOut <- function(data, facets=NULL, colorVar=NULL, aggregateVar=NULL, popul
     ggtitle(plotTitle)
 
   if(facetForm != ""){
+    print(facetForm)
     out <- out + facet_grid(facets=facetForm, scales="free")
   }
     #scale_y_flowJo_biexp() +
 
   transFun <- getOption("scaleTrans")
 
-  if(transFun == "biexp"){
+
+  if(!is.null(transFun)){
+
+    if(transFun == "biexp"){
     out <- out + scale_y_continuous(trans=flowTrans)
+    }
   }
 
   return(out)

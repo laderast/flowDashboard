@@ -4,7 +4,7 @@
 \alias{dotPlotUIFromGO}
 \title{Title}
 \usage{
-dotPlotUIFromGO(GO, id = NULL)
+dotPlotUIFromGO(GO, objId = NULL)
 }
 \arguments{
 \item{GO}{}

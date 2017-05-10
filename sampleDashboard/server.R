@@ -19,19 +19,20 @@ shinyServer(function(input, output, session) {
   qcMod <- qcModuleFromQCO(input, output, session, QCO, annotationQC)
 
   #Gating Modules
-  #annotationGO <- subsetModuleDCO(input, output, session, dataObj = GO)
-  #source("gating.R",local = TRUE)
+  annotationGO <- subsetModuleDCO(input, output, dataObj = GO)
+  source("gating.R",local = TRUE)
 
   ##Expression Modules
 
-  ##Dot Plot Modules
-  annotationGO2 <- subsetModuleDCO(input, output, dataObj = GO)
-  # dotPlotMod <- dotplotOutputFromGO(input, output,
-  #                                  GO, annotationGO2)
 
-   dotPlotMod <- callModule(dotPlotOutput, id=GO$objId, data=GO$popTable,
-                            annotation=annotationGO2,
-                            facetOrderList = GO$subsetOptionList,
-                            mapVar = GO$mapVar)
+  ##Dot Plot Modules
+  annotationGO2 <- subsetModuleDCO(input, output, dataObj = GO, objId=goObjId2)
+  # dotPlotMod <- dotplotOutputFromGO(input, output,
+  #                                   GO2, annotationGO2)
+
+  dotPlotMod <- callModule(dotPlotOutput, id=goObjId2, data=GO$popTable,
+                             annotation=annotationGO2,
+                             facetOrderList = GO$subsetOptionList,
+                             mapVar = GO$mapVar)
 
 })

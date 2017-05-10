@@ -4,8 +4,8 @@
 \alias{dotPlot}
 \title{Title}
 \usage{
-dotPlot(data, aesList = c(x = "Population", y = "percentPop"), xFacet,
-  facetOrderList)
+dotPlot(data, aesList = aes_string(x = "Population", y = "percentPop"),
+  xFacet, facetOrderList)
 }
 \arguments{
 \item{xFacet}{}

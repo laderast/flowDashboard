@@ -71,8 +71,6 @@ test_that("testGO",{
   subsetOptions = c("fileName"="FCSFiles", "Gender", "Source")
   expect_silent(go$setSubsetAndSortOptions(subsetOptions, subsetOptions))
 
-
-
 })
 
 test_that("testPEO",{
@@ -110,5 +108,9 @@ test_that("dotPlotTests",{
 
   #dat <- GO$popTable[GO$annotation, on=GO$mapVar, nomatch=0][Population == "CD45+"]
   #flowDashboard::dotPlot(dat,xFacet = "Gender",facetOrderList = GO$sortOptionList)
+
+})
+
+test_that("gatingPlotTests",{
 
 })
