@@ -342,7 +342,6 @@ qcHeatmapPlot <- function(data, annotation, fakeData)
   Orange <- colorRampPalette(c("orange","darkorange3"))
   #pal <- c(Blue(5), "#E5E5E5", Orange(5))
 
-
   levs <- sort(unique(round(data$zscore)))
 
   #print(levs)
@@ -371,5 +370,19 @@ qcHeatmapPlot <- function(data, annotation, fakeData)
 
 }
 
+#' Title
+#'
+#' @param data
+#'
+#' @return
+#' @export
+#'
+#' @examples
+buildMedianTable <- function(data){
+  medTable <- summarise(group_by(data,variable,idVar),med = median(value)) %>%
+    group_by(variable) %>%
+    mutate(zscore = scale_this(med), popKey=paste0(idVar, "-", variable))
+  medTable
+}
 
 
