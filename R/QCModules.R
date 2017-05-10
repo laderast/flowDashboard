@@ -317,8 +317,8 @@ qcHeatmapPlot <- function(data)
 
   #namesDomX <- unique(data$notation)
 
-  if(is.null(data)){data <- fakeData}
-  if( nrow(data) == 0){data <- fakeData}
+  #if(is.null(data)){data <- fakeData}
+  #if( nrow(data) == 0){data <- fakeData}
 
   domX <- unique(data$idVar)
   #names(domX) <- namesDomX
