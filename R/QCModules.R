@@ -359,7 +359,7 @@ qcHeatmapPlot <- function(data, annotation, fakeData)
     add_axis("x", properties = axis_props(labels = list(angle = 270)), orient="top",
              title_offset = 120, tick_padding=40, title="Sample/Panel") %>%
     add_axis("y", orient="left", title_offset = 80, title = "Marker") %>%
-    add_tooltip(heatmapTooltip,on="hover") %>%
+    #add_tooltip(heatmapTooltip,on="hover") %>%
     scale_nominal("y", padding = 0, points = FALSE, domain = domY) %>%
     # scale_nominal("x", padding = 0, points = FALSE, domain = namesDomX) %>%
     scale_nominal("x", padding = 0, points = FALSE, domain=domX) %>%
