@@ -305,7 +305,6 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 #' Title
 #'
 #' @param data
-#' @param annotation
 #'
 #' @return
 #' @export
