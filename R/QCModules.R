@@ -147,7 +147,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
   qcHeatmapReact <- reactive({
     #print(medData())
     fakeData <- data[1:10]
-    qcHeatmapPlot(medData(), annotation=annotation, fakeData=data[1:10,])
+    qcHeatmapPlot(medData())
   })
 
 
