@@ -12,7 +12,7 @@
 #' @export
 #'
 #' @examples
-gatingModuleUI <- function(id, label = "qcViolin", sortConditions,
+gatingModuleUI <- function(id, label = "gatingModule", sortConditions,
                            subsetCondition=NULL, annotation){
 
     ns <- NS(id)

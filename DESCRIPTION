@@ -2,7 +2,7 @@ Package: flowDashboard
 Type: Package
 Title: Shiny Modules for Building interactive Dashboards for flow cytometry
     analysis
-Version: 0.1.0
+Version: 0.1.1
 Author: Ted Laderas
 Maintainer: Ted Laderas <laderast@ohsu.edu>
 Description: This package contains shiny modules to visualize gating results
