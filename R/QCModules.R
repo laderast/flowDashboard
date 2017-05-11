@@ -33,7 +33,7 @@ qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
     #uiOutput(ns("qcHeatmapUI")),
     ggvisOutput(ns("qcHeatmap")),
     uiOutput(ns("qcViolinUI")),
-    plotOutput(ns("qcViolinPlot"), width = '200%')#,
+    plotOutput(ns("qcViolinPlot"), inline=TRUE)#,
           #hover= hoverOpts(ns("plotHover"),
           #delay = 500, delayType = "debounce")),
     #uiOutput(ns("hoverTip"))
@@ -235,7 +235,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     colors <- input$Color
     marker <- input$Marker
     qcViolinOut(violData(), marker, colors)
-  })
+  }, width=1000, height= 400)
 
 
   qcViolinOut <- function(data, marker, colors){

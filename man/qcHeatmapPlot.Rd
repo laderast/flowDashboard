@@ -4,10 +4,10 @@
 \alias{qcHeatmapPlot}
 \title{Title}
 \usage{
-qcHeatmapPlot(data, annotation, fakeData)
+qcHeatmapPlot(data)
 }
 \arguments{
-\item{annotation}{}
+\item{data}{}
 }
 \description{
 Title

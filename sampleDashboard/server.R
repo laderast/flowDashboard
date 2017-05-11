@@ -24,7 +24,6 @@ shinyServer(function(input, output, session) {
 
   ##Expression Modules
 
-
   ##Dot Plot Modules
   annotationGO2 <- subsetModuleDCO(input, output, dataObj = GO, objId=goObjId2)
   # dotPlotMod <- dotplotOutputFromGO(input, output,

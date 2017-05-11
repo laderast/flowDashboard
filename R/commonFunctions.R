@@ -181,6 +181,11 @@ plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
   }
 }
 
+#' @export
+scale_this <- function(x){
+  as.vector(scale(x))
+}
+
 
 #' Title
 #'
