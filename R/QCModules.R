@@ -310,7 +310,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 #' @export
 #'
 #' @examples
-qcHeatmapPlot <- function(data)
+qcHeatmapPlot <- function(data, height=NULL, width=NULL)
 {
   #print(data)
 
@@ -350,6 +350,14 @@ qcHeatmapPlot <- function(data)
 
   pal <- c(Blue(belowAverage), "#E5E5E5", Orange(aboveAverage))
 
+  if(is.null(height)){
+    height <- 60 * (noMarkers)
+  }
+
+  if(is.null(width)) {
+    width <- 60 * (noSamples)
+  }
+
   data %>%
     #filter(as.character(notation) %in% domX) %>%
     ggvis(x=~idVar,y= ~variable, fill=~factor(round(zscore))) %>%
@@ -364,7 +372,7 @@ qcHeatmapPlot <- function(data)
     scale_nominal("x", padding = 0, points = FALSE, domain=domX) %>%
     layer_text(text:=~signif(med,digits=2), stroke:="darkgrey", align:="left",
                baseline:="top", dx := 10, dy:=10) %>%
-    set_options(width = 60 * (noSamples), height = 50 * (noMarkers))
+    set_options(width =width, height = height)
   #}
 
 }

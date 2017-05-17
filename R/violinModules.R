@@ -1,3 +1,4 @@
+#' @export
 violinUIFromCDO<- function(dataObj){
 
   violinUI(id=dataObj$id, label="violin")
@@ -27,11 +28,25 @@ violinUI <- function(id, label = "qcViolin") {
     uiOutput(ns("violinMarkerUI")),
     plotOutput(ns("qcViolinPlot"))
   )
+
 }
 
 
-violinOutputFromPEO <- function(input, output, session, dataObj){
-
+#' Title
+#'
+#' @param input
+#' @param output
+#' @param PEO
+#' @param annotation
+#'
+#' @return
+#' @export
+#'
+#' @examples
+violinOutputFromPEO <- function(input, output, PEO, annotation){
+      callModule(violinOutput, id=PEO$objId, PEO$expressionData, annotation,
+                 facetList=PEO$subsetOptions, aggregateList = PEO$subsetOptions,
+                 colorConditions=PEO$subsetOptions)
 
 }
 

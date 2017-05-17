@@ -23,6 +23,8 @@ shinyServer(function(input, output, session) {
   source("gating.R",local = TRUE)
 
   ##Expression Modules
+  annotationPEO <- subsetModuleDCO(input, output, dataObj = PEO)
+  violinPEO <- violinOutputFromPEO(input, output, PEO, annotationPEO)
 
   ##Dot Plot Modules
   annotationGO2 <- subsetModuleDCO(input, output, dataObj = GO, objId=goObjId2)

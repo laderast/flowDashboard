@@ -24,7 +24,7 @@ shinyUI(dashboardPage(
                                     subsetModuleUICDO(GO)),
 
                   menuItem("Expression", tabName="PopExpression", selected=FALSE),
-                  conditionalPanel("input.sidebarmenu === 'PopExpression'",
+                 conditionalPanel("input.sidebarmenu === 'PopExpression'",
                                    subsetModuleUICDO(PEO)),
 
                   menuItem("dotPlots", tabName="DotPlot", selected=FALSE),
@@ -49,11 +49,11 @@ shinyUI(dashboardPage(
                                style="opacity: 0.8; background-color: white",
                                height=200,width="auto",
                                h4("Gating Scheme (draggable)"),
-                               imageOutput("gating")), selected=NULL
-                   )
-                 ),
+                               imageOutput("gating"))
 
-       tabItem(tabName = "PopExpression"),
+                 )),
+
+       tabItem(tabName = "PopExpression", violinUIFromCDO(PEO)),
       tabItem(tabName= "DotPlot", dotPlotUIFromGO(GO, objId = goObjId2))
 
       )

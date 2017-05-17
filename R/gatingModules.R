@@ -17,6 +17,7 @@ gatingModuleUI <- function(id, label = "gatingModule", sortConditions,
 
     ns <- NS(id)
 
+    box(
     tagList(
     h4("Filter Samples"),
     # checkboxGroupInput("panelDisplayPop", label="Show Panel",
@@ -32,7 +33,7 @@ gatingModuleUI <- function(id, label = "gatingModule", sortConditions,
                    h4("Gating Scheme (draggable)"),
                    imageOutput(ns("gating"))),
     br(), br(), br(), br(), br()
-    )
+    ))
 
 }
 
