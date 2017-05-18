@@ -310,7 +310,8 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 #' @export
 #'
 #' @examples
-qcHeatmapPlot <- function(data, height=NULL, width=NULL, addText=TRUE)
+qcHeatmapPlot <- function(data, height=NULL, width=NULL, addText=TRUE,
+                          xVar="idVar", yVar="variable")
 {
   #print(data)
 
@@ -360,7 +361,8 @@ qcHeatmapPlot <- function(data, height=NULL, width=NULL, addText=TRUE)
 
   out <- data %>%
     #filter(as.character(notation) %in% domX) %>%
-    ggvis(x=~idVar,y= ~variable, fill=~factor(round(zscore))) %>%
+    #ggvis(x=~idVar,y= ~variable, fill=~factor(round(zscore))) %>%
+    ggvis(fill=~factor(round(zscore)), prop("x", as.name(xVar)), prop("y", as.name(yVar))) %>%
     layer_rects(height = band(), width = band(), key:=~popKey) %>%
     scale_ordinal('fill',range = pal) %>%
     add_axis("x", properties = axis_props(labels = list(angle = 270)), orient="top",
