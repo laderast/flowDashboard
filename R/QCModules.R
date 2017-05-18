@@ -378,7 +378,7 @@ qcHeatmapPlot <- function(data, height=NULL, width=NULL, addText=TRUE)
 
     }
   #}
-
+    out
 }
 
 #' Title
