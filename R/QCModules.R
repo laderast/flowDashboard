@@ -320,15 +320,15 @@ qcHeatmapPlot <- function(data, height=NULL, width=NULL, addText=TRUE,
   #if(is.null(data)){data <- fakeData}
   #if( nrow(data) == 0){data <- fakeData}
 
-  domX <- unique(data$idVar)
+  domX <- unique(data[[xVar]])
   #names(domX) <- namesDomX
-  domY <- unique(as.character(data$variable))
+  domY <- unique(as.character(data[[yVar]]))
   #print(domY)
 
-  noSamples <- length(unique(data$idVar))
+  noSamples <- length(domX)
   #print(paste0("number samples: ",noSamples))
   #noMarkers <- length(unique(MedTable()$Var1))
-  noMarkers <- length(unique(data$variable))
+  noMarkers <- length(domY)
   #domX <- Samples()
   #medNotation <- as.character(unique(data$idVar))
   #domX <- domX[domX %in% medNotation]
