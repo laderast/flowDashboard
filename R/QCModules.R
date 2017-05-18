@@ -373,7 +373,7 @@ qcHeatmapPlot <- function(data, height=NULL, width=NULL, addText=TRUE)
     set_options(width =width, height = height)
 
     if(addText){
-    out <- layer_text(text:=~signif(med,digits=2), stroke:="darkgrey", align:="left",
+    out <- out %>% layer_text(text:=~signif(med,digits=2), stroke:="darkgrey", align:="left",
                baseline:="top", dx := 10, dy:=10)
 
     }
