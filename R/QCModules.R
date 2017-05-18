@@ -120,8 +120,10 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     #print(subdata)
 
     medTable <- summarise(group_by(subdata,variable,idVar),
-                          med = median(value), mean = mean(value), firstQ = quantile(value, probs=c(0.25)),
-                          thirdQ = quantile(value, probs=c(0.75)), min=min(value), max=max(value)) %>%
+                          med = median(value), mean = mean(value),
+                          firstQ = quantile(value, probs=c(0.25)),
+                          thirdQ = quantile(value, probs=c(0.75)),
+                          min=min(value), max=max(value)) %>%
 
       group_by(variable) %>%
       mutate(zscore = scale_this(med), popKey=paste0(idVar, "-", variable)) #%>%
@@ -395,7 +397,11 @@ qcHeatmapPlot <- function(data, height=NULL, width=NULL, addText=TRUE,
 #'
 #' @examples
 buildMedianTable <- function(data){
-  medTable <- summarise(group_by(data,variable,idVar),med = median(value)) %>%
+  medTable <- summarise(group_by(data,variable,idVar),med = median(value),
+                        mean = mean(value),
+                        firstQ = quantile(value, probs=c(0.25)),
+                        thirdQ = quantile(value, probs=c(0.75)),
+                        min=min(value), max=max(value)) %>%
     group_by(variable) %>%
     mutate(zscore = scale_this(med), popKey=paste0(idVar, "-", variable))
   medTable
