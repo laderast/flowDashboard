@@ -310,7 +310,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 #' @export
 #'
 #' @examples
-qcHeatmapPlot <- function(data, height=NULL, width=NULL)
+qcHeatmapPlot <- function(data, height=NULL, width=NULL, addText=TRUE)
 {
   #print(data)
 
@@ -358,7 +358,7 @@ qcHeatmapPlot <- function(data, height=NULL, width=NULL)
     width <- 60 * (noSamples)
   }
 
-  data %>%
+  out <- data %>%
     #filter(as.character(notation) %in% domX) %>%
     ggvis(x=~idVar,y= ~variable, fill=~factor(round(zscore))) %>%
     layer_rects(height = band(), width = band(), key:=~popKey) %>%
@@ -370,9 +370,13 @@ qcHeatmapPlot <- function(data, height=NULL, width=NULL)
     scale_nominal("y", padding = 0, points = FALSE, domain = domY) %>%
     # scale_nominal("x", padding = 0, points = FALSE, domain = namesDomX) %>%
     scale_nominal("x", padding = 0, points = FALSE, domain=domX) %>%
-    layer_text(text:=~signif(med,digits=2), stroke:="darkgrey", align:="left",
-               baseline:="top", dx := 10, dy:=10) %>%
     set_options(width =width, height = height)
+
+    if(addText){
+    out <- layer_text(text:=~signif(med,digits=2), stroke:="darkgrey", align:="left",
+               baseline:="top", dx := 10, dy:=10)
+
+    }
   #}
 
 }
