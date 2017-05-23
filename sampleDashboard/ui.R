@@ -40,9 +40,13 @@ shinyUI(dashboardPage(
                   selected=TRUE),
 
          tabItem(tabName = "GatingDash",
+                 #div(style = 'overflow-x: scroll',
+
                  box(
-                   absolutePanel(id="heatmap", h4("Population Heatmap (Click on box to see provenance)"),
-                               ggvisOutput("populationHeatmap"), top=250, left=0),
+                       absolutePanel(id="heatmap",
+                                     h4("Population Heatmap (Click on box to see provenance)"),
+                                     ggvisOutput("populationHeatmap"), top=250, left=0, fixed=FALSE)
+                       ),
 
                    absolutePanel(id="gating",draggable=TRUE,top=0, left=0,
                                fixed=FALSE,
@@ -51,7 +55,8 @@ shinyUI(dashboardPage(
                                h4("Gating Scheme (draggable)"),
                                imageOutput("gating"))
 
-                 )),
+                 #)
+                 ),
 
        tabItem(tabName = "PopExpression", violinUIFromCDO(PEO)),
       tabItem(tabName= "DotPlot", dotPlotUIFromGO(GO, objId = goObjId2))

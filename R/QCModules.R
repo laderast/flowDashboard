@@ -31,9 +31,10 @@ qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
 
   tagList(
     #uiOutput(ns("qcHeatmapUI")),
+    div(style = 'overflow-x: scroll',
     ggvisOutput(ns("qcHeatmap")),
     uiOutput(ns("qcViolinUI")),
-    plotOutput(ns("qcViolinPlot"), inline=TRUE)#,
+    plotOutput(ns("qcViolinPlot"), inline=TRUE))#,
           #hover= hoverOpts(ns("plotHover"),
           #delay = 500, delayType = "debounce")),
     #uiOutput(ns("hoverTip"))

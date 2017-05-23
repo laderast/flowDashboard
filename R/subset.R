@@ -86,7 +86,7 @@ subsetModule <- function(input, output, session, subsetOptionList, annotation){
 
     updateSelectInput(session, "subgroup",
                              choices= subsetChoice,
-                    selected= na.omit(subsetChoice))
+                    selected= subsetChoice)
   })
 
 
