@@ -29,15 +29,20 @@ shinyUI(dashboardPage(
 
                   menuItem("dotPlots", tabName="DotPlot", selected=FALSE),
                   conditionalPanel("input.sidebarmenu === 'DotPlot'",
-                                   subsetModuleUICDO(GO, objId = goObjId2))
+                                   subsetModuleUICDO(GO, objId = goObjId2)),
+
+                 menuItem("Waterfall", tabName="Waterfall", selected=FALSE),
+                 conditionalPanel("input.sidebarmenu === 'Waterfall'",
+                                  subsetModuleUICDO(GO, objId = goObjId3))
 
 
     )),
     dashboardBody(
       tabItems(
         tabItem(tabName="QCDash",
-                  qcModuleUIFromQCO(QCO),
-                  selected=TRUE),
+                box(
+                  absolutePanel(qcModuleUIFromQCO(QCO), fixed=FALSE),
+                  selected=TRUE)),
 
          tabItem(tabName = "GatingDash",
                  #div(style = 'overflow-x: scroll',
@@ -55,11 +60,11 @@ shinyUI(dashboardPage(
                                h4("Gating Scheme (draggable)"),
                                imageOutput("gating"))
 
-                 #)
                  ),
 
        tabItem(tabName = "PopExpression", violinUIFromCDO(PEO)),
-      tabItem(tabName= "DotPlot", dotPlotUIFromGO(GO, objId = goObjId2))
+      tabItem(tabName= "DotPlot", dotPlotUIFromGO(GO, objId = goObjId2)),
+      tabItem(tabName="Waterfall", waterfallOutputUIfromGO(GO, objId= goObjId3))
 
       )
     )

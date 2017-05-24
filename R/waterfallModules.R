@@ -24,6 +24,48 @@ waterfallOutputUI <- function(id, label="waterfall", populationChoices, colorCol
 
 }
 
+#' Title
+#'
+#' @param GO
+#' @param objId
+#'
+#' @return
+#' @export
+#'
+#' @examples
+waterfallOutputUIfromGO <- function(GO, objId = NULL){
+  if(is.null(objId)){
+    objId <- GO$objId
+  }
+
+  waterfallOutputUI(id = objId,label = objId,populationChoices = GO$populations,
+                    colorColumns = GO$sortOptions)
+}
+
+
+#' Title
+#'
+#' @param GO - a gating object
+#'
+#' @return - waterfallOutput module
+#' @export
+#'
+#' @examples
+waterfallOutputFromGO <- function(GO, annotation, objId=NULL){
+
+  if(is.null(objId)){
+    objId <- GO$objId
+  }
+
+  print(objId)
+
+  callModule(waterfallOutput, id=objId, data=GO$popTable, annotation=annotation,
+             populationChoices=GO$populations, colorColumns=GO$sortOptions,
+             mapVar = GO$mapVar)
+
+}
+
+
 #' Waterfall plot output module
 #'
 #' @param input - normal shiny input object
@@ -69,6 +111,7 @@ waterfallOutput <- function(input, output, session, data, annotation,
     dataOut <- data[annotation(), on=mapVar][!is.na(percentPop)][order(-percentPop)][Population == pop]
     dataOut$popKey <- factor(dataOut$popKey, levels=unique(dataOut$popKey))
 
+    print(head(dataOut))
     return(dataOut)
 
   })
@@ -80,9 +123,9 @@ waterfallOutput <- function(input, output, session, data, annotation,
     #print(population)
     outcomeVar <- input$colorVar
     #print(outcomeVar)
-    #print(popTable())
+    #print(head(popTable()))
 
-    out <- waterfallGraphic(popTable(), colorChoice=outcomeVar, annotation=annotation)
+    out <- waterfallPlot(popTable(), colorChoice=outcomeVar)
     #print(out)
     out
   })
@@ -123,45 +166,55 @@ waterfallOutput <- function(input, output, session, data, annotation,
     )
   })
 
-  #waterfall graphic expects a sorted table by population percentage
+}
 
-  waterfallGraphic <- function(data, annotation, colorChoice){
+#' Waterfall graphic expects a sorted table by population percentage
+#'
+#' @param data
+#' @param annotation
+#' @param colorChoice
+#'
+#' @return
+#' @export
+#'
+#' @examples
+waterfallPlot <- function(data, colorChoice){
 
-    levelOrd <- levels(data$name)
-    #annot <- annotation[FCSFiles %in% levelOrd]
-    #annot$FCSFiles <- factor(annot$FCSFiles, levels=levelOrd)
+  #TODO:
 
-    #annotation <- annotation[data][,c("popKey",covariateChoices),with=FALSE]
-    #print(annotation)
+  levelOrd <- levels(data$name)
+  #annot <- annotation[FCSFiles %in% levelOrd]
+  #annot$FCSFiles <- factor(annot$FCSFiles, levels=levelOrd)
 
-    #data <- data[annotation]
+  #annotation <- annotation[data][,c("popKey",covariateChoices),with=FALSE]
+  #print(annotation)
 
-    #x <- 1:nrow(data)
-    ##code from https://www.r-bloggers.com/waterfall-plots-what-and-how/
-    plot1 <- ggplot(data, aes_string(x="popKey", y="percentPop", fill=colorChoice, color=colorChoice)) +
-      #scale_fill_discrete(name="Treatmentnarm") +
-      scale_color_discrete(guide="none") +
-      #labs(list(title = "Waterfall plot for changes in QoL scores", x = NULL, y = "Change from baseline (%) in QoL score")) +
-      theme_classic() %+replace%
-      theme(axis.line.x = element_blank(), axis.text.x = element_blank(), axis.ticks.x = element_blank(),
-            axis.title.y = element_text(face="bold",angle=90)) +
-      #coord_cartesian(ylim = c(0,100)) +
-      geom_bar(stat="identity", width=0.7, position = position_dodge(width=0.4)) +
-      geom_bar(stat="identity", width=0.7, position = position_dodge(width=0.4))
+  #data <- data[annotation]
 
-
-    ##melt annotation
-
-    #annotMelt <- melt.data.table(annotation, id.vars="popKey")
-    #levels(annotMelt$FCSFiles) <- levelOrd
-    #c <- ggplot(data, aes_string(x=FCSFiles, y=variable))
-
-    plot1
+  #x <- 1:nrow(data)
+  ##code from https://www.r-bloggers.com/waterfall-plots-what-and-how/
+  plot1 <- ggplot(data, aes_string(x="popKey", y="percentPop", fill=colorChoice, color=colorChoice)) +
+    #scale_fill_discrete(name="Treatmentnarm") +
+    scale_color_discrete(guide="none") +
+    #labs(list(title = "Waterfall plot for changes in QoL scores", x = NULL, y = "Change from baseline (%) in QoL score")) +
+    theme_classic() %+replace%
+    theme(axis.line.x = element_blank(), axis.text.x = element_blank(), axis.ticks.x = element_blank(),
+          axis.title.y = element_text(face="bold",angle=90)) +
+    #coord_cartesian(ylim = c(0,100)) +
+    geom_bar(stat="identity", width=0.7, position = position_dodge(width=0.4)) +
+    geom_bar(stat="identity", width=0.7, position = position_dodge(width=0.4))
 
 
-  }
+  ##melt annotation
+
+  #annotMelt <- melt.data.table(annotation, id.vars="popKey")
+  #levels(annotMelt$FCSFiles) <- levelOrd
+  #c <- ggplot(data, aes_string(x=FCSFiles, y=variable))
+
+  plot1
+
 
 }
 
 
-#waterfallGraphic(popTable[Population=="CD13CD33"][order(percentPop)][annotation], )
+#waterfallPlot(popTable[Population=="CD13CD33"][order(percentPop)][annotation], )

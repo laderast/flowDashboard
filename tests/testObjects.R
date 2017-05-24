@@ -114,3 +114,6 @@ test_that("dotPlotTests",{
 test_that("gatingPlotTests",{
 
 })
+
+
+test_that("subsetTests", {})

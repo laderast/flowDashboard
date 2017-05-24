@@ -325,7 +325,7 @@ gatingObj <-
                               self$gates <- gates
                               self$mapVar <- mapVar
                               self$populations <-
-                                self$popTable$Population
+                                unique(self$popTable$Population)
 
                               invisible(self)
                             },

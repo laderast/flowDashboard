@@ -36,3 +36,4 @@ GO$objId <- "GObj"
 PEO$objId <- "PEObj"
 
 goObjId2 <- "GO2"
+goObjId3 <- "GO3"

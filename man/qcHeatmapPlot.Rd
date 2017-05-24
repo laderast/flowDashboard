@@ -4,7 +4,8 @@
 \alias{qcHeatmapPlot}
 \title{Title}
 \usage{
-qcHeatmapPlot(data)
+qcHeatmapPlot(data, height = NULL, width = NULL, addText = TRUE,
+  xVar = "idVar", yVar = "variable")
 }
 \arguments{
 \item{data}{}

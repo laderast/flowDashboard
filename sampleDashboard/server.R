@@ -36,4 +36,7 @@ shinyServer(function(input, output, session) {
                              facetOrderList = GO$subsetOptionList,
                              mapVar = GO$mapVar)
 
+  annotationGO3 <- subsetModuleDCO(input, output, dataObj = GO, objId = goObjId3)
+  waterfallMod <- waterfallOutputFromGO(GO, annotation=annotationGO3, objId = goObjId3)
+
 })

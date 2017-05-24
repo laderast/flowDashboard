@@ -10,6 +10,8 @@ output$gating <- renderImage({
 
 populationHeatmap <- reactive({
 
+  #need namespace reference here
+
   popTp <- function(x){
     if(is.null(x)) return(NULL)
     plotObj[["gating"]] <- paste0(GO$imageDir, x$idVar, ".png")
