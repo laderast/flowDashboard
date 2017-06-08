@@ -30,17 +30,24 @@ subsetModuleUICDO <-function(dataObj, objId=NULL){
 subsetModuleUI <- function(id, subsetOptionList, sortOptions, subsetOptions){
   ns <- NS(id)
 
-  tagList(
+    outList <- list(
     selectInput(ns("categoryNameSubset"), "Select Variable to Subset On",
                 choices=subsetOptions,
                 selected=subsetOptions[1]),
     selectInput(ns("subgroup"), "Select Subset", choices =
                      subsetOptionList[[1]], selectize = TRUE,
-                       selected=subsetOptionList[[1]], multiple=TRUE),
-    selectInput(ns("sortVariable"), label="Select Sort Condition", choices=sortOptions)
-  )
+                       selected=subsetOptionList[[1]], multiple=TRUE))
+
+    if(!is.null(sortOptions)){
+          outList <- list(outList,
+                       selectInput(ns("sortVariable"), label="Select Sort Condition",
+                choices=sortOptions))
+    }
+
+    tagList(outList)
 
 }
+
 
 #' Title
 #'
@@ -92,10 +99,14 @@ subsetModule <- function(input, output, session, subsetOptionList, annotation){
 
   annotationOut <- reactive({
 
-    validate(need(input$subgroup,"Need Subgroups"),
-             need(input$sortVariable,"Need Sort Variable"))
+    validate(need(input$subgroup,"Need Subgroups"))#,
+             #need(input$sortVariable,"Need Sort Variable"))
 
-    sortVariable <- input$sortVariable
+    sortVariable <- NULL
+
+    if(!is.null(input$sortVariable)){
+      sortVariable <- input$sortVariable
+    }
     #returnIDs <- list(subsetList=input$subgroup,subsetID=categoryName,
     #                sortID = sortVariable)
 
@@ -110,13 +121,17 @@ subsetModule <- function(input, output, session, subsetOptionList, annotation){
 
     #print(filterExpression)
 
-    annotationSubset <- annotation %>% filter_(.dots=filterExpression) %>%
-      arrange_(sortVariable)
+    annotationSubset <- annotation %>% filter_(.dots=filterExpression)
+
+    if(!is.null(sortVariable)){
+          annotationSubset <- annotationSubset %>%
+            arrange_(sortVariable)
+    }
 
     #annotationSubset <- annotation[as.name(categoryName) %in% input$subgroup][order(as.name(categoryName))]
     #print(head(annotationSubset))
     outTable <- data.table(annotationSubset)
-    setkeyv(outTable, c(sortVariable, "FCSFiles"))
+    #setkeyv(outTable, c(sortVariable, "FCSFiles"))
 
     return(outTable)
   })

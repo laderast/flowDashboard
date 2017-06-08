@@ -23,20 +23,33 @@ shinyServer(function(input, output, session) {
   source("gating.R",local = TRUE)
 
   ##Expression Modules
-  annotationPEO <- subsetModuleDCO(input, output, dataObj = PEO)
+  #annotationPEO <- subsetModuleDCO(input, output, dataObj = PEO)
+  annotationPEO <- reactive({PEO$annotation})
   violinPEO <- violinOutputFromPEO(input, output, PEO, annotationPEO)
 
+  #violinPEO <- violinOutput(data=)
+
   ##Dot Plot Modules
-  annotationGO2 <- subsetModuleDCO(input, output, dataObj = GO, objId=goObjId2)
-  # dotPlotMod <- dotplotOutputFromGO(input, output,
-  #                                   GO2, annotationGO2)
+  #annotationGO2 <- subsetModuleDCO(input, output, dataObj = GO, objId=goObjId2)
+    #dotPlotMod <- dotplotOutputFromGO(input, output,
+    #                                  GO, annotation = GO$annotation)
+
+  annotationGO2 <- reactive({GO$annotation})
 
   dotPlotMod <- callModule(dotPlotOutput, id=goObjId2, data=GO$popTable,
-                             annotation=annotationGO2,
-                             facetOrderList = GO$subsetOptionList,
-                             mapVar = GO$mapVar)
+                              annotation=annotationGO2,
+                              facetOrderList = GO$subsetOptionList,
+                              mapVar = GO$mapVar)
 
-  annotationGO3 <- subsetModuleDCO(input, output, dataObj = GO, objId = goObjId3)
-  waterfallMod <- waterfallOutputFromGO(GO, annotation=annotationGO3, objId = goObjId3)
+  #annotationGO3 <- subsetModuleDCO(input, output, dataObj = GOadam)
+  annotationGO3 <- reactive({
+    GOadam$annotation
+  })
+
+  waterfallMod <- waterfallOutputFromGO(GOadam, annotation=annotationGO3)
+
+  #annotationGO4 <- subsetModuleDCO(input, output, dataObj = GOCD4CD8)
+  #waterfallMod2 <- waterfallOutputFromGO(GOCD4CD8, annotation=annotationGO4)
+
 
 })

@@ -18,7 +18,8 @@ waterfallOutputUI <- function(id, label="waterfall", populationChoices, colorCol
                 selected = colorColumns[1]),
     #uiOutput(ns("waterfallDynamicUI")),
     plotOutput(ns("waterfallPlot"), hover = hoverOpts(ns("plotHover"), delay = 100, delayType = "debounce")),
-    uiOutput(ns("hoverTip"))
+    uiOutput(ns("hoverTip")),
+    plotOutput(ns("annotationHeatmap"))
 
   )
 
@@ -103,11 +104,13 @@ waterfallOutput <- function(input, output, session, data, annotation,
     #colorVar <- input$colorVar
     pop <- input$population
     #covariates <- input$covariates
-    key <- key(data)
+    #key <- key(data)
 
     #annotOut <- annotation[, .SD, .SDcols = covariates]
     #annotOut <- annotation
     #sort data
+    print(nrow(annotation))
+
     dataOut <- data[annotation(), on=mapVar][!is.na(percentPop)][order(-percentPop)][Population == pop]
     dataOut$popKey <- factor(dataOut$popKey, levels=unique(dataOut$popKey))
 
@@ -123,11 +126,21 @@ waterfallOutput <- function(input, output, session, data, annotation,
     #print(population)
     outcomeVar <- input$colorVar
     #print(outcomeVar)
-    #print(head(popTable()))
+    #print(nrow(popTable()))
 
     out <- waterfallPlot(popTable(), colorChoice=outcomeVar)
     #print(out)
     out
+  })
+
+  output$annotationHeatmap <- renderPlot({
+    annotationCols <- colnames(annotation)
+
+    gather_cols <- annotationCols[!annotationCols %in% c(mapVar)]
+
+    annotation() %>%
+      gather_(key_col="variable", value_col="value", gather_cols=gather_cols)
+
   })
 
   output$hoverTip <- renderUI({
@@ -201,7 +214,7 @@ waterfallPlot <- function(data, colorChoice){
     theme(axis.line.x = element_blank(), axis.text.x = element_blank(), axis.ticks.x = element_blank(),
           axis.title.y = element_text(face="bold",angle=90)) +
     #coord_cartesian(ylim = c(0,100)) +
-    geom_bar(stat="identity", width=0.7, position = position_dodge(width=0.4)) +
+#    geom_bar(stat="identity", width=0.7, position = position_dodge(width=0.4)) +
     geom_bar(stat="identity", width=0.7, position = position_dodge(width=0.4))
 
 
@@ -212,6 +225,15 @@ waterfallPlot <- function(data, colorChoice){
   #c <- ggplot(data, aes_string(x=FCSFiles, y=variable))
 
   plot1
+
+
+}
+
+heatmapAnnotation <- function(annotation, ids, mapVar){
+
+  annotation %>% gather() %>%
+    ggplot(aes(x=mapVar, y=factor(annotationCol))) +
+    geom_tile()
 
 
 }

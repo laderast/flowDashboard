@@ -205,8 +205,13 @@ commonDataObj <-
 
                         if(classObj[1] == "gatingObj"){
                                   self$popTable <- data
-                                  if(!is.null(imageDir)){
-                                    if(!dir.exists(self$imageDir)){
+                                  if(is.null(self$imageDir)){
+                                    warning("image dir is NULL")
+                                  }
+
+                                  if(!is.null(self$imageDir)){
+                                    imageDir <- self$imageDir
+                                    if(!dir.exists(imageDir)){
                                       warning("image dir doesn't exist")
                                     }
                                   }
@@ -311,21 +316,27 @@ gatingObj <-
                               checkIntegrity=TRUE, reconcile=TRUE){
 
                               if(checkIntegrity){
-                                outList <- checkIntegrity(annotation, popTable, mapVar, reconcile)
+                                outList <- checkIntegrity(annotation, popTable,
+                                                          mapVar, reconcile)
                                 annotation <- outList$annotation
                                 popTable <- outList$data
                               }
+
                               if(is.null(mapVar)){
                                 mapVar <- c("name"="FCSFiles")
                               }
+
+                              pops <- unique(popTable$Population)
+                              #print(pops)
+
+                              #popTable$Population <- factor(self$popTable$Population, levels=pops)
 
                               self$annotation <- annotation
                               self$popTable <- popTable
                               self$imageDir <- imageDir
                               self$gates <- gates
                               self$mapVar <- mapVar
-                              self$populations <-
-                                unique(self$popTable$Population)
+                              self$populations <- pops
 
                               invisible(self)
                             },
@@ -376,10 +387,12 @@ populationExpressionObj <-
                                         mapVar <- c("idVar"="FCSFiles")
                                       }
 
+                                       populations <- unique(expressionData$Population)
                                        self$annotation <- annotation
                                        self$expressionData <- expressionData
                                        self$mapVar <- mapVar
                                        self$markers <- unique(expressionData$variable)
+                                       self$populations <- populations
 
                                        invisible(self)
 
@@ -399,7 +412,7 @@ populationExpressionObj <-
                   expressionData = NULL,
                   mapVar=NULL,
                   markers=NULL,
-                  population=NULL)
+                  populations=NULL)
 
           )
 

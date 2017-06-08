@@ -152,7 +152,7 @@ popHeatmap <- function(data, annotation, mapVar=c("name"="FCSFiles")){
 
   #pal <- c(Blue(3), "#E5E5E5", Orange(6))
 
-  data[Population %in% displayNodes] %>%
+  dataNew[Population %in% displayNodes] %>%
     #mutate()
     #filter(as.character(Population) %in% displayNodes) %>%
     ggvis(x=~name,y= ~Population, fill=~factor(round(zscore))) %>%
@@ -170,5 +170,51 @@ popHeatmap <- function(data, annotation, mapVar=c("name"="FCSFiles")){
     layer_text(text:=~signif(percentPop,digits=2), stroke:="darkgrey", align:="left",
                baseline:="top", dx := 5, dy:=5) %>%
     set_options(width= max(c(60 * (noSamples), 600)), height= 60 * (noMarkers))
+
+}
+
+
+
+#' Title
+#'
+#' @param data
+#' @param annotation
+#' @param mapVar
+#'
+#' @return
+#' @export
+#'
+#' @examples
+popHeatmapGG <- function(data, annotation, mapVar=c("name"="FCSFiles")){
+
+  dataNew <- data[annotation, on=mapVar]
+  dataNew <- data[!is.na(percentPop)]
+
+  domY <- unique(as.character(data[["Population"]]))
+  displayNodes <- domY
+  noMarkers <- length(displayNodes)
+
+  domX <- unique(as.character(data[["name"]]))
+  noSamples <- length(domX)
+
+  Green <- colorRampPalette(c("green","green4"))
+  Red <- colorRampPalette(c("red4","red"))
+
+  levs <- sort(unique(round(data$zscore)))
+
+  #print(levs)
+
+  belowAverage <- length(which(levs < 0))
+  aboveAverage <- length(which(levs > 0))
+
+  pal <- c(Green(belowAverage), "000000", Red(aboveAverage))
+
+  #pal <- c(Blue(3), "#E5E5E5", Orange(6))
+
+  dataNew[Population %in% displayNodes] %>%
+    mutate(fillVals = round(zscore)) %>%
+    ggplot(aes_string(x="name", y="Population", fill="fillVals")) +
+    geom_tile(aes(colour="black")) + scale_fill_gradient2(low = "Blue", mid="White", high = "Orange") +
+    scale_y_discrete()
 
 }

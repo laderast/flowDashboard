@@ -116,4 +116,10 @@ test_that("gatingPlotTests",{
 })
 
 
+test_that("violinOutTests", {
+  violinOut(PEO$expressionData[PEO$annotation, on=PEO$mapVar],population="live",
+            marker="CD4", colorVar = "Gender")
+
+})
+
 test_that("subsetTests", {})

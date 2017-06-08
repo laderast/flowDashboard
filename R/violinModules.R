@@ -1,8 +1,6 @@
 #' @export
 violinUIFromCDO<- function(dataObj){
-
-  violinUI(id=dataObj$id, label="violin")
-
+  violinUI(id=dataObj$objId, label="violin")
 }
 
 #' Title
@@ -26,7 +24,7 @@ violinUI <- function(id, label = "qcViolin") {
 
   tagList(
     uiOutput(ns("violinMarkerUI")),
-    plotOutput(ns("qcViolinPlot"))
+    plotOutput(ns("violinPlot"))
   )
 
 }
@@ -44,9 +42,11 @@ violinUI <- function(id, label = "qcViolin") {
 #'
 #' @examples
 violinOutputFromPEO <- function(input, output, PEO, annotation){
-      callModule(violinOutput, id=PEO$objId, PEO$expressionData, annotation,
-                 facetList=PEO$subsetOptions, aggregateList = PEO$subsetOptions,
-                 colorConditions=PEO$subsetOptions)
+      callModule(violinOutput, id=PEO$objId, data=PEO$expressionData,
+                 annotation=annotation,
+                 colorConditions=PEO$subsetOptions,
+                 markers=as.character(PEO$markers),
+                 mapVar = PEO$mapVar)
 
 }
 
@@ -65,7 +65,7 @@ violinOutputFromPEO <- function(input, output, PEO, annotation){
 violinOutput <- function(input, output, session, data, annotation, facetList=NULL,
                          aggregateList=NULL, markers=NULL,
                          colorConditions=NULL,
-                         mapVar=c("sample"="FCSFiles")) {
+                         mapVar=c("idVar"="FCSFiles")) {
 
   output$violinMarkerUI <- renderUI({
     ns <- session$ns
@@ -101,7 +101,9 @@ violinOutput <- function(input, output, session, data, annotation, facetList=NUL
                               selected=facetList[[1]]))
     }
 
-    return(tagList(tL))
+    #print(tagList(tL))
+
+    return(tL)
 
   })
 
@@ -132,6 +134,7 @@ violinOutput <- function(input, output, session, data, annotation, facetList=NUL
     marker <- input$markers
     colorVar <- input$colorVar
     aggregateVar <- input$aggregateVar
+    population <- input$population
 
     if(!is.null(facetList)) {facets <- input$facet}
     else {facets <- NULL}
@@ -140,7 +143,8 @@ violinOutput <- function(input, output, session, data, annotation, facetList=NUL
 
     #dataOut$idVar <- factor(dataOut$idVar, levels = )
 
-    violinOut(dataOut, facets, colorVar, aggregateVar)
+    violinPlot(dataOut, facets, colorVar, aggregateVar,
+              marker=marker, population=population)
   })
 }
 
@@ -150,14 +154,17 @@ violinOutput <- function(input, output, session, data, annotation, facetList=NUL
 #' @param facets
 #' @param colorVar
 #' @param aggregateVar
+#' @param population
+#' @param marker
 #'
 #' @return
 #' @export
 #'
 #' @examples
-violinOut <- function(data, facets=NULL, colorVar=NULL, aggregateVar=NULL){
+violinPlot <- function(data, facets=NULL, colorVar=NULL, aggregateVar=NULL,
+                      population, marker){
 
-  marker <- unique(data$variable)[1]
+  #marker <- unique(data$variable)[1]
   plotTitle <- marker
 
   if(!is.null(population)){

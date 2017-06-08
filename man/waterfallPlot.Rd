@@ -4,7 +4,7 @@
 \alias{waterfallPlot}
 \title{Waterfall graphic expects a sorted table by population percentage}
 \usage{
-waterfallPlot(data, annotation, colorChoice)
+waterfallPlot(data, colorChoice)
 }
 \arguments{
 \item{colorChoice}{}

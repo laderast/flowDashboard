@@ -20,20 +20,24 @@ shinyUI(dashboardPage(
                                    subsetModuleUICDO(QCO)),
 
                    menuItem("Gating", tabName="GatingDash", selected = FALSE),
-                   conditionalPanel("input.sidebarmenu === 'GatingDash'",
-                                    subsetModuleUICDO(GO)),
+                   #conditionalPanel("input.sidebarmenu === 'GatingDash'",
+                  #                  subsetModuleUICDO(GO)),
 
                   menuItem("Expression", tabName="PopExpression", selected=FALSE),
-                 conditionalPanel("input.sidebarmenu === 'PopExpression'",
-                                   subsetModuleUICDO(PEO)),
+                 #conditionalPanel("input.sidebarmenu === 'PopExpression'",
+                  #                 subsetModuleUICDO(PEO)),
 
                   menuItem("dotPlots", tabName="DotPlot", selected=FALSE),
-                  conditionalPanel("input.sidebarmenu === 'DotPlot'",
-                                   subsetModuleUICDO(GO, objId = goObjId2)),
+                  #conditionalPanel("input.sidebarmenu === 'DotPlot'",
+                  #                 subsetModuleUICDO(GO, objId = goObjId2)),
 
-                 menuItem("Waterfall", tabName="Waterfall", selected=FALSE),
-                 conditionalPanel("input.sidebarmenu === 'Waterfall'",
-                                  subsetModuleUICDO(GO, objId = goObjId3))
+                 menuItem("Waterfall1", tabName="Waterfall", selected=FALSE)#,
+                 #conditionalPanel("input.sidebarmenu === 'Waterfall1'",
+                  #                subsetModuleUICDO(GOadam))#,
+
+#                 menuItem("Waterfall2", tabName="Waterfall2", selected=FALSE),
+#                 conditionalPanel("input.sidebarmenu === 'Waterfall2'",
+#                                  subsetModuleUICDO(GOCD4CD8))
 
 
     )),
@@ -41,7 +45,7 @@ shinyUI(dashboardPage(
       tabItems(
         tabItem(tabName="QCDash",
                 box(
-                  absolutePanel(qcModuleUIFromQCO(QCO), fixed=FALSE),
+                  absolutePanel(qcModuleUIFromQCO(QCO)),
                   selected=TRUE)),
 
          tabItem(tabName = "GatingDash",
@@ -50,21 +54,23 @@ shinyUI(dashboardPage(
                  box(
                        absolutePanel(id="heatmap",
                                      h4("Population Heatmap (Click on box to see provenance)"),
-                                     ggvisOutput("populationHeatmap"), top=250, left=0, fixed=FALSE)
-                       ),
+                                     ggvisOutput("populationHeatmap"), top=250, left=0, fixed=FALSE),
+
 
                    absolutePanel(id="gating",draggable=TRUE,top=0, left=0,
                                fixed=FALSE,
                                style="opacity: 0.8; background-color: white",
                                height=200,width="auto",
                                h4("Gating Scheme (draggable)"),
-                               imageOutput("gating"))
+                               imageOutput("gating")), width = 10
+                    )
 
                  ),
 
        tabItem(tabName = "PopExpression", violinUIFromCDO(PEO)),
-      tabItem(tabName= "DotPlot", dotPlotUIFromGO(GO, objId = goObjId2)),
-      tabItem(tabName="Waterfall", waterfallOutputUIfromGO(GO, objId= goObjId3))
+      tabItem(tabName= "DotPlot", box(dotPlotUIFromGO(GO, objId = goObjId2))),
+      tabItem(tabName="Waterfall", box(waterfallOutputUIfromGO(GOadam)))#,
+
 
       )
     )
