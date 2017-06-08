@@ -43,10 +43,10 @@ shinyServer(function(input, output, session) {
 
   #annotationGO3 <- subsetModuleDCO(input, output, dataObj = GOadam)
   annotationGO3 <- reactive({
-    GOadam$annotation
+    GO$annotation
   })
 
-  waterfallMod <- waterfallOutputFromGO(GOadam, annotation=annotationGO3)
+  waterfallMod <- waterfallOutputFromGO(GO, annotation=annotationGO3)
 
   #annotationGO4 <- subsetModuleDCO(input, output, dataObj = GOCD4CD8)
   #waterfallMod2 <- waterfallOutputFromGO(GOCD4CD8, annotation=annotationGO4)

@@ -1,4 +1,5 @@
 library(flowDashboard)
+library(tidyverse)
 plotObj <- reactiveValues(gating="")
 wd <- paste0(getwd(), "/data/")
 imageDir <- paste0(wd, "/gating/image/")

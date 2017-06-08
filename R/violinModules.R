@@ -74,7 +74,7 @@ violinOutput <- function(input, output, session, data, annotation, facetList=NUL
     populations <- unique(as.character(data$Population))
 
     if(length(populations) > 1){
-      tL <- c(tL, selectInput(ns("populations"), "Select Population", choices=populations,
+      tL <- list(tL, selectInput(ns("populations"), "Select Population", choices=populations,
                         selected = populations[[1]]))
     }
 
@@ -83,27 +83,25 @@ violinOutput <- function(input, output, session, data, annotation, facetList=NUL
                     decreasing = TRUE)
     }
 
-    tL <- c(tL, selectInput(ns("markers"), "Select Markers", choices = markers,
+    tL <- list(tL, selectInput(ns("markers"), "Select Markers", choices = markers,
                     selected = markers[1]))
 
     if(!is.null(colorConditions)){
-      tL <- c(tL, selectInput(ns("colorVar"), "Select Condition to Color", choices = colorConditions,
+      tL <- list(tL, selectInput(ns("colorVar"), "Select Condition to Color", choices = colorConditions,
                               selected = colorConditions[1]))
     }
 
     if(!is.null(aggregateList)){
-      tL <- c(tL, selectInput(ns("aggregateVar"), "Select Condition to Aggregate On", choices =
+      tL <- list(tL, selectInput(ns("aggregateVar"), "Select Condition to Aggregate On", choices =
                                 aggregateList, selected = aggregateList[1]))
     }
 
     if(!is.null(facetList)){
-      tL <- c(tL, selectInput(ns("facet"), "Select Variable to Facet", choices=facetList,
+      tL <- list(tL, selectInput(ns("facet"), "Select Variable to Facet", choices=facetList,
                               selected=facetList[[1]]))
     }
 
-    #print(tagList(tL))
-
-    return(tL)
+    return(tagList(tL))
 
   })
 

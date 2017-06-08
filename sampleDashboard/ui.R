@@ -67,10 +67,9 @@ shinyUI(dashboardPage(
 
                  ),
 
-       tabItem(tabName = "PopExpression", violinUIFromCDO(PEO)),
-      tabItem(tabName= "DotPlot", box(dotPlotUIFromGO(GO, objId = goObjId2))),
-      tabItem(tabName="Waterfall", box(waterfallOutputUIfromGO(GOadam)))#,
-
+      tabItem(tabName = "PopExpression", box(violinUIFromCDO(PEO)), width=10),
+      tabItem(tabName= "DotPlot", box(dotPlotUIFromGO(GO, objId = goObjId2)), width=10),
+      tabItem(tabName="Waterfall", box(waterfallOutputUIfromGO(GO)), width=10)#,
 
       )
     )

@@ -10,7 +10,7 @@ Description: This package contains shiny modules to visualize gating results
     GatingSet results to representations for experiment annotation, QC, gating
     hierarchies, and marker expression.
 Depends:
-    rex,
+    tidyr,
     dplyr,
     shiny,
     data.table,
