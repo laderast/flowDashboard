@@ -44,9 +44,9 @@ shinyUI(dashboardPage(
     dashboardBody(
       tabItems(
         tabItem(tabName="QCDash",
-                box(
+                #box(
                   absolutePanel(qcModuleUIFromQCO(QCO)),
-                  selected=TRUE)),
+                  selected=TRUE), #),
 
          tabItem(tabName = "GatingDash",
                  #div(style = 'overflow-x: scroll',

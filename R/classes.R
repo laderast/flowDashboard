@@ -149,7 +149,8 @@ commonDataObj <-
                                     sortNotInAnnotation, collapse="\n")
                                 )
                               }
-                        }
+                           }
+                           annotation <- data.table(annotation)
 
                         subsetOptionList <- as.list(
                                 annotation[,subsetOptions, with=FALSE])
