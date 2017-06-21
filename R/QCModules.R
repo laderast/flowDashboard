@@ -222,8 +222,8 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
     #facetOrder
 
-    print(head(dataOut))
-    print(levels(dataOut$idVar))
+    #print(head(dataOut))
+    #print(levels(dataOut$idVar))
 
     #dataOut <- dataOut[variable %in% Marker]
 

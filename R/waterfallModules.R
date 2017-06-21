@@ -109,12 +109,12 @@ waterfallOutput <- function(input, output, session, data, annotation,
     #annotOut <- annotation[, .SD, .SDcols = covariates]
     #annotOut <- annotation
     #sort data
-    print(nrow(annotation))
+    #print(nrow(annotation))
 
     dataOut <- data[annotation(), on=mapVar][!is.na(percentPop)][order(-percentPop)][Population == pop]
     dataOut$popKey <- factor(dataOut$popKey, levels=unique(dataOut$popKey))
 
-    print(head(dataOut))
+    #print(head(dataOut))
     return(dataOut)
 
   })

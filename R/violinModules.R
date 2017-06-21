@@ -203,7 +203,7 @@ violinPlot <- function(data, facets=NULL, colorVar=NULL, aggregateVar=NULL,
     ggtitle(plotTitle)
 
   if(facetForm != ""){
-    print(facetForm)
+    #print(facetForm)
     out <- out + facet_grid(facets=facetForm, scales="free")
   }
     #scale_y_flowJo_biexp() +

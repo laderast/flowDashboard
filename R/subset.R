@@ -89,7 +89,9 @@ subsetModule <- function(input, output, session, subsetOptionList, annotation){
     validate(need(input$categoryNameSubset, "needs category"))
     categoryName <- input$categoryNameSubset
     #print(categoryName)
-    subsetChoice <- subsetOptionList[categoryName]
+    subsetChoice <- subsetOptionList[[categoryName]]
+
+    print(subsetChoice)
 
     updateSelectInput(session, "subgroup",
                              choices= subsetChoice,

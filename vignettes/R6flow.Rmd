@@ -1,0 +1,29 @@
+---
+title: "flowDashboard R6 objects"
+author: "Ted Laderas"
+date: "6/16/2017"
+output: 
+  html_document:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R6 Objects for `flowDashboard`
+
+In order to enable comparison of flow cytometry data across samples, we have developed three objects that enable different portions of the analysis in our Shiny Dashboard.
+
+- `qcFlowObj`
+- `gatingObj`
+- `populationExpressionObj`
+
+Why R6 objects? We wanted to make the data easily comparable and reusable. Putting data into these objects allows for rapid deployment of a comparative flow analysis dashboard. Once the objects are built, they can be loaded into a Shiny dashboard with relatively little work.
+
+## Basic Architecture of Objects
+
+All three data objects have an `annotation` slot, which holds a `data.table`. This `annotation` slot allows for subsetting the data according to covariates in the data. There is a constraint on these objects that forces the `annotation` and associated data table (`qcData`, `popTable`, and `expressionData`) to have sample ids that reconcile with each other. The mapping variable between these two `data.table`s must be specified as a named vector (for example: `c("idVar"="FCSFiles").
+
+## Setting Display Options on `flowDashboard` Objects
+
