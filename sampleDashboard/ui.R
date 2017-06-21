@@ -24,12 +24,12 @@ shinyUI(dashboardPage(
                   #                  subsetModuleUICDO(GO)),
 
                   menuItem("Expression", tabName="PopExpression", selected=FALSE),
-                 #conditionalPanel("input.sidebarmenu === 'PopExpression'",
-                  #                 subsetModuleUICDO(PEO)),
+                 conditionalPanel("input.sidebarmenu === 'PopExpression'",
+                                   subsetModuleUICDO(PEO)),
 
                   menuItem("dotPlots", tabName="DotPlot", selected=FALSE),
-                  #conditionalPanel("input.sidebarmenu === 'DotPlot'",
-                  #                 subsetModuleUICDO(GO, objId = goObjId2)),
+                  conditionalPanel("input.sidebarmenu === 'DotPlot'",
+                                   subsetModuleUICDO(GO, objId = goObjId2)),
 
                  menuItem("Waterfall1", tabName="Waterfall", selected=FALSE)#,
                  #conditionalPanel("input.sidebarmenu === 'Waterfall1'",

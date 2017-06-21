@@ -91,7 +91,7 @@ subsetModule <- function(input, output, session, subsetOptionList, annotation){
     #print(categoryName)
     subsetChoice <- subsetOptionList[[categoryName]]
 
-    print(subsetChoice)
+    #print(subsetChoice)
 
     updateSelectInput(session, "subgroup",
                              choices= subsetChoice,

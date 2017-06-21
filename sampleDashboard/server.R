@@ -23,18 +23,18 @@ shinyServer(function(input, output, session) {
   source("gating.R",local = TRUE)
 
   ##Expression Modules
-  #annotationPEO <- subsetModuleDCO(input, output, dataObj = PEO)
-  annotationPEO <- reactive({PEO$annotation})
+  annotationPEO <- subsetModuleDCO(input, output, dataObj = PEO)
+  #annotationPEO <- reactive({PEO$annotation})
   violinPEO <- violinOutputFromPEO(input, output, PEO, annotationPEO)
 
   #violinPEO <- violinOutput(data=)
 
   ##Dot Plot Modules
-  #annotationGO2 <- subsetModuleDCO(input, output, dataObj = GO, objId=goObjId2)
+  annotationGO2 <- subsetModuleDCO(input, output, dataObj = GO, objId=goObjId2)
     #dotPlotMod <- dotplotOutputFromGO(input, output,
     #                                  GO, annotation = GO$annotation)
 
-  annotationGO2 <- reactive({GO$annotation})
+  #annotationGO2 <- reactive({GO$annotation})
 
   dotPlotMod <- callModule(dotPlotOutput, id=goObjId2, data=GO$popTable,
                               annotation=annotationGO2,
