@@ -15,15 +15,15 @@ populationHeatmap <- reactive({
   popTp <- function(x){
     if(is.null(x)) return(NULL)
     plotObj[["gating"]] <- paste0(GO$imageDir, x$idVar, ".png")
-    print("")
+    return(NULL)
   }
 
   #annotationGOOut <- annotationGO()
-  annotationGOOut <- GO$annotation
+  #annotationGOOut <- GO$annotation
   #print(head(annotationGOOut))
 
   #mapVars=c("name"="FCSFiles")
-  flowDashboard::popHeatmap(data = GO$popTable, annotation = annotationGOOut,
+  flowDashboard::popHeatmap(data = GO$popTable, annotation = annotationGO(),
                             mapVar = GO$mapVar) %>%
     add_tooltip(popTp,on="click")
 

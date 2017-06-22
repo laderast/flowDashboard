@@ -6,3 +6,6 @@ imageDir <- paste0(wd, "/gating/image/")
 
 addResourcePath("data","data")
 load("data/objects.RData")
+GO$imageDir <- paste0(wd, "/gating/image/")
+
+print(GO$imageDir)

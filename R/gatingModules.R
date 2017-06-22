@@ -169,7 +169,7 @@ popHeatmap <- function(data, annotation, mapVar=c("name"="FCSFiles")){
     scale_nominal("x", padding = 0, points = FALSE) %>%
     layer_text(text:=~signif(percentPop,digits=2), stroke:="darkgrey", align:="left",
                baseline:="top", dx := 5, dy:=5) %>%
-    set_options(width= max(c(60 * (noSamples), 600)), height= 60 * (noMarkers))
+    set_options(width= max(c(60 * (noSamples), 600)), height= max(60 *(noMarkers), 700))
 
 }
 
