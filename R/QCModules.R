@@ -31,9 +31,14 @@ qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
 
   tagList(
     #uiOutput(ns("qcHeatmapUI")),
+    box(
     ggvisOutput(ns("qcHeatmap")),
-    uiOutput(ns("qcViolinUI")),
-    plotOutput(ns("qcViolinPlot"), inline=TRUE)#,
+      width=12),
+    box(
+      uiOutput(ns("qcViolinUI")),
+      plotOutput(ns("qcViolinPlot")),
+
+      width = 12)#,
           #hover= hoverOpts(ns("plotHover"),
           #delay = 500, delayType = "debounce")),
     #uiOutput(ns("hoverTip"))

@@ -23,6 +23,10 @@ shinyUI(dashboardPage(
                    conditionalPanel("input.sidebarmenu === 'GatingDash'",
                                    subsetModuleUICDO(GO)),
 
+                  menuItem("GatingGG", tabName="GatingFromGO", selected = FALSE),
+                  conditionalPanel("input.sidebarmenu === 'GatingFromGO'",
+                                   subsetModuleUICDO(GO)),
+
                   menuItem("Expression", tabName="PopExpression", selected=FALSE),
                  conditionalPanel("input.sidebarmenu === 'PopExpression'",
                                    subsetModuleUICDO(PEO)),
@@ -48,9 +52,14 @@ shinyUI(dashboardPage(
                   absolutePanel(qcModuleUIFromQCO(QCO)),
                   selected=TRUE), #),
 
+        tabItem(tabName = "GatingFromGO",
+                #div(style= 'overflow-x: scroll',
+                    gatingModuleUIFromGO(GO)
+                #    )
+        ),
 
          tabItem(tabName = "GatingDash",
-                 #div(style = 'overflow-x: scroll',
+                 div(style = 'overflow-x: scroll',
                  box(
                    absolutePanel(id="gating",draggable=TRUE,top=0, left=0,
                                  fixed=FALSE,
@@ -67,7 +76,7 @@ shinyUI(dashboardPage(
                        width = 12)
 
 
-                 #)
+                 )
                 ),
 
       tabItem(tabName = "PopExpression", box(violinUIFromCDO(PEO), width=10)),

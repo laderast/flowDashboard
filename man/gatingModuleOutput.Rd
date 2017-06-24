@@ -5,7 +5,7 @@
 \title{Title}
 \usage{
 gatingModuleOutput(input, output, session, imageDir, popTable, displayNodes,
-  annotation, plotObj, subsetChoices = NULL)
+  annotation, plotObj, mapVar)
 }
 \arguments{
 \item{input}{- shiny module input object}
@@ -23,7 +23,7 @@ by plotAllPopulations()}
 
 \item{annotation}{- annotation data.table}
 
-\item{subsetChoices}{}
+\item{plotObj}{}
 }
 \description{
 Title

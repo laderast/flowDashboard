@@ -6,7 +6,7 @@
 \usage{
 violinOutput(input, output, session, data, annotation, facetList = NULL,
   aggregateList = NULL, markers = NULL, colorConditions = NULL,
-  mapVar = c(sample = "FCSFiles"))
+  mapVar = c(idVar = "FCSFiles"))
 }
 \arguments{
 \item{annotation}{}

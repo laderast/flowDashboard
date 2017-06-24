@@ -1,4 +1,22 @@
+#' Title
+#'
+#' @param GO
+#' @param objId
+#'
+#' @return
+#' @export
+#'
+#' @examples
+gatingModuleUIFromGO <- function(GO, objId=NULL){
 
+  if(is.null(objId)){
+    objId <- GO$objId
+  }
+
+  gatingModuleUI(id=objId, sortConditions = GO$subsetOptions,
+                 subsetCondition = GO$subsetOptions)
+
+}
 
 #' Title
 #'
@@ -17,25 +35,63 @@ gatingModuleUI <- function(id, label = "gatingModule", sortConditions,
 
     ns <- NS(id)
 
-    box(
+
     tagList(
-    h4("Filter Samples"),
     # checkboxGroupInput("panelDisplayPop", label="Show Panel",
     #                    choices=c("1", "3"), selected=c("1","3")),
     #uiOutput(ns("gatingDynamicUI")),
-    absolutePanel(id=ns("heatmap"), h4("Population Heatmap (Click on box to see provenance)"),
-                  ggvisOutput(ns("populationHeatmap")), top=250, left=0),
+    #fluidRow(
+    box(
+      absolutePanel(id=ns("gating"),draggable=TRUE,top=0, left=300,
+                    fixed=FALSE,
+                    style="opacity: 0.8; background-color: white",
+                    height=200,width="auto",
+                    h4("Gating Scheme (draggable)"),
+                    imageOutput(ns("gating"))),
+      width=12#)
+    ),
+    #fluidRow(
+    box(
+      absolutePanel(id=ns("heatmap"), h4("Population Heatmap (Click on box to see provenance)"),
+                  plotOutput(ns("populationHeatmap"), click = clickOpts(ns("popTooltip"))), top=250, left=0),
+                  width = 12#)
+    ),
+    uiOutput(ns("popTooltip")
+             #)
+
     # absolutePanel(id="scheme",imageOutput(ns("pipelineHierarchy")), top=250, left=650),
-    absolutePanel(id=ns("gating"),draggable=TRUE,top=0, left=300,
-                   fixed=FALSE,
-                   style="opacity: 0.8; background-color: white",
-                   height=200,width="auto",
-                   h4("Gating Scheme (draggable)"),
-                   imageOutput(ns("gating"))),
-    br(), br(), br(), br(), br()
-    ))
+    )
+    )
+}
+
+#' Title
+#'
+#' @param input
+#' @param output
+#' @param session
+#' @param GO
+#' @param annotation
+#' @param objId
+#' @param plotObj
+#'
+#' @return
+#' @export
+#'
+#' @examples
+gatingModuleOutputFromGO <- function(input, output, session, GO, annotation, objId=NULL,
+                                     plotObj){
+
+  if(is.null(objId)){
+
+    objId <- GO$objId
+  }
+
+  callModule(gatingModuleOutput, id=objId, popTable = GO$popTable, annotation=annotation,
+             imageDir = GO$imageDir, displayNodes =GO$populations, plotObj=plotObj,
+             mapVar=GO$mapVar)
 
 }
+
 
 #' Title
 #'
@@ -48,7 +104,6 @@ gatingModuleUI <- function(id, label = "gatingModule", sortConditions,
 #' @param displayNodes - which gating populations to display in heatmap
 #' @param annotation - annotation data.table
 #' @param plotObj
-#' @param subsetChoices
 #'
 #' @return
 #' @export
@@ -56,7 +111,7 @@ gatingModuleUI <- function(id, label = "gatingModule", sortConditions,
 #' @examples
 gatingModuleOutput <- function(input, output, session,
                                imageDir, popTable, displayNodes, annotation, plotObj,
-                               subsetChoices=NULL){
+                               mapVar){
 
   ns <- session$ns
 
@@ -67,7 +122,7 @@ gatingModuleOutput <- function(input, output, session,
     plotObj[["gating"]] <- paste0(imageDir, x$idVar, ".png")
     #print(out)
     #out
-    x$idVar
+    return(NULL)
   }
 
   pngGraph <- reactive({
@@ -79,7 +134,6 @@ gatingModuleOutput <- function(input, output, session,
          contentType = "image/png"
     )
   },deleteFile=FALSE)
-
 
   # populationHeatmap <- reactive({
   #
@@ -98,14 +152,16 @@ gatingModuleOutput <- function(input, output, session,
 
   populationHeatmap <- reactive({
 
-    popHeatmap(popTable, annotation, mapVar=c("name"="FCSFiles")) %>%
+    dat <- popTable[annotation(), on=mapVar]
+
+    popHeatmapGG(dat) #%>%
       #add interactive tooltip
-      add_tooltip(popTooltip,on="click")
+      #add_tooltip(popTooltip,on="click")
 
   })
 
-  populationHeatmap %>%
-    bind_shiny(ns("populationHeatmap"), session=session)
+  #populationHeatmap %>%
+  #  bind_shiny(ns("populationHeatmap"), session=session)
   #bind_shiny("plot-plot", session = getDefaultReactiveDomain()[["parent"]])
 }
 
@@ -178,17 +234,18 @@ popHeatmap <- function(data, annotation, mapVar=c("name"="FCSFiles")){
 #' Title
 #'
 #' @param data
-#' @param annotation
 #' @param mapVar
 #'
 #' @return
 #' @export
 #'
 #' @examples
-popHeatmapGG <- function(data, annotation, mapVar=c("name"="FCSFiles")){
+popHeatmapGG <- function(data, text=TRUE){
 
-  dataNew <- data[annotation, on=mapVar]
+  #dataNew <- data[annotation, on=mapVar]
   dataNew <- data[!is.na(percentPop)]
+  dataNew$Population <- fct_rev(factor(dataNew$Population,
+                                       levels=unique(dataNew$Population)))
 
   domY <- unique(as.character(data[["Population"]]))
   displayNodes <- domY
@@ -211,10 +268,18 @@ popHeatmapGG <- function(data, annotation, mapVar=c("name"="FCSFiles")){
 
   #pal <- c(Blue(3), "#E5E5E5", Orange(6))
 
-  dataNew[Population %in% displayNodes] %>%
+  outData <- dataNew[Population %in% displayNodes]
+
+  outPlot <- outData %>%
     mutate(fillVals = round(zscore)) %>%
     ggplot(aes_string(x="name", y="Population", fill="fillVals")) +
-    geom_tile(aes(colour="black")) + scale_fill_gradient2(low = "Blue", mid="White", high = "Orange") +
-    scale_y_discrete()
+    geom_tile(colour="black") +
+    scale_fill_gradient2(low = "green", mid="Black", high = "red") +
+    scale_y_discrete() + theme(axis.text.x = element_text(angle=90))
 
+  if(text){
+    outPlot <- outPlot +
+      geom_text(aes(label=signif(percentPop,digits = 2)), color="white")
+  }
+  outPlot
 }
