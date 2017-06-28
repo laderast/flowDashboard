@@ -18,7 +18,7 @@ waterfallOutputUI <- function(id, label="waterfall", populationChoices, colorCol
                 selected = colorColumns[1]),
     #uiOutput(ns("waterfallDynamicUI")),
     plotOutput(ns("waterfallPlot"), hover = hoverOpts(ns("plotHover"), delay = 100, delayType = "debounce")),
-    uiOutput(ns("hoverTip")),
+    #uiOutput(ns("hoverTip")),
     plotOutput(ns("annotationHeatmap"))
 
   )
@@ -83,7 +83,8 @@ waterfallOutputFromGO <- function(GO, annotation, objId=NULL){
 #'
 #' @examples
 waterfallOutput <- function(input, output, session, data, annotation,
-                            populationChoices, colorColumns, covariateChoices=NULL, subsetVariables = NULL,
+                            populationChoices, colorColumns, covariateChoices=NULL,
+                            subsetVariables = NULL, annotDisplayOptions=NULL,
                             mapVar = c("name"="FCSFiles")){
 
   output$waterfallDynamicUI <- renderUI({
@@ -155,6 +156,7 @@ waterfallOutput <- function(input, output, session, data, annotation,
 
     #print(hover)
     point <- popTable()[floor(hover$x),]
+    outputString <- makeOutputString(point, annotDisplayOptions)
 
     left_pct <- (hover$x - hover$domain$left) / (hover$domain$right - hover$domain$left)
     top_pct <- (hover$domain$top - hover$y) / (hover$domain$top - hover$domain$bottom)
@@ -172,10 +174,7 @@ waterfallOutput <- function(input, output, session, data, annotation,
     # actual tooltip created as wellPanel
     wellPanel(
       style = style,
-      p(HTML(paste0(#"<b> Car: </b>", rownames(point), "<br/>",
-                    #"<b> mpg: </b>", point$mpg, "<br/>",
-                    "<b> Patient: </b>", point$patientID, "<br/>",
-                    "<b> Condition: </b>", point$NewCondition)))
+      p(HTML(outputString))
     )
   })
 

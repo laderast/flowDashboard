@@ -1,6 +1,9 @@
 library(data.table)
 library(R6)
 
+## To add: check if imageDir exists for GatingObj
+
+
 #' Reconcile annotation and data tables in object
 #'
 #' @param annotation
@@ -106,6 +109,11 @@ checkIntegrity <- function(annotation, data, mapVar, reconcile=TRUE){
 }
 
 
+returnMergedData <- function(data, annotation, mapVar){
+  return(data[annotation, on=mapVar])
+
+}
+
 ##commonDataObj - SuperClass for other classes
 ##classes that inherit
 commonDataObj <-
@@ -170,6 +178,7 @@ commonDataObj <-
                         invisible(self)
 
                         },
+            self$annotcols <- NULL,
 
             checkIntegrity =
               function(reconcile=FALSE){
@@ -228,7 +237,11 @@ commonDataObj <-
               subsetAnnotation = function(ids){
                     self$checkIntegrity(idsInBoth = ids, reconcile=TRUE)
                     invisible(self)
-                    }
+                    },
+              setAnnotationDisplayOptions=functions(annotCols){
+                annotCols <- annotCols[annotCols %in% colnames(self$annotation)]
+                self$annotCols <- annotCols
+              }
 
                   )
         )
@@ -285,6 +298,9 @@ qcFlowObj <- R6Class(
                             invisible(self)
 
                           },
+                          returnMergedData=function(self){
+                            self$qcData[self$annotation, on=self$mapVar]
+                          }
                           qcData = NULL, markers=NULL,
                           mapVar=NULL,
     setMarkers = function(markers){
@@ -341,6 +357,9 @@ gatingObj <-
 
                               invisible(self)
                             },
+        returnMergedData =function(self){
+          self$popTable[self$annotation, on=self$mapVar]
+        }
       setPopulations = function(popList){
           popTable <- self$popTable
           populations <- unique(self$populations)
@@ -398,6 +417,9 @@ populationExpressionObj <-
                                        invisible(self)
 
                                      },
+                  returnMergedData = function(self){
+                    self$expData[self$annotation, on=self$mapVar]
+                  }
                   setMarkers = function(markers){
                     expData <- self$expressionData
                     oldMarkers <- unique(expData[["variable"]])

@@ -22,8 +22,11 @@ shinyServer(function(input, output, session) {
   annotationGO <- subsetModuleDCO(input, output, dataObj = GO)
   source("gating.R",local = TRUE)
 
-  gatingMod <- gatingModuleOutputFromGO(input, output, session, GO,
-                                        annotationGO, plotObj = plotObj)
+  annotationGO4 <- subsetModuleDCO(input, output, dataObj = GO, objId="GObj4")
+  #annotationGO4 <- reactive({GO$annotation})
+  gatingMod <- gatingModuleOutputFromGO(input, output, session, GO = GO,
+                                        annotation = annotationGO4,
+                                        objId = "GObj4")
 
   ##Expression Modules
   annotationPEO <- subsetModuleDCO(input, output, dataObj = PEO)
@@ -54,5 +57,9 @@ shinyServer(function(input, output, session) {
   #annotationGO4 <- subsetModuleDCO(input, output, dataObj = GOCD4CD8)
   #waterfallMod2 <- waterfallOutputFromGO(GOCD4CD8, annotation=annotationGO4)
 
+  output$test <- renderPlot({
+    outDat <- GO$popTable[annotationGO4(), on=GO$mapVar]
+    popHeatmapGG(outDat)
+  })
 
 })

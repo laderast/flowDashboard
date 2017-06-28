@@ -35,33 +35,32 @@ gatingModuleUI <- function(id, label = "gatingModule", sortConditions,
 
     ns <- NS(id)
 
-
+    div(style = 'overflow-x: scroll',
     tagList(
     # checkboxGroupInput("panelDisplayPop", label="Show Panel",
     #                    choices=c("1", "3"), selected=c("1","3")),
     #uiOutput(ns("gatingDynamicUI")),
     #fluidRow(
     box(
-      absolutePanel(id=ns("gating"),draggable=TRUE,top=0, left=300,
+      absolutePanel(id=ns("gating"), draggable=TRUE,top=0,
                     fixed=FALSE,
                     style="opacity: 0.8; background-color: white",
                     height=200,width="auto",
                     h4("Gating Scheme (draggable)"),
                     imageOutput(ns("gating"))),
-      width=12#)
+      width=12, height=225#)
     ),
     #fluidRow(
     box(
-      absolutePanel(id=ns("heatmap"), h4("Population Heatmap (Click on box to see provenance)"),
-                  plotOutput(ns("populationHeatmap"), click = clickOpts(ns("popTooltip"))), top=250, left=0),
-                  width = 12#)
-    ),
-    uiOutput(ns("popTooltip")
+      #absolutePanel(id=ns("heatmap"),
+                    h4("Population Heatmap (Click on box to see provenance)"),
+                  plotOutput(ns("popHeatmap"), click = clickOpts(ns("popClick"))),
+                  width=12)#, uiOutput(ns("popGate"))
              #)
 
     # absolutePanel(id="scheme",imageOutput(ns("pipelineHierarchy")), top=250, left=650),
-    )
-    )
+
+    ))
 }
 
 #' Title
@@ -78,13 +77,14 @@ gatingModuleUI <- function(id, label = "gatingModule", sortConditions,
 #' @export
 #'
 #' @examples
-gatingModuleOutputFromGO <- function(input, output, session, GO, annotation, objId=NULL,
-                                     plotObj){
+gatingModuleOutputFromGO <- function(input, output, session, GO, annotation, objId=NULL){
 
   if(is.null(objId)){
 
     objId <- GO$objId
   }
+
+  plotObj <- reactiveValues(gating="")
 
   callModule(gatingModuleOutput, id=objId, popTable = GO$popTable, annotation=annotation,
              imageDir = GO$imageDir, displayNodes =GO$populations, plotObj=plotObj,
@@ -113,13 +113,24 @@ gatingModuleOutput <- function(input, output, session,
                                imageDir, popTable, displayNodes, annotation, plotObj,
                                mapVar){
 
-  ns <- session$ns
+  #ns <- session$ns
 
 
   popTooltip <- function(x){
-    if(is.null(x)) return(NULL)
+    click <- input$plotGate
+
+
+    if(is.null(click$x)){
+      return(NULL)
+    }
+
+    point <- popTableReact()[floor(click$x),]
+
+
+
+    if(is.null(point)) return(NULL)
     #out <- paste0("<img src='data/images/", x$idVar, ".png'></img>")
-    plotObj[["gating"]] <- paste0(imageDir, x$idVar, ".png")
+    plotObj[["gating"]] <- paste0(imageDir, point$idVar, ".png")
     #print(out)
     #out
     return(NULL)
@@ -150,14 +161,18 @@ gatingModuleOutput <- function(input, output, session,
   #   #}
   # })
 
-  populationHeatmap <- reactive({
+  popTableReact <- reactive({
+      popTable[annotation(), on=mapVar]
+  })
+
+  popHeatmap <- renderPlot({
 
     dat <- popTable[annotation(), on=mapVar]
-
-    popHeatmapGG(dat) #%>%
+    print(head(dat))
+    out <- popHeatmapGG(popTableReact()) #%>%
       #add interactive tooltip
       #add_tooltip(popTooltip,on="click")
-
+    out
   })
 
   #populationHeatmap %>%

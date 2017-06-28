@@ -25,7 +25,7 @@ shinyUI(dashboardPage(
 
                   menuItem("GatingGG", tabName="GatingFromGO", selected = FALSE),
                   conditionalPanel("input.sidebarmenu === 'GatingFromGO'",
-                                   subsetModuleUICDO(GO)),
+                                   subsetModuleUICDO(GO, objId = "GObj4")),
 
                   menuItem("Expression", tabName="PopExpression", selected=FALSE),
                  conditionalPanel("input.sidebarmenu === 'PopExpression'",
@@ -53,9 +53,11 @@ shinyUI(dashboardPage(
                   selected=TRUE), #),
 
         tabItem(tabName = "GatingFromGO",
-                #div(style= 'overflow-x: scroll',
-                    gatingModuleUIFromGO(GO)
-                #    )
+                plotOutput("test", click = "clickGate"),
+                div(style= 'overflow-x: scroll',
+                    gatingModuleUIFromGO(GO, objId = "GObj4")
+
+                    )
         ),
 
          tabItem(tabName = "GatingDash",

@@ -19,7 +19,7 @@ Depends:
     lazyeval,
     gplots,
     ggplot2,
-    R6,
+    R6, forcats,
     stringi
 Suggests:
     flowCore,

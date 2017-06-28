@@ -18,8 +18,8 @@ dotPlotUI <- function(id, populationList, facetConditions) {
                 populationList[1]),
     selectInput(ns("xFacet"),label="Select X Facet", choices=facetConditions, selected=facetConditions[1]),
     #selectInput(ns("yFacet"), "Select Y Facet", choices=facetList, selected=facetList),
-    plotOutput(ns("dotPlot"), hover= hoverOpts(ns("plotHover"), delay = 100, delayType = "debounce")),
-    uiOutput(ns("hoverTip"))
+    plotOutput(ns("dotPlot"), hover= hoverOpts(ns("plotHover"), delay = 100, delayType = "debounce"))#,
+    #uiOutput(ns("hoverTip"))
     #selectInput(ns("ConditionVariable"), label="Select Ordering Variable",
     #            choices=orderList)
 
