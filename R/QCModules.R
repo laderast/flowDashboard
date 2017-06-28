@@ -36,8 +36,7 @@ qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
       width=12),
     box(
       uiOutput(ns("qcViolinUI")),
-      plotOutput(ns("qcViolinPlot")),
-
+      plotOutput(ns("qcViolinPlot"), width="100%"),
       width = 12)#,
           #hover= hoverOpts(ns("plotHover"),
           #delay = 500, delayType = "debounce")),
@@ -204,6 +203,8 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     )
   })
 
+  numPatients <- reactive({length(annotation[,mapVar])})
+
   violData <- reactive({
 
     validate(need(input$Marker, "Marker not specified"))
@@ -244,8 +245,10 @@ qcModuleOutput <- function(input, output, session, data, annotation,
   output$qcViolinPlot <- renderPlot({
     colors <- input$Color
     marker <- input$Marker
+    #numPatients <- unique(annotation[,names(mapVar)])
+
     qcViolinOut(violData(), marker, colors)
-  }, width=1000, height= 400)
+  })
 
 
   qcViolinOut <- function(data, marker, colors){
