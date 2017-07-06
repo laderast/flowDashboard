@@ -36,7 +36,7 @@ qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
       width=12),
     box(
       uiOutput(ns("qcViolinUI")),
-      plotOutput(ns("qcViolinPlot"), width="100%"),
+      plotOutput(ns("qcViolinPlot"), width="1000px"),
       width = 12)#,
           #hover= hoverOpts(ns("plotHover"),
           #delay = 500, delayType = "debounce")),

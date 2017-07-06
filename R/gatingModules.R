@@ -55,7 +55,8 @@ gatingModuleUI <- function(id, label = "gatingModule", sortConditions,
       #absolutePanel(id=ns("heatmap"),
                     h4("Population Heatmap (Click on box to see provenance)"),
                   plotOutput(ns("popHeatmap"), click = clickOpts(ns("popClick"))),
-                  width=12)#, uiOutput(ns("popGate"))
+                  width=12),#, uiOutput(ns("popGate"))
+      selectInput(ns("ss"), "", choices=subsetCondition, selected=subsetCondition, multiple=TRUE)
              #)
 
     # absolutePanel(id="scheme",imageOutput(ns("pipelineHierarchy")), top=250, left=650),
@@ -162,14 +163,16 @@ gatingModuleOutput <- function(input, output, session,
   # })
 
   popTableReact <- reactive({
+      out <- input$ss
       popTable[annotation(), on=mapVar]
   })
 
   popHeatmap <- renderPlot({
-
+    test <- input$ss
+    print(test)
     dat <- popTable[annotation(), on=mapVar]
     print(head(dat))
-    out <- popHeatmapGG(popTableReact()) #%>%
+    out <- popHeatmapGG(dat) #%>%
       #add interactive tooltip
       #add_tooltip(popTooltip,on="click")
     out
