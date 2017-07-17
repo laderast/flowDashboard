@@ -363,12 +363,12 @@ gatingObj <-
       setPopulations = function(popList){
           popTable <- self$popTable
           populations <- unique(self$populations)
-          notInPopulations <- popList[popList %in% populations]
+          notInPopulations <- popList[!popList %in% populations]
 
           if(length(notInPopulations)>0){
             errorMsg <- paste0("These populations not in data:\n",
                                paste(notInPopulations, collapse="\n"))
-            stop(errorMsg)
+            warning(errorMsg)
           }
 
           newPop <- populations[populations %in% popList]
@@ -378,6 +378,18 @@ gatingObj <-
           self$popTable <- popTable
           invisible(self)
       },
+      setPopulationSubset = function(subPopSets){
+        if(!is.list(subPopSets)){stop("Input must be a list")}
+        populations = self$populations
+        outList <- lapply(subPopSets, function(x){
+          xOut <- x[x %in% populations]
+          xOut
+        })
+        names(outList) <- names(subPopSets)
+        self$populationSubset <- outList
+        invisible(self)
+      },
+      populationSubset = NULL,
       populations = NULL,
       popTable = NULL,
       imageDir = NULL,
