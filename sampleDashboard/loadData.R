@@ -1,4 +1,5 @@
 library(flowDashboard)
+setwd("sampleDashboard")
 options("scaleTrans"="none")
 wd <- paste0(getwd(), "/data/")
 imageDir <- paste0(wd, "/gating/image/")
@@ -14,6 +15,16 @@ load("../inst/extdata/expressionData.RData")
 QCO <- qcFlowObj$new(annotation, qcData, mapVar=c("idVar"="FCSFiles"))
 GO <- gatingObj$new(annotation, popTable, mapVar=c("name"="FCSFiles"),
                     reconcile=TRUE, imageDir=imageDir)
+
+subsets <- list(QC = c("singlet1", "singlet2", "live", "CD45+"),
+                TCells = c("singlet2", "live", "CD45", "TCell", "CD4Helper",
+                           "CD8Helper"),
+                CD8Cells = c("CD8Helper","CD8TEMRA","CD8EMem","CD8CMem","CD8Naive" ),
+                CD4Cells = c("CD4Helper","CD4CMem","CD4TEMRA","CD4EMem", "CD4Naive"),
+                DblNeg = c("DblNegTCells","DblNegTEMRA","DblNegEMem","DblNegCMem","DblNegNaive"))
+
+GO$setPopulationSubset(subsets)
+
 #GO2 <- gatingObj$new(annotation, popTable, mapVar=c("name"="FCSFiles"), reconcile=TRUE)
 
 PEO <- populationExpressionObj$new(annotation, expressionData, mapVar=c("idVar"="FCSFiles"))
@@ -23,6 +34,8 @@ subsetOptions <- c("BeatAMLID", "Gender", "Source")
 
 QCO$setSubsetAndSortOptions(sortOptions=sortOptions, subsetOptions=subsetOptions)
 GO$setSubsetAndSortOptions(sortOptions=sortOptions, subsetOptions=subsetOptions)
+
+
 #GO2$setSubsetAndSortOptions(sortOptions=sortOptions, subsetOptions=subsetOptions)
 PEO$setSubsetAndSortOptions(sortOptions=sortOptions, subsetOptions=subsetOptions)
 

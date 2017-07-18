@@ -381,15 +381,18 @@ gatingObj <-
       setPopulationSubset = function(subPopSets){
         if(!is.list(subPopSets)){stop("Input must be a list")}
         populations = self$populations
-        outList <- lapply(subPopSets, function(x){
+        outList <- list(all=populations)
+        oL <- lapply(subPopSets, function(x){
           xOut <- x[x %in% populations]
           xOut
         })
-        names(outList) <- names(subPopSets)
-        self$populationSubset <- outList
+        outList <- c(outList, oL)
+
+        names(outList) <- c("all",names(subPopSets))
+        self$popSubsets <- outList
         invisible(self)
       },
-      populationSubset = NULL,
+      popSubsets = NULL,
       populations = NULL,
       popTable = NULL,
       imageDir = NULL,

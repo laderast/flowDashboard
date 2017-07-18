@@ -56,7 +56,6 @@ shinyUI(dashboardPage(
                 plotOutput("test", click = "clickGate"),
                 div(style= 'overflow-x: scroll',
                     gatingModuleUIFromGO(GO, objId = "GObj4")
-
                     )
         ),
 

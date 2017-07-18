@@ -13,8 +13,7 @@ gatingModuleUIFromGO <- function(GO, objId=NULL){
     objId <- GO$objId
   }
 
-  gatingModuleUI(id=objId, sortConditions = GO$subsetOptions,
-                 subsetCondition = GO$subsetOptions)
+  gatingModuleUI(id=objId, popSubsets = GO$popSubsets)
 
 }
 
@@ -30,8 +29,7 @@ gatingModuleUIFromGO <- function(GO, objId=NULL){
 #' @export
 #'
 #' @examples
-gatingModuleUI <- function(id, label = "gatingModule", sortConditions,
-                           subsetCondition=NULL, annotation){
+gatingModuleUI <- function(id, label = "gatingModule", popSubsets){
 
     ns <- NS(id)
 
@@ -54,10 +52,11 @@ gatingModuleUI <- function(id, label = "gatingModule", sortConditions,
     box(
       #absolutePanel(id=ns("heatmap"),
                     h4("Population Heatmap (Click on box to see provenance)"),
+                    selectInput(ns("ps"), "Select Cellular Subsets", choices=names(popSubsets),
+                                selected=names(popSubsets)[1]),
                   plotOutput(ns("popHeatmap"), click = clickOpts(ns("popClick"))),
-                  width=12),#, uiOutput(ns("popGate"))
-      selectInput(ns("ss"), "", choices=subsetCondition, selected=subsetCondition, multiple=TRUE)
-             #)
+                  width=12)#, uiOutput(ns("popGate"))
+                   #)
 
     # absolutePanel(id="scheme",imageOutput(ns("pipelineHierarchy")), top=250, left=650),
 
@@ -89,6 +88,7 @@ gatingModuleOutputFromGO <- function(input, output, session, GO, annotation, obj
 
   callModule(gatingModuleOutput, id=objId, popTable = GO$popTable, annotation=annotation,
              imageDir = GO$imageDir, displayNodes =GO$populations, plotObj=plotObj,
+             popSubsets=GO$popSubsets,
              mapVar=GO$mapVar)
 
 }
@@ -112,6 +112,7 @@ gatingModuleOutputFromGO <- function(input, output, session, GO, annotation, obj
 #' @examples
 gatingModuleOutput <- function(input, output, session,
                                imageDir, popTable, displayNodes, annotation, plotObj,
+                               popSubsets,
                                mapVar){
 
   #ns <- session$ns
@@ -120,14 +121,11 @@ gatingModuleOutput <- function(input, output, session,
   popTooltip <- function(x){
     click <- input$plotGate
 
-
     if(is.null(click$x)){
       return(NULL)
     }
 
     point <- popTableReact()[floor(click$x),]
-
-
 
     if(is.null(point)) return(NULL)
     #out <- paste0("<img src='data/images/", x$idVar, ".png'></img>")
@@ -163,18 +161,20 @@ gatingModuleOutput <- function(input, output, session,
   # })
 
   popTableReact <- reactive({
-      out <- input$ss
-      popTable[annotation(), on=mapVar]
+      out <- input$ps
+      ps <- popSubsets[out]
+      print(ps)
+      popTable[annotation(), on=mapVar][Population %in% ps]
   })
 
   popHeatmap <- renderPlot({
-    test <- input$ss
-    print(test)
-    dat <- popTable[annotation(), on=mapVar]
+    #test <- input$ss
+    #print(test)
+    dat <- popTableReact()
     print(head(dat))
     out <- popHeatmapGG(dat) #%>%
       #add interactive tooltip
-      #add_tooltip(popTooltip,on="click")
+      add_tooltip(popTooltip,on="click")
     out
   })
 
