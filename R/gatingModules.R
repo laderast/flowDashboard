@@ -259,7 +259,6 @@ gatingModuleGGOutput <- function(input, output, session,
     click$y <- click$y - 0.5
 
     point <- findPointsGeomTile(click, data=outDat(), spreaddata = outDatSpread())
-
     print(point)
 
     #point <- outDat()[floor(click$x),]
@@ -344,7 +343,7 @@ popHeatmap <- function(data, annotation, mapVar=c("name"="FCSFiles")){
 popHeatmapGG <- function(data, text=TRUE){
 
   #dataNew <- data[annotation, on=mapVar]
-  dataNew <- data[!is.na(percentPop)]
+  dataNew <- data#[!is.na(percentPop)]
   dataNew$Population <- fct_rev(factor(dataNew$Population,
                                        levels=unique(dataNew$Population)))
 

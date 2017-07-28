@@ -32,6 +32,9 @@ populationHeatmap <- reactive({
 populationHeatmap  %>%
   bind_shiny("populationHeatmap")
 
+
+## New GGPLot code
+
 pngGraph2 <- reactive({
   #print(plotObj2[["gating"]])
   return(plotObj2[["gating"]])
@@ -46,14 +49,18 @@ output$gating2 <- renderImage({
 outDat <- reactive({
   popSubset <- input$ps
   ##need to add sort by levels
-  outDat <- GO$popTable[annotationGO4(), on=GO$mapVar][Population %in% popSubsets[[popSubset]]]
+  ##popsubset is affecting the xcols here
+  outDat <- GO$popTable[annotationGO4(), on=GO$mapVar][Population %in% popSubsets[[popSubset]]][!is.na(percentPop)]
   outDat
 })
 
-outDatSpread <- reactive({
-  outDatSpread <- data.table::dcast(outDat(), Population~name, value.var="percentPop", fill = NA)
-  head(outDatSpread)
-  return(outDatSpread)
+outDataXColNames <- reactive({
+  #outDatSpread <- data.table::dcast(outDat(), Population~factor(name), value.var="percentPop", fill = NA)
+  unique(outDat()$name)
+})
+
+outDataYColNames <- reactive({
+  outDatY <- unique(outDat()$Population)
 })
 
 output$test <- renderPlot({
@@ -67,10 +74,10 @@ output$clickTip <- renderUI({
     return(NULL)
   }
 
-  click$x <- click$x - 0.5
-  click$y <- click$y - 0.5
+  click$x <- click$x
+  click$y <- click$y
 
-  point <- findPointsGeomTile(click, data=outDat(), spreaddata = outDatSpread())
+  point <- findPointsGeomTile(click, data=outDat(), xcol = outDataXColNames(), ycol=outDataYColNames())
 
   print(point)
 
@@ -90,11 +97,9 @@ output$hoverTip <- renderUI({
     return(NULL)
   }
 
-  click$x <- click$x - 0.5
-  click$y <- click$y - 0.5
+  point <- findPointsGeomTile(click, data=outDat(), xcol = outDataXColNames(), ycol=outDataYColNames())
 
-  point <- findPointsGeomTile(click, data=outDat(), spreaddata = outDatSpread())
-
+  print(ncol(outDatSpread))
   print(point)
 
   #point <- outDat()[floor(click$x),]
@@ -104,27 +109,34 @@ output$hoverTip <- renderUI({
   return(NULL)
 })
 
-findPointsGeomTile <- function(point, data, spreaddata){
-  numRows <- nrow(spreaddata)
-  numCols <- ncol(spreaddata)
+#need to fix the issue when spreaddata has more columns than plot
+findPointsGeomTile <- function(point, data, xcol, ycol){
+  numRows <- length(ycol)
+  numCols <- length(xcol)
+
+  #xcols <- length(spreaddata)
+
+  print(numCols)
+  print(numRows)
   pointXrange <- point$range$right - point$range$left
   xCellSize <- pointXrange / numRows
   #print(xCellSize)
-  xCellNum <- ceiling(point$x) + 1
+  xCellNum <- ceiling(point$x - 0.5)
   pointYrange <- point$range$bottom - point$range$top
   yCellSize <- pointYrange / numRows
   #print(yCellSize)
-  yCellNum <- numRows - ceiling(point$y) + 1
+  yCellNum <- numRows - ceiling(point$y - 0.5) + 1
 
   print(xCellNum)
   print(yCellNum)
 
   ps <- popSubsets[[input$ps]]
-  xName <- colnames(spreaddata)[xCellNum]
+  xName <- xcol[xCellNum]
+  #print(colnames(spreaddata))
   yName <- ps[yCellNum]
 
-  print(xName)
-  print(yName)
+  #print(xName)
+  #print(yName)
 
   outLine <- data[name==xName & Population== yName]
   return(outLine)
