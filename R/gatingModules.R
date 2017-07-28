@@ -54,8 +54,9 @@ gatingModuleUI <- function(id, label = "gatingModule", popSubsets){
                     h4("Population Heatmap (Click on box to see provenance)"),
                     selectInput(ns("ps"), "Select Cellular Subsets", choices=names(popSubsets),
                                 selected=names(popSubsets)[1]),
-                  plotOutput(ns("popHeatmap"), click = clickOpts(ns("popGate"))),
-                  width=12)#, uiOutput(ns("popGate"))
+                  plotOutput(ns("popHeatmap"), click = clickOpts(ns("clickGate"))),
+                  width=12), #,
+    uiOutput(ns("clickTip"))
                    #)
 
     # absolutePanel(id="scheme",imageOutput(ns("pipelineHierarchy")), top=250, left=650),
@@ -190,6 +191,87 @@ padMissingValues <- function(popTable){
 
 }
 
+
+gatingModuleGGOutput <- function(input, output, session,
+                               imageDir, popTable, displayNodes, annotation, plotObj,
+                               popSubsets,
+                               mapVar){
+
+  pngGraph2 <- reactive({
+    #print(plotObj2[["gating"]])
+    return(plotObj2[["gating"]])
+  })
+
+  output$gating2 <- renderImage({
+    list(src = pngGraph2(),
+         contentType = "image/png"
+    )
+  },deleteFile=FALSE)
+
+  outDat <- reactive({
+    popSubset <- input$ps
+    ##need to add sort by levels
+    outDat <- GO$popTable[annotationGO4(), on=GO$mapVar][Population %in% popSubsets[[popSubset]]]
+    outDat
+  })
+
+  outDatSpread <- reactive({
+    outDatSpread <- data.table::dcast(outDat(), Population~name, value.var="percentPop", fill = NA)
+    head(outDatSpread)
+    return(outDatSpread)
+  })
+
+  output$test <- renderPlot({
+    popHeatmapGG(outDat())
+  })
+
+  output$clickTip <- renderUI({
+    click <- input$clickGate
+
+    if(is.null(click$x)){
+      return(NULL)
+    }
+
+    click$x <- click$x - 0.5
+    click$y <- click$y - 0.5
+
+    point <- findPointsGeomTile(click, data=outDat(), spreaddata = outDatSpread())
+
+    print(point)
+
+    #point <- outDat()[floor(click$x),]
+    outClick <- paste0(imageDir, point$idVar, ".png")
+    plotObj2[["gating"]] <- outClick
+    #print(outClick)
+    return(NULL)
+  })
+
+  ##need to add hovertips
+  output$hoverTip <- renderUI({
+
+    click <- input$clickGate
+
+    if(is.null(click$x)){
+      return(NULL)
+    }
+
+    click$x <- click$x - 0.5
+    click$y <- click$y - 0.5
+
+    point <- findPointsGeomTile(click, data=outDat(), spreaddata = outDatSpread())
+
+    print(point)
+
+    #point <- outDat()[floor(click$x),]
+    outClick <- paste0(imageDir, point$idVar, ".png")
+    plotObj2[["gating"]] <- outClick
+    #print(outClick)
+    return(NULL)
+  })
+
+
+  }
+
 #' Title
 #'
 #' @param data
@@ -246,6 +328,7 @@ popHeatmap <- function(data, annotation, mapVar=c("name"="FCSFiles")){
     set_options(width= max(c(60 * (noSamples), 600)), height= max(60 *(noMarkers), 700))
 
 }
+
 
 
 
