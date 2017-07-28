@@ -66,8 +66,10 @@ shinyUI(dashboardPage(
                 box(
                 selectInput("ps", "Select Cellular Subsets", choices=names(popSubsets),
                             selected=names(popSubsets)[1]),
-                plotOutput("test", click = clickOpts("clickGate", clip=FALSE)),
+                plotOutput("test", click = clickOpts("clickGate", clip=FALSE),
+                           hover=hoverOpts("hoverGate")),
                 uiOutput("clickTip"),
+                uiOutput("hoverTip"),
                 #div(style= 'overflow-x: scroll',
                 #    gatingModuleUIFromGO(GO, objId = "GObj4")
                 #    ),

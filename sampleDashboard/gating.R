@@ -91,7 +91,7 @@ output$clickTip <- renderUI({
 ##need to add hovertips
 output$hoverTip <- renderUI({
 
-  click <- input$clickGate
+  click <- input$hoverGate
 
   if(is.null(click$x)){
     return(NULL)

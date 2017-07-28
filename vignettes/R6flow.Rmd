@@ -76,9 +76,9 @@ QCO$annotation
 QCO$qcData
 ```
 
-Here we build a `gatingObj` from our `GatingSet`. If you want to show the gating for each sample, you will also need to set `plotGraphs=TRUE` as a argument to `gatingObjFromGatingSet`. 
+Here we build a `gatingObj` from our `GatingSet`. If you want to show the gating for each sample, you will also need to set `plotGraphs=TRUE` and provide an `imageDir` as arguments to `gatingObjFromGatingSet`. 
 
-```{r eval=FALSE}
+```{r}
 objId <- "GOgvhd"
 GO <- gatingObjFromGatingSet(gs, objId = objId) 
 ```
