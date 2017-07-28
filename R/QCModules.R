@@ -155,7 +155,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
   qcHeatmapReact <- reactive({
     #print(medData())
-    fakeData <- data[1:10]
+    #fakeData <- data[1:10]
     qcHeatmapPlot(medData())
   })
 
@@ -371,6 +371,8 @@ qcHeatmapPlot <- function(data, height=NULL, width=NULL, addText=TRUE,
   if(is.null(width)) {
     width <- 60 * (noSamples)
   }
+
+  print(head(data))
 
   out <- data %>%
     #filter(as.character(notation) %in% domX) %>%

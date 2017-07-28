@@ -4,8 +4,7 @@
 \alias{gatingModuleOutputFromGO}
 \title{Title}
 \usage{
-gatingModuleOutputFromGO(input, output, session, GO, annotation, objId = NULL,
-  plotObj)
+gatingModuleOutputFromGO(input, output, session, GO, annotation, objId = NULL)
 }
 \arguments{
 \item{plotObj}{}

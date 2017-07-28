@@ -209,7 +209,7 @@ getPopulationsAndZscores <- function(gateSet, pipelineFile="panel1", delimiter="
   }
 
 
-  popTable <- popTable %>% mutate(idVar = makePopulationIdentifier(Population,name,pipelineFile,delimiter),
+  popTable <- data.frame(popTable) %>% mutate(idVar = makePopulationIdentifier(Population,name,pipelineFile,delimiter),
                                   percentPop =(Count/ParentCount)*100)
 
   #popMat <- acast(popTable, name~Population, value.var = "percentPop")
@@ -226,7 +226,7 @@ getPopulationsAndZscores <- function(gateSet, pipelineFile="panel1", delimiter="
   #popTable %>% inner_join(y=popScaleMelt, by=c("idVar"="idVar"))
   #popTable <- merge(popTable, popScaleMelt, by="idVar")
 
-  popTable
+  return(data.table(popTable))
 }
 
 

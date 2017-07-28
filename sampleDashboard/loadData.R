@@ -12,9 +12,16 @@ load("../inst/extdata/qcData.RData")
 popTable <- fread("../inst/extdata/cleanupPopulations.txt")
 load("../inst/extdata/expressionData.RData")
 
+
+#initialize R6 data objects
+
+
 QCO <- qcFlowObj$new(annotation, qcData, mapVar=c("idVar"="FCSFiles"))
 GO <- gatingObj$new(annotation, popTable, mapVar=c("name"="FCSFiles"),
                     reconcile=TRUE, imageDir=imageDir)
+PEO <- populationExpressionObj$new(annotation, expressionData,
+                                   mapVar=c("idVar"="FCSFiles"))
+
 
 subsets <- list(QC = c("singlet1", "singlet2", "live", "CD45+"),
                 TCells = c("singlet2", "live", "CD45", "TCell", "CD4Helper",
@@ -23,11 +30,9 @@ subsets <- list(QC = c("singlet1", "singlet2", "live", "CD45+"),
                 CD4Cells = c("CD4Helper","CD4CMem","CD4TEMRA","CD4EMem", "CD4Naive"),
                 DblNeg = c("DblNegTCells","DblNegTEMRA","DblNegEMem","DblNegCMem","DblNegNaive"))
 
+#add subsets to GO object
 GO$setPopulationSubset(subsets)
 
-#GO2 <- gatingObj$new(annotation, popTable, mapVar=c("name"="FCSFiles"), reconcile=TRUE)
-
-PEO <- populationExpressionObj$new(annotation, expressionData, mapVar=c("idVar"="FCSFiles"))
 
 sortOptions <- c("BeatAMLID", "Gender", "Source")
 subsetOptions <- c("BeatAMLID", "Gender", "Source")
@@ -56,8 +61,6 @@ annotation <- data.frame(GOadam$annotation)
 annotation$RISK[is.na(annotation$RISK)] <- "Unknown"
 annotation$Gender[is.na(annotation$Gender)] <- "Unknown"
 
-GOadam$annotation <- data.table(annotation)
-GOadam$setSubsetAndSortOptions(GOadam$subsetOptions, GOadam$subsetOptions)
 #GOadam$annotation
 
 save.image("data/objects.RData")

@@ -7,6 +7,7 @@ load("inst/extdata/qcData.RData")
 qcData <- data.table(qcData)
 popTable <- fread("inst/extdata/cleanupPopulations.txt")
 load("inst/extdata/expressionData.RData")
+gs <- load_gs("inst/extdata/gvHDgs/")
 
 #mapVar = c("idVar"="FCSFiles")
 #peo <- populationExpressionObj$new(annotation=annotation,expressionData=expressionData)
@@ -22,7 +23,6 @@ test_that("testCheckIntegrity", {
 
   expect_warning(checkIntegrity(annotation, expressionData, mapVar = c("idVar"="FCSFiles"),
                                 reconcile = TRUE))
-
 
   test <- checkIntegrity(annotation, popTable,
                  mapVar=c("name"="FCSFiles"), reconcile=TRUE)
@@ -123,3 +123,23 @@ test_that("violinOutTests", {
 })
 
 test_that("subsetTests", {})
+
+test_that("gatingSetTests", {
+  expect_is(qcFlowObjFromGatingSet(gs), "qcFlowObj")
+  expect_error(qcFlowObjFromGatingSet(gs, annotation = pData(gs@data@phenoData)))
+  QCO <- qcFlowObjFromGatingSet(gs, annotation = pData(gs@data@phenoData), mapVar=c("idVar"="name"))
+  expect_is(QCO, "qcFlowObj")
+  QCO <- qcFlowObjFromGatingSet(gs, samplePop = 1000)
+  expect_is(QCO, "qcFlowObj")
+
+  objId <- "GO"
+  GO <- gatingObjFromGatingSet(gs[1:3])
+  expect_null(GO$objId)
+  expect_null(GO$imageDir)
+  imageDir = tempdir()
+  GO <- gatingObjFromGatingSet(gs[1:3], objId = objId)
+  GO <- gatingObjFromGatingSet(gs[1:2], objId = objId, makeGraphs=TRUE, imageDir = imageDir)
+  expect_equal(GO$imageDir, imageDir)
+  GO <- gatingObjFromGatingSet()
+
+})

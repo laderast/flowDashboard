@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Where `flowDashboard` Fits in an Analysis Workflow
 
-`flowDashboard` enables you to visualize data at the Sample and Population Level. The package assumes that you either have FCS data in a directory, or have generated a GatingSet for your gating scheme. This gating scheme can either be automated (from a pipeline such as `openCyto`) or manually (imported from flowJo). 
+`flowDashboard` enables you to visualize data at both the Sample and Population Level. The package assumes that you either have FCS data in a directory, or have generated a GatingSet for your gating scheme. This gating scheme can either be automated (from a pipeline such as `openCyto`) or manually (imported from flowJo). 
 
 There are multiple modules that will enable you to examine each step of the analysis. 
 
@@ -31,15 +31,40 @@ There are multiple modules that will enable you to examine each step of the anal
 
 ## Preprocessing Data
 
-Once your data is in a GatingSet (preferably in ncdf format), we will need to transform and prep it into the `data.table` format. This package uses `data.table` because it is a very fast format for accessing and displaying data.
+Once your data is in a `gatingSet` (preferably in ncdf format), we will need to transform and prep it into the `data.table` format. This package uses `data.table` because it is a very fast format for accessing, merging, sorting, and displaying data.
 
-The annotation structure is another `data.table` that we need for the dashboard. Based on your unit of analysis and what the FCS file represents (which may be patients, cell lines, or conditions within a patient), you will need an annotation table that provides covariate information at the level of analysis you are interested in. You can generate the skeleton of an annotation table with the .
+The annotation structure is another `data.table` that we need for the dashboard. Based on your unit of analysis and what the FCS file represents (which may be patients, cell lines, or conditions within a patient), you will need an annotation table that provides covariate information at the level of analysis you are interested in. You can generate the skeleton of an annotation table with the `` command, or you can use the phenoData slot in your GatingSet.
+
+Please note that the usefulness of `flowDashboard` is only as good as your annotation. Careful curation of variables in your annotation will allow you to sort, subset, and aggregate on these variables.
+
+```{r}
+library(flowWorkspace)
+gs <- load_gs("../inst/extdata/gvHDgs/")
+
+##look at phenoData slot in gs
+phenotypes <- pData(gs@data@phenoData)
+phenotypes
+
+##look at marker information in gs
+markerInfo <- pData(parameters(gs))
+markerInfo
+
+#build a qcFlowObj 
+QCO <- qcFlowObjFromGatingSet(gs, samplePop = 5000)
+
+#show annotation slot
+QCO$annotation
+
+#show first few lines of qcData
+QCO$qcData
+```
+
 
 ## QC Module
 
 The QC Heatmap provides a quick overview of how markers vary across populations. This heatmap is based on the idea of examining a QC panel of markers to compare whether there is a large technical variation between samples.
 
-The QC Violin plots allow you to examine 
+The QC Violin plots allow you to compare fluoresence distibution of individual functions.
 
 The underlying QC data is sampled using the `buildSampledDataList()` function. This function generates a data.table that samples from each FCS file for a selected control panel of markers.
 
@@ -54,6 +79,8 @@ The Violin plots
 ## Coexpression Module
 
 ## Waterfall Module
+
+This module displays population percentages 
 
 ## DotPlot Module
 

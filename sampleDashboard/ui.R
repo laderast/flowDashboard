@@ -45,6 +45,7 @@ shinyUI(dashboardPage(
 
 
     )),
+
     dashboardBody(
       tabItems(
         tabItem(tabName="QCDash",
@@ -53,10 +54,25 @@ shinyUI(dashboardPage(
                   selected=TRUE), #),
 
         tabItem(tabName = "GatingFromGO",
-                plotOutput("test", click = "clickGate"),
-                div(style= 'overflow-x: scroll',
-                    gatingModuleUIFromGO(GO, objId = "GObj4")
-                    )
+                box(
+                  absolutePanel(id="gating2",draggable=TRUE,top=0, left=0,
+                                fixed=FALSE,
+                                style="opacity: 0.8; background-color: white",
+                                height=200,width="auto",
+                                h4("Gating Scheme (draggable)"),
+                                imageOutput("gating2")), width=12, height=225
+                  ),
+
+                box(
+                selectInput("ps", "Select Cellular Subsets", choices=names(popSubsets),
+                            selected=names(popSubsets)[1]),
+                plotOutput("test", click = clickOpts("clickGate", clip=FALSE)),
+                uiOutput("clickTip"),
+                #div(style= 'overflow-x: scroll',
+                #    gatingModuleUIFromGO(GO, objId = "GObj4")
+                #    ),
+                width = 12
+                )
         ),
 
          tabItem(tabName = "GatingDash",

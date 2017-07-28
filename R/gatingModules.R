@@ -54,7 +54,7 @@ gatingModuleUI <- function(id, label = "gatingModule", popSubsets){
                     h4("Population Heatmap (Click on box to see provenance)"),
                     selectInput(ns("ps"), "Select Cellular Subsets", choices=names(popSubsets),
                                 selected=names(popSubsets)[1]),
-                  plotOutput(ns("popHeatmap"), click = clickOpts(ns("popClick"))),
+                  plotOutput(ns("popHeatmap"), click = clickOpts(ns("popGate"))),
                   width=12)#, uiOutput(ns("popGate"))
                    #)
 

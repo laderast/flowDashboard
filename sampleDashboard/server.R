@@ -1,18 +1,8 @@
-#
-# This is the server logic of a Shiny web application. You can run the
-# application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
 
 library(shiny)
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output, session) {
-
-  #session <- getDefaultReactiveDomain()
 
   #QC modules
   annotationQC <- subsetModuleDCO(input, output, dataObj = QCO)
@@ -57,9 +47,5 @@ shinyServer(function(input, output, session) {
   #annotationGO4 <- subsetModuleDCO(input, output, dataObj = GOCD4CD8)
   #waterfallMod2 <- waterfallOutputFromGO(GOCD4CD8, annotation=annotationGO4)
 
-  output$test <- renderPlot({
-    outDat <- GO$popTable[annotationGO4(), on=GO$mapVar]
-    popHeatmapGG(outDat)
-  })
 
 })

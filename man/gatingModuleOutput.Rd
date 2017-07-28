@@ -5,7 +5,7 @@
 \title{Title}
 \usage{
 gatingModuleOutput(input, output, session, imageDir, popTable, displayNodes,
-  annotation, plotObj, mapVar)
+  annotation, plotObj, popSubsets, mapVar)
 }
 \arguments{
 \item{input}{- shiny module input object}

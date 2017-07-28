@@ -282,13 +282,15 @@ qcFlowObj <- R6Class(
   public=list(
     initialize= function(annotation, qcData, mapVar=NULL,
                          checkIntegrity=TRUE, reconcile=TRUE){
+
+                            if(is.null(mapVar)){
+                              mapVar=c("idVar"="FCSFiles")
+                              }
+
                             if(checkIntegrity){
                               outList <- checkIntegrity(annotation, qcData, mapVar, reconcile)
                               annotation <- outList$annotation
                               qcData <- outList$data
-                            }
-                            if(is.null(mapVar)){
-                              mapVar=c("idVar"="FCSFiles")
                             }
 
                             self$annotation <- annotation
@@ -453,4 +455,141 @@ populationExpressionObj <-
                   populations=NULL)
 
           )
+
+#' Build a qcFlowObj from flowSet or gatingSet
+#'
+#' @param gs - can be flowSet or gatingSet
+#' @param annotation - annotation. if NULL, will attempt to get from phenoData slot
+#' @param samplePop - number of points to sample from each flowFrame
+#' @param qcMarkers - list of markers to return that represent qcMarkers
+#'
+#' @return
+#' @export
+#'
+#' @examples
+qcFlowObjFromGatingSet <- function(gs, annotation=NULL, samplePop=4000,
+                               qcMarkers=NULL, mapVar=NULL){
+
+  if(class(gs) == "flowSet"){
+    dataMelt <- returnMeltedData(gs, selectMarkers=qcMarkers,
+                                 returnCellNum = samplePop)
+
+    if(is.null(annotation)){
+      annotation <- pData(gs@phenoData)
+      mapVar = c("idVar"="name")
+    }
+  }
+
+  if(class(gs) == "GatingSet"){
+    dataMelt <- returnMeltedData(fS = gs@data, selectMarkers=qcMarkers,
+                                 returnCellNum = samplePop)
+
+    if(is.null(annotation)){
+      annotation <- pData(gs@data@phenoData)
+      mapVar = c("idVar"="name")
+    }
+  }
+
+  if(!is.null(annotation) & is.null(mapVar)){
+    stop("You need to supply a mapping variable in the form of mapVar=c('idVar'= X),
+           where X is the id column in your annotation that corresponds with qcData$idVar")
+  }
+
+  dataMelt <- data.table(dataMelt)
+  annotation <- data.table(annotation)
+
+  QCO <- qcFlowObj$new(qcData=dataMelt, annotation=annotation, mapVar=mapVar)
+
+  return(QCO)
+}
+
+#' Build a gatingObj from a gatingSet
+#'
+#' @param gs - a GatingSet object.
+#' @param annotation - annotation object. if NULL, will try to pull from phenoData in gs@data
+#' @param populations
+#' @param objId - unique ID for this object. Used in shiny modules to avoid namespace collisions.
+#' @param imageDir -
+#' @param mapVar - a named variable that will map to populationTable.
+#' The column to map in popTable is `name`.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+gatingObjFromGatingSet <- function(gs, annotation=NULL, populations=NULL,
+                              imageDir=NULL, mapVar=NULL, objId=NULL, makeGraphs=FALSE){
+    if(is.null(annotation)){
+      annotation <- pData(gs@data@phenoData)
+      mapVar <- c("name"="name")
+    }
+
+    if(is.null(populations)){
+      populations <- getNodes(gs, path="auto")[-1]
+    }
+
+    if(!is.null(annotation) & is.null(mapVar)){
+      stop("You need to supply a mapping variable in the form of mapVar=c('name'= X),
+           where X is the id column in your annotation that corresponds with popTable$name")
+    }
+
+    if(!is.null(objId)){
+      GO$objId <- objId
+    }
+
+    annotation <- data.table(annotation)
+    popTable <- data.table(getPopulationsAndZscores(gs, pipelineFile=objId))
+
+    GO <- gatingObj$new(popTable=popTable, annotation=annotation, mapVar=mapVar)
+    GO$setPopulations(populations)
+
+    if(!is.null(imageDir)){
+      if(makeGraphs){
+        if(!dir.exists(imageDir)){
+          dir.create(imageDir)
+        }
+        plotAllPopulationsOld(gs, pipelineFile = objId,imagePath=paste0(imageDir, "/"))
+      }
+      GO$imageDir <- imageDir
+    }
+
+    return(GO)
+}
+
+#' Build a populationExpressionObj from a GatingSet
+#'
+#' @param gs - a gatingSet
+#' @param annotation - Annotations for each sample, where one column = sampleNames(gs).
+#' If NULL, then it will attempt to grab annotation from the phenoData slot.
+#' @param populations - A list of populations (must correspond to populationNames in gs).
+#' If NULL, will just set populations with all populations in gatingSet
+#' @param samplePop - Number of points per population to sample. If
+#'
+#' @return
+#' @export
+#'
+#' @examples
+PEOFromGatingSet <- function(gs, annotation=NULL, populations=NULL, samplePop=4000){
+
+  if(is.null(annotation)){
+    annotation <- pData(gs@data@phenoData)
+  }
+
+  if(is.null(populations)){
+    populations <- getNodes(gs)[-1]
+  }
+
+  dataList <- lapply(nodes, function(x){
+    flowDashboard::returnMeltedDataFromGS(gs=gs,
+                                          population=x, samplePopulation=samplePop)})
+
+  annotation <- data.table(annotation)
+  expressionData <- data.table(do.call(rbind,dataList))
+
+  PEO <- populationExpressionObj$new(expressionData=expressionData, annotation=annotation)
+
+  PEO$setPopulations(populations)
+
+  return(PEO)
+}
 

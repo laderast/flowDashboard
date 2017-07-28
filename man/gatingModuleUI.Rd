@@ -4,8 +4,7 @@
 \alias{gatingModuleUI}
 \title{Title}
 \usage{
-gatingModuleUI(id, label = "gatingModule", sortConditions,
-  subsetCondition = NULL, annotation)
+gatingModuleUI(id, label = "gatingModule", popSubsets)
 }
 \arguments{
 \item{annotation}{}
