@@ -4,7 +4,7 @@
 \alias{findPointsGeomTile}
 \title{Title}
 \usage{
-findPointsGeomTile(point, data, xcol, ycol)
+findPointsGeomTile(point, data, xcol, ycol, ps)
 }
 \arguments{
 \item{ycol}{}

@@ -58,7 +58,7 @@ waterfallOutputFromGO <- function(GO, annotation, objId=NULL){
     objId <- GO$objId
   }
 
-  print(objId)
+  #print(objId)
 
   callModule(waterfallOutput, id=objId, data=GO$popTable, annotation=annotation,
              populationChoices=GO$populations, colorColumns=GO$sortOptions,

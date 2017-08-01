@@ -10,15 +10,16 @@ shinyServer(function(input, output, session) {
 
   #Gating Modules
   annotationGO <- subsetModuleDCO(input, output, dataObj = GO)
-  source("gating.R",local = TRUE)
+  #source("gating.R",local = TRUE)
 
-  annotationGO4 <- subsetModuleDCO(input, output, dataObj = GO, objId="GObj4")
-
-
+  annotationGO4 <- subsetModuleDCO(input, output, dataObj = GO, objId=goObjId3)
   #annotationGO4 <- reactive({GO$annotation})
-  gatingMod <- gatingModuleOutputFromGO(input, output, session, GO = GO,
-                                        annotation = annotationGO4,
-                                        objId = "GObj4")
+  gatingGGMod <- gatingModuleOutputGGFromGO(input,output,session, GO=GO,
+                                            annotation=annotationGO4, objId=goObjId3)
+  #annotationGO4 <- reactive({GO$annotation})
+  #gatingMod <- gatingModuleOutputFromGO(input, output, session, GO = GO,
+  #                                      annotation = annotationGO4,
+  #                                      objId = "GObj4")
 
   ##Expression Modules
   annotationPEO <- subsetModuleDCO(input, output, dataObj = PEO)

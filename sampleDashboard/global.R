@@ -10,6 +10,9 @@ addResourcePath("data","data")
 load("data/objects.RData")
 GO$imageDir <- imageDir
 
+goObjId2 <- "GO2"
+goObjId3 <- "GO3"
+
 annotCols <- GO$annotCols
 
 #print(GO$imageDir)

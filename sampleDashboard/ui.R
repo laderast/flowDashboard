@@ -11,25 +11,26 @@ shinyUI(dashboardPage(
                   conditionalPanel("input.sidebarmenu === 'QCDash'",
                                    subsetModuleUICDO(QCO)),
 
-                   menuItem("Gating", tabName="GatingDash", selected = FALSE),
-                   conditionalPanel("input.sidebarmenu === 'GatingDash'",
-                                   subsetModuleUICDO(GO)),
+                   # menuItem("Gating", tabName="GatingDash", selected = FALSE),
+                   # conditionalPanel("input.sidebarmenu === 'GatingDash'",
+                   #                 subsetModuleUICDO(GO)),
 
-                  menuItem("GatingGG", tabName="GatingFromGO", selected = FALSE),
+                  menuItem("Gating", tabName="Gating", selected = FALSE),
                   conditionalPanel("input.sidebarmenu === 'GatingFromGO'",
-                                   subsetModuleUICDO(GO, objId = "GObj4")),
-
-                  menuItem("Expression", tabName="PopExpression", selected=FALSE),
-                 conditionalPanel("input.sidebarmenu === 'PopExpression'",
-                                   subsetModuleUICDO(PEO)),
+                                   subsetModuleUICDO(GO, objId = goObjId3)),
 
                   menuItem("dotPlots", tabName="DotPlot", selected=FALSE),
                   conditionalPanel("input.sidebarmenu === 'DotPlot'",
                                    subsetModuleUICDO(GO, objId = goObjId2)),
 
-                 menuItem("Waterfall1", tabName="Waterfall", selected=FALSE)#,
+                 menuItem("Waterfall1", tabName="Waterfall", selected=FALSE),#,
                  #conditionalPanel("input.sidebarmenu === 'Waterfall1'",
                   #                subsetModuleUICDO(GOadam))#,
+
+                 menuItem("Expression", tabName="PopExpression", selected=FALSE),
+                 conditionalPanel("input.sidebarmenu === 'PopExpression'",
+                                  subsetModuleUICDO(PEO))
+
 
 #                 menuItem("Waterfall2", tabName="Waterfall2", selected=FALSE),
 #                 conditionalPanel("input.sidebarmenu === 'Waterfall2'",
@@ -41,54 +42,36 @@ shinyUI(dashboardPage(
     dashboardBody(
       tabItems(
         tabItem(tabName="QCDash",
-                #box(
+
                   absolutePanel(qcModuleUIFromQCO(QCO)),
-                  selected=TRUE), #),
+                  selected=TRUE),
 
-        tabItem(tabName = "GatingFromGO",
+        tabItem(tabName = "Gating",
                 box(
-                  absolutePanel(id="gating2",draggable=TRUE,top=0, left=0,
-                                fixed=FALSE,
-                                style="opacity: 0.8; background-color: white",
-                                height=200,width="auto",
-                                h4("Gating Scheme (draggable)"),
-                                imageOutput("gating2")), width=12, height=225
-                  ),
-
-                box(
-                selectInput("ps", "Select Cellular Subsets", choices=names(popSubsets),
-                            selected=names(popSubsets)[1]),
-                plotOutput("test", click = clickOpts("clickGate", clip=FALSE),
-                           hover=hoverOpts("hoverGate")),
-                uiOutput("clickTip"),
-                uiOutput("hoverTip"),
-                #div(style= 'overflow-x: scroll',
-                #    gatingModuleUIFromGO(GO, objId = "GObj4")
-                #    ),
+                  gatingModuleUIFromGO(GO, objId=goObjId3),
                 width = 12
                 )
         ),
 
-         tabItem(tabName = "GatingDash",
-                 div(style = 'overflow-x: scroll',
-                 box(
-                   absolutePanel(id="gating",draggable=TRUE,top=0, left=0,
-                                 fixed=FALSE,
-                                 style="opacity: 0.8; background-color: white",
-                                 height=200,width="auto",
-                                 h4("Gating Scheme (draggable)"),
-                                 imageOutput("gating")),
-                   width = 12, height=225#, height=length(GO$populations)*60
-                 ),
-                 box(
-                       #absolutePanel(id="heatmap",
-                                     h4("Population Heatmap (Click on box to see provenance)"),
-                                     ggvisOutput("populationHeatmap"),#, top=250, left=0, fixed=FALSE),
-                       width = 12)
-
-
-                 )
-                ),
+         # tabItem(tabName = "GatingDash",
+         #         div(style = 'overflow-x: scroll',
+         #         box(
+         #           absolutePanel(id="gating",draggable=TRUE,top=0, left=0,
+         #                         fixed=FALSE,
+         #                         style="opacity: 0.8; background-color: white",
+         #                         height=200,width="auto",
+         #                         h4("Gating Scheme (draggable)"),
+         #                         imageOutput("gating")),
+         #           width = 12, height=225#, height=length(GO$populations)*60
+         #         ),
+         #         box(
+         #                             h4("Population Heatmap (Click on box to see provenance)"),
+         #                             ggvisOutput("populationHeatmap"),
+         #               width = 12)
+         #
+         #
+         #         )
+         #        ),
 
       tabItem(tabName = "PopExpression", box(violinUIFromCDO(PEO), width=10)),
       tabItem(tabName= "DotPlot", box(dotPlotUIFromGO(GO, objId = goObjId2),width=10)),

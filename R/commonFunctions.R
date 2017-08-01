@@ -669,7 +669,7 @@ makeOutputString <- function(point, annotDisplayOptions){
 #' @return row in data that corresponds to clicked point
 #'
 #' @examples
-findPointsGeomTile <- function(point, data, xcol, ycol){
+findPointsGeomTile <- function(point, data, xcol, ycol, ps){
   numRows <- length(ycol)
   numCols <- length(xcol)
 
@@ -686,16 +686,16 @@ findPointsGeomTile <- function(point, data, xcol, ycol){
   #print(yCellSize)
   yCellNum <- numRows - ceiling(point$y - 0.5) + 1
 
-  #print(xCellNum)
-  #print(yCellNum)
+  print(xCellNum)
+  print(yCellNum)
 
-  ps <- popSubsets[[input$ps]]
+  #ps <- popSubsets[[input$ps]]
   xName <- xcol[xCellNum]
   #print(colnames(spreaddata))
   yName <- ps[yCellNum]
 
-  #print(xName)
-  #print(yName)
+  print(xName)
+  print(yName)
 
   outLine <- data[name==xName & Population== yName]
 
