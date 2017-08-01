@@ -10,6 +10,8 @@ addResourcePath("data","data")
 load("data/objects.RData")
 GO$imageDir <- imageDir
 
+annotCols <- GO$annotCols
+
 #print(GO$imageDir)
 
 popSubsets <- GO$popSubsets

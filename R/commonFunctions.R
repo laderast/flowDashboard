@@ -653,7 +653,7 @@ reconcileDataAndAnnotation<- function(annotation, data, mapVar){
 }
 
 makeOutputString <- function(point, annotDisplayOptions){
-  point <- point[annotDisplayOptions]
+  point <- as.list(point)[annotDisplayOptions]
   outputString <- paste("<b>",names(point),":</b> ", point, "<br/>", collapse = "")
 
   outputString
@@ -663,33 +663,43 @@ makeOutputString <- function(point, annotDisplayOptions){
 #'
 #' @param point
 #' @param data
-#' @param spreaddata
+#' @param xcol
+#' @param ycol
 #'
 #' @return row in data that corresponds to clicked point
 #'
 #' @examples
-findPointsGeomTile <- function(point, data, spreaddata){
-  numRows <- nrow(spreaddata)
-  numCols <- ncol(spreaddata)
+findPointsGeomTile <- function(point, data, xcol, ycol){
+  numRows <- length(ycol)
+  numCols <- length(xcol)
+
+  #xcols <- length(spreaddata)
+
+  #print(numCols)
+  #print(numRows)
   pointXrange <- point$range$right - point$range$left
   xCellSize <- pointXrange / numRows
   #print(xCellSize)
-  xCellNum <- ceiling(point$x) + 1
+  xCellNum <- ceiling(point$x - 0.5)
   pointYrange <- point$range$bottom - point$range$top
   yCellSize <- pointYrange / numRows
   #print(yCellSize)
-  yCellNum <- numRows - ceiling(point$y) + 1
+  yCellNum <- numRows - ceiling(point$y - 0.5) + 1
 
-  print(xCellNum)
-  print(yCellNum)
+  #print(xCellNum)
+  #print(yCellNum)
 
   ps <- popSubsets[[input$ps]]
-  xName <- colnames(spreaddata)[xCellNum]
+  xName <- xcol[xCellNum]
+  #print(colnames(spreaddata))
   yName <- ps[yCellNum]
 
-  print(xName)
-  print(yName)
+  #print(xName)
+  #print(yName)
 
   outLine <- data[name==xName & Population== yName]
+
+
+
   return(outLine)
 }

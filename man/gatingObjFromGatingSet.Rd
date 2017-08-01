@@ -5,15 +5,19 @@
 \title{Build a gatingObj from a gatingSet}
 \usage{
 gatingObjFromGatingSet(gs, annotation = NULL, populations = NULL,
-  samplePop = 4000, imageDir = NULL, mapVar = NULL)
+  imageDir = NULL, mapVar = NULL, objId = NULL, makeGraphs = FALSE)
 }
 \arguments{
 \item{gs}{- a GatingSet object.}
 
 \item{annotation}{- annotation object. if NULL, will try to pull from phenoData in gs@data}
 
+\item{imageDir}{-}
+
 \item{mapVar}{- a named variable that will map to populationTable.
 The column to map in popTable is `name`.}
+
+\item{objId}{- unique ID for this object. Used in shiny modules to avoid namespace collisions.}
 }
 \description{
 Build a gatingObj from a gatingSet

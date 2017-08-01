@@ -359,7 +359,11 @@ gatingObj <-
 
                               invisible(self)
                             },
-        returnMergedData =function(self){
+        setAnnotationDisplayOptions=function(annotCols){
+          annotCols <- annotCols[annotCols %in% colnames(self$returnMergedData())]
+          self$annotCols <- annotCols
+        },
+        returnMergedData =function(){
           self$popTable[self$annotation, on=self$mapVar]
         },
       setPopulations = function(popList){

@@ -46,6 +46,9 @@ PEO$setSubsetAndSortOptions(sortOptions=sortOptions, subsetOptions=subsetOptions
 
 QCO$objId <- "QCObj"
 GO$objId <- "GObj"
+GO$setAnnotationDisplayOptions(c("BeatAMLID", "patientStatus", "Population", "Count", "name", "numCells", "Age", "Gender"))
+
+
 #GO2$objId <- "GObj2"
 PEO$objId <- "PEObj"
 
@@ -57,10 +60,6 @@ load("../inst/extdata/proliferationGoObjects.rda")
 varClass <- sapply(GOadam$annotation, class)
 varClass <- sapply(varClass, function(x){return(x[1])})
 
-annotation <- data.frame(GOadam$annotation)
-annotation$RISK[is.na(annotation$RISK)] <- "Unknown"
-annotation$Gender[is.na(annotation$Gender)] <- "Unknown"
-
 #GOadam$annotation
 
-save.image("data/objects.RData")
+save(GO, PEO, QCO, file="data/objects.RData")
