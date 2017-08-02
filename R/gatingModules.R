@@ -55,7 +55,7 @@ gatingModuleUI <- function(id, label = "gatingModule", popSubsets){
                     selectInput(ns("ps"), "Select Cellular Subsets", choices=names(popSubsets),
                                 selected=names(popSubsets)[1]),
                   plotOutput(ns("popHeatmap"), click = clickOpts(id=ns("clickGate"), clip=TRUE),
-                             hover=hoverOpts(id=ns("hoverGate"), clip=TRUE,delay = 500)),
+                             hover=hoverOpts(id=ns("hoverGate"), clip=TRUE,delay = 500),width="auto",height = "auto"),
                   uiOutput(ns("clickTip")),
                   uiOutput(ns("hoverTip")),
                   width=12#, height=700
