@@ -58,7 +58,8 @@ gatingModuleUI <- function(id, label = "gatingModule", popSubsets){
                              hover=hoverOpts(id=ns("hoverGate"), clip=TRUE,delay = 500)),
                   uiOutput(ns("clickTip")),
                   uiOutput(ns("hoverTip")),
-                  width=12) #,
+                  width=12#, height=700
+                  ) #,
                    #)
 
     # absolutePanel(id="scheme",imageOutput(ns("pipelineHierarchy")), top=250, left=650),

@@ -46,7 +46,7 @@ PEO$setSubsetAndSortOptions(sortOptions=sortOptions, subsetOptions=subsetOptions
 
 QCO$objId <- "QCObj"
 GO$objId <- "GObj"
-GO$setAnnotationDisplayOptions(c("BeatAMLID", "patientStatus", "Population", "Count", "name", "numCells", "Age", "Gender"))
+GO$setAnnotationDisplayOptions(c("BeatAMLID", "patientStatus", "Population", "Count", "numCells", "Age", "Gender"))
 
 
 #GO2$objId <- "GObj2"

@@ -168,9 +168,6 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
     IDRow <- x$idVar
 
-    # showInfo <- c("BeatAML ID"="patientID", "Panel"="Panel", "Run Date"="runDate",
-    #               "PanelSampleID"="notation", "FCS File Name" = "FCSFileName", "Number of Cells"="NumberCells")
-    #print(IDRow)
     outRow <- annotation()[annotation()$idVar == IDRow,]
     #print(outRow)
 
@@ -210,10 +207,6 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     validate(need(input$Marker, "Marker not specified"))
     Marker <- input$Marker
 
-    # If no file is selected, don't do anything
-    #validate(need(input$Marker, message = FALSE))
-    #validate(need(input$Population, message= FALSE))
-    #dataOut <- data[annotateSelect(), nomatch=0]
 
     dataOut <- data[annotation(), nomatch=0, on=mapVar][variable %in% Marker]
 
@@ -221,23 +214,6 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     dataOut$idVar <- droplevels(dataOut$idVar)
     dataOut$idVar <- factor(dataOut$idVar, levels=unique(as.character(annotation()$FCSFiles)))
 
-    #reorder levels of idVar using sort variable
-    #dataOut$idVar <- relevel(dataOut$idVar, as.symbol(sortVariable))
-
-    #setkeyv()
-
-    #facetOrder
-
-    #print(head(dataOut))
-    #print(levels(dataOut$idVar))
-
-    #dataOut <- dataOut[variable %in% Marker]
-
-    #print(dataOut)
-
-    #dataOut <- dataOut %>% dplyr::filter(variable %in% input$Marker) %>% arrange_(input$Order)
-
-    #dataOut[variable %in% Marker]
     dataOut
   })
 
@@ -372,7 +348,7 @@ qcHeatmapPlot <- function(data, height=NULL, width=NULL, addText=TRUE,
     width <- 60 * (noSamples)
   }
 
-  print(head(data))
+  #print(head(data))
 
   out <- data %>%
     #filter(as.character(notation) %in% domX) %>%
