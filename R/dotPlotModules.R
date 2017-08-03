@@ -205,7 +205,7 @@ dotPlot <- function(data, aesList=aes_string(x="Population",y="percentPop"), xFa
     #labs(list(y = "% Parent Population")) +
     theme(axis.title.x = element_text(face="bold"), axis.text.x = element_blank()) +
     theme(axis.title.y = element_text(face="bold"), axis.text.y = element_text(face="bold")) +
-    scale_y_continuous(limits= c(lowLim,100)) +
+    #scale_y_continuous(limits= c(lowLim,100)) +
     ggtitle(plotTitle)
   #theme() +
 
