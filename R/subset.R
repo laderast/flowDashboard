@@ -67,7 +67,7 @@ subsetModuleDCO <- function(input, output, dataObj, objId=NULL){
   }
 
   callModule(subsetModule, id=objId, subsetOptionList=dataObj$subsetOptionList,
-               annotation=dataObj$annotation)
+               annotation=dataObj$annotation, mapVar=dataObj$mapVar)
 }
 
 
@@ -82,7 +82,7 @@ subsetModuleDCO <- function(input, output, dataObj, objId=NULL){
 #' @export
 #'
 #' @examples
-subsetModule <- function(input, output, session, subsetOptionList, annotation){
+subsetModule <- function(input, output, session, subsetOptionList, annotation, mapVar=NULL){
     ns <- session$ns
     observe({
 
@@ -118,6 +118,7 @@ subsetModule <- function(input, output, session, subsetOptionList, annotation){
 
     subgroup <- input$subgroup
 
+    #this section is ripe for tidyeval
     subgroup <- paste0("c('",paste(subgroup, collapse = "', '"),"')")
     filterExpression <- paste0("as.character(", categoryName, ") %in% ", subgroup)
 
@@ -126,8 +127,15 @@ subsetModule <- function(input, output, session, subsetOptionList, annotation){
     annotationSubset <- annotation %>% filter_(.dots=filterExpression)
 
     if(!is.null(sortVariable)){
+
+          idCol <- mapVar
+
           annotationSubset <- annotationSubset %>%
             arrange_(sortVariable)
+
+          orderedIds <- unique(annotationSubset[[idCol]])
+          annotationSubset[[idCol]] <- ordered(annotationSubset[[idCol]], levels=orderedIds)
+
     }
 
     #annotationSubset <- annotation[as.name(categoryName) %in% input$subgroup][order(as.name(categoryName))]

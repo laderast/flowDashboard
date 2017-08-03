@@ -300,7 +300,7 @@ qcFlowObj <- R6Class(
                             invisible(self)
 
                           },
-                          returnMergedData=function(self){
+                          returnMergedData=function(){
                             self$qcData[self$annotation, on=self$mapVar]
                           },
                           qcData = NULL, markers=NULL,

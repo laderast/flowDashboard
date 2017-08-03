@@ -128,6 +128,10 @@ violinOutput <- function(input, output, session, data, annotation, facetList=NUL
   output$violinPlot <- renderPlot({
 
     #need to test whether these inputs exist
+    validate(
+      need(input$markers, "need marker input"),
+      need(input$colorVar, "need color variable")
+    )
 
     marker <- input$markers
     colorVar <- input$colorVar
