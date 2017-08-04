@@ -303,7 +303,7 @@ findMedianValues <- function(controlMelt){
 #' @export
 #'
 #' @examples
-returnMeltedData <- function(fS, selectMarkers =NULL,
+returnMeltedData <- function(fS, selectMarkers =NULL, samplePop=NULL,
                              returnCellNum=FALSE){
 
   pD <- pData(parameters(fS[[1]]))
@@ -319,9 +319,10 @@ returnMeltedData <- function(fS, selectMarkers =NULL,
     idCol <- rep(x, nrow(out))
     out <- data.frame(idVar=idCol,out)
 
-  cellNum <- 1:nrow(out)
-  out <- data.frame(cellNum, out)
-
+  if(!returnCellNum){
+    cellNum <- 1:nrow(out)
+    out <- data.frame(cellNum, out)
+  }
   #print(dim(out))
 
   out
@@ -338,7 +339,7 @@ returnMeltedData <- function(fS, selectMarkers =NULL,
     cellFrame <- cellFrame[,colnames(cellFrame) %in% c("idVar",selectMarkers)]
   }
 
-  print(head(cellFrame))
+  #print(head(cellFrame))
 
   #print(colnames(cellFrame))
 
@@ -353,7 +354,7 @@ returnMeltedData <- function(fS, selectMarkers =NULL,
   }
   else{
     idVars <- c("idVar")
-    cellFrame <- cellFrame[,!colnames(cellFrame) %in% c("cellNum")]
+    #cellFrame <- cellFrame[,!colnames(cellFrame) %in% c("cellNum")]
   }
 
 
@@ -659,7 +660,7 @@ makeOutputString <- function(point, annotDisplayOptions){
   outputString
 }
 
-#' Title
+#' Finds line in file for geom_tile() heatmaps
 #'
 #' @param point
 #' @param data
@@ -702,4 +703,9 @@ findPointsGeomTile <- function(point, data, xcol, ycol, ps){
 
 
   return(outLine)
+}
+
+makeRandomId <- function(){
+  randName <- paste0(c(sample(LETTERS, 5), sample(0:9, 2)), collapse="")
+  randName
 }

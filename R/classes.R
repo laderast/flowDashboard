@@ -467,27 +467,31 @@ populationExpressionObj <-
 #' @param samplePop - number of points to sample from each flowFrame
 #' @param qcMarkers - list of markers to return that represent qcMarkers
 #'
-#' @return
+#' @return qcFlowObj
 #' @export
 #'
 #' @examples
 qcFlowObjFromGatingSet <- function(gs, annotation=NULL, samplePop=4000,
-                               qcMarkers=NULL, mapVar=NULL){
+                               qcMarkers=NULL, mapVar=NULL, objId=NULL){
 
-  if(class(gs) == "flowSet"){
+  #make sure the marker names are R-permitted
+  if(!is.null(qcMarkers)){
+    qcMarkers <- make.names(qcMarkers)
+  }
+
+  if(class(gs)[1] == "flowSet"){
     dataMelt <- returnMeltedData(gs, selectMarkers=qcMarkers,
                                  returnCellNum = samplePop)
 
     if(is.null(annotation)){
-      annotation <- pData(gs@phenoData)
+      annotation <- pData(gs@data@phenoData)
       mapVar = c("idVar"="name")
     }
   }
 
-  if(class(gs) == "GatingSet"){
+  if(class(gs)[1] == "GatingSet"){
     dataMelt <- returnMeltedData(fS = gs@data, selectMarkers=qcMarkers,
                                  returnCellNum = samplePop)
-
     if(is.null(annotation)){
       annotation <- pData(gs@data@phenoData)
       mapVar = c("idVar"="name")
@@ -503,6 +507,25 @@ qcFlowObjFromGatingSet <- function(gs, annotation=NULL, samplePop=4000,
   annotation <- data.table(annotation)
 
   QCO <- qcFlowObj$new(qcData=dataMelt, annotation=annotation, mapVar=mapVar)
+
+  ##assign default objId if there is none
+  ##assign a random string Id to avoid namespace collisions
+  if(is.null(objId)){
+
+    randName <- makeRandomId()
+    objId <- paste0("QCO-", randName)
+
+  }
+
+  QCO$objId <- objId
+  #set default options
+
+  annotCols <- colnames(annotation)
+
+  annotCols <- annotCols[!annotCols %in% mapVar]
+
+  QCO$setAnnotationDisplayOptions(annotCols)
+  QCO$setSubsetAndSortOptions(annotCols, annotCols)
 
   return(QCO)
 }
@@ -537,15 +560,25 @@ gatingObjFromGatingSet <- function(gs, annotation=NULL, populations=NULL,
            where X is the id column in your annotation that corresponds with popTable$name")
     }
 
-    if(!is.null(objId)){
-      GO$objId <- objId
-    }
+
+  if(is.null(objId)){
+    randName <- makeRandomId()
+    objId <- paste0("GO-", randName)
+  }
+
+    GO$objId <- objId
 
     annotation <- data.table(annotation)
     popTable <- data.table(getPopulationsAndZscores(gs, pipelineFile=objId))
 
     GO <- gatingObj$new(popTable=popTable, annotation=annotation, mapVar=mapVar)
     GO$setPopulations(populations)
+
+    annotCols <- colnames(annotation)
+    annotCols <- annotCols[!annotCols %in% mapVar]
+
+    GO$setAnnotationDisplayOptions(annotCols)
+    GO$setSubsetAndSortOptions(annotCols, annotCols)
 
     if(!is.null(imageDir)){
       if(makeGraphs){
@@ -555,7 +588,11 @@ gatingObjFromGatingSet <- function(gs, annotation=NULL, populations=NULL,
         plotAllPopulationsOld(gs, pipelineFile = objId,imagePath=paste0(imageDir, "/"))
       }
       GO$imageDir <- imageDir
-    }
+    }else{
+      if(makeGraphs){
+        stop("You set makeGraphs=TRUE, but didn't specify imageDir")
+        }
+      }
 
     return(GO)
 }
@@ -567,13 +604,14 @@ gatingObjFromGatingSet <- function(gs, annotation=NULL, populations=NULL,
 #' If NULL, then it will attempt to grab annotation from the phenoData slot.
 #' @param populations - A list of populations (must correspond to populationNames in gs).
 #' If NULL, will just set populations with all populations in gatingSet
-#' @param samplePop - Number of points per population to sample. If
+#' @param samplePop - Number of cells per population to sample. If NULL, returns all
+#' cells in population.
 #'
-#' @return
+#' @return populationExpressionObj
 #' @export
 #'
 #' @examples
-PEOFromGatingSet <- function(gs, annotation=NULL, populations=NULL, samplePop=4000){
+PEOFromGatingSet <- function(gs, annotation=NULL, populations=NULL, samplePop=4000, objId=NULL){
 
   if(is.null(annotation)){
     annotation <- pData(gs@data@phenoData)
@@ -593,6 +631,18 @@ PEOFromGatingSet <- function(gs, annotation=NULL, populations=NULL, samplePop=40
   PEO <- populationExpressionObj$new(expressionData=expressionData, annotation=annotation)
 
   PEO$setPopulations(populations)
+
+  if(is.null(objId)){
+    randName <- makeRandomId()
+    objId <- paste0("PEO-", randName)
+  }
+
+  annotCols <- colnames(annotation)
+  annotCols <- annotCols[!annotCols %in% mapVar]
+
+  PEO$setAnnotationDisplayOptions(annotCols)
+  PEO$setSubsetAndSortOptions(annotCols, annotCols)
+
 
   return(PEO)
 }

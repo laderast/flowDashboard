@@ -8,6 +8,14 @@ source("R/gatingModules.R")
 source("R/violinModules.R")
 options("scaleTrans"=FALSE)
 
+annotation <- fread("inst/extdata/FCSFileInfo.txt")
+load("inst/extdata/qcData.RData")
+qcData <- data.table(qcData)
+popTable <- fread("inst/extdata/cleanupPopulations.txt")
+load("inst/extdata/expressionData.RData")
+gs <- load_gs("inst/extdata/gvHDgs/")
+
+
 
 testDir <- system.file("extdata",package="flowWorkspaceData")
 fcsFiles <- list.files(testDir, pattern = "a2004",full.names = TRUE)
@@ -52,14 +60,10 @@ test_that("plotAllPopulations",{
 
 
 test_that("returnMeltedData tests", {
-  # wsfile<-list.files(testDir,pattern="A2004Analysis.xml",full=TRUE)
-  # ws <- openWorkspace(wsfile);
-  # gs<-try(parseWorkspace(ws,path=testDir,name=1));
-  #
-  # popTable <- getPopulationsAndZscores(gs, pipelineFile = "A2004")
-  #
-  # nodeList <- getNodes(gs[[1]],path="full")
-  # plotAllPopulations(gs, nodeList=nodeList, pipelineFile = "A2004")
+  pD <- pData(parameters(gs@data[[1]]))
+  returnMeltedData(gs)
+  returnMeltedData(gs@data)
+  returnMeltedData(gs, selectMarkers = pD$desc[1:5])
 
 })
 

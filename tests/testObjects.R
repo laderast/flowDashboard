@@ -26,8 +26,6 @@ test_that("testCheckIntegrity", {
 
   test <- checkIntegrity(annotation, popTable,
                  mapVar=c("name"="FCSFiles"), reconcile=TRUE)
-
-
 })
 
 test_that("testQCO", {
@@ -140,6 +138,6 @@ test_that("gatingSetTests", {
   GO <- gatingObjFromGatingSet(gs[1:3], objId = objId)
   GO <- gatingObjFromGatingSet(gs[1:2], objId = objId, makeGraphs=TRUE, imageDir = imageDir)
   expect_equal(GO$imageDir, imageDir)
-  GO <- gatingObjFromGatingSet()
+  expect_error(gatingObjFromGatingSet(gs[1:3], makeGraphs = TRUE, imageDir = NULL))
 
 })
