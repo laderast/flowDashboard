@@ -2,7 +2,7 @@
 % Please edit documentation in R/commonFunctions.R
 \name{findPointsGeomTile}
 \alias{findPointsGeomTile}
-\title{Title}
+\title{Finds line in file for geom_tile() heatmaps}
 \usage{
 findPointsGeomTile(point, data, xcol, ycol, ps)
 }
@@ -13,6 +13,6 @@ findPointsGeomTile(point, data, xcol, ycol, ps)
 row in data that corresponds to clicked point
 }
 \description{
-Title
+Finds line in file for geom_tile() heatmaps
 }
 

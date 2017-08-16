@@ -33,7 +33,10 @@ makePopulationIdentifier <- function(popName, name, pipelineFile="Panel1", delim
 #'
 #'
 #' @param gateSet - a gatingSet with attached populations
+#' @param nodeList - a list of populations to plot
+#' @pipelineFile - unique object identifier used to map population/sample to image
 #' @param imagePath - directory to write population images
+#' @delimiter - character. what delimiter to use to distinguish idVar. Default is "+"
 #'
 #' @return nothing. Side effect is images written to the imagePath.
 #' @export
@@ -198,16 +201,10 @@ scale_this <- function(x){
 #' @examples
 getPopulationsAndZscores <- function(gateSet, pipelineFile="panel1", delimiter="+"){
   popTable <- getPopStats(gateSet, path="auto")
-  #popTable$Population <- make.names(popTable$Population)
-  #popTable$Parent <- make.names(popTable$Population)
-
-  #popTable$Population <- gsub(pattern = "\\.$", replacement = "", popTable$Population)
-  #popTable$Parent <- gsub(pattern = "\\.$", replacement = "", popTable$Parent)
 
   scale_this <- function(x){
     as.vector(scale(x))
   }
-
 
   popTable <- data.frame(popTable) %>% mutate(idVar = makePopulationIdentifier(Population,name,pipelineFile,delimiter),
                                   percentPop =(Count/ParentCount)*100)
@@ -215,23 +212,15 @@ getPopulationsAndZscores <- function(gateSet, pipelineFile="panel1", delimiter="
   #popMat <- acast(popTable, name~Population, value.var = "percentPop")
   popTable <- popTable %>%
     group_by(Population) %>%
-    mutate(zscore = scale_this(percentPop), popKey = paste0(name,delimiter,Population))
-
-  #popScale <- scale(popMat)
-  #popScaleMelt <- melt(popScale,value.name="zscore")
-  #popScaleMelt <- popScaleMelt %>% mutate(idVar=paste(Var1,Var2,pipelineFile,sep = delimiter)) %>%
-  #  select(idVar, zscore)
-
-
-  #popTable %>% inner_join(y=popScaleMelt, by=c("idVar"="idVar"))
-  #popTable <- merge(popTable, popScaleMelt, by="idVar")
+    mutate(zscore = scale_this(percentPop),
+           popKey = paste0(name,delimiter,Population))
 
   return(data.table(popTable))
 }
 
 
 
-#' buildSampledDataList
+#' buildSampledDataList - deprecated
 #'
 #' @param fSet
 #' @param controlMarkers
@@ -319,36 +308,32 @@ returnMeltedData <- function(fS, selectMarkers =NULL, samplePop=NULL,
     idCol <- rep(x, nrow(out))
     out <- data.frame(idVar=idCol,out)
 
-  if(!returnCellNum){
+  if(returnCellNum){
     cellNum <- 1:nrow(out)
     out <- data.frame(cellNum, out)
   }
   #print(dim(out))
 
-  out
+    #return sampled Data if samplePop is a numeric value
+    if(!is.null(samplePop)){
+      out <- out[sample(nrow(out), samplePop),]
+    }
+
+  return(data.table(out))
   })
 
-  cellFrame <- do.call(rbind,listExprs)
-
-  #print(head(cellFrame))
-  #print(dim(cellFrame))
-
-  #print(colnames(cellFrame))
+  cellFrame <- rbindlist(listExprs)
 
   if(!is.null(selectMarkers)){
-    cellFrame <- cellFrame[,colnames(cellFrame) %in% c("idVar",selectMarkers)]
+    colsInMarkers <- colnames(cellFrame) %in% c("idVar",selectMarkers)
+
+    if(length(which(colsInMarkers))==0){
+      stop("selectMarkers not in dataset")
+    }
+
+    cellFrame <- cellFrame[,colsInMarkers]
   }
 
-  #print(head(cellFrame))
-
-  #print(colnames(cellFrame))
-
-  #  if(!is.null(samplePopulation)){
-  #    sampleInd <- sample(1:nrow(cellFrame), samplePopulation)
-  #    cellFrame <- cellFrame[sampleInd,]
-  #  }
-
-  #cellFrame <- cellFrame %>% select(-BEADDIST,-Original.Frame)
   if(returnCellNum){
     idVars <- c("idVar", "cellNum")
   }
@@ -357,15 +342,7 @@ returnMeltedData <- function(fS, selectMarkers =NULL, samplePop=NULL,
     #cellFrame <- cellFrame[,!colnames(cellFrame) %in% c("cellNum")]
   }
 
-
-  #cellMelt <- cellMelt %>% arrange(idVar)
   cellMelt <- reshape2::melt(cellFrame, id.vars=idVars)
-  #print(head(cellMelt))
-  #print(tail(cellMelt))
-  #levels(cellMelt$variable) <- levels(pD$desc)
-  #print(head(cellMelt))
-  #print(tail(cellMelt))
-
   return(data.table::data.table(cellMelt))
 
 }
@@ -464,7 +441,9 @@ setMethod("buildFileManifest", signature=c(object="flowSet"),
 #'
 #' @examples
 returnMeltedDataFromGS <- function(gS, population, removeMarkers = NULL, samplePopulation = NULL){
-  require(reshape2)
+  #require(reshape2)
+  if(!is.character(population)){stop("population must be specified")}
+
   amlList <- getData(gS, population)
   #amlList <- amlList[grep("D",sampleNames(amlList))]
 
@@ -477,24 +456,30 @@ returnMeltedDataFromGS <- function(gS, population, removeMarkers = NULL, sampleP
 
   #markersToInterrogate <- descFrame[!descFrame$desc %in% removeMarkers,]
 
-  mCAList <- as(amlList, "list")
+  #exprList <- fsApply(amlList, function(x){data.table(exprs(x))})
 
-  exprList <- lapply(mCAList, exprs)
+  exprList <- as(amlList, "list")
+  exprList <- lapply(exprList, function(x){data.table(exprs(x))})
+  filteredExprList <-
+    lapply(exprList, function(x){colnames(x) <- descFrame$desc
 
-  filteredExprList <- lapply(exprList, function(x){colnames(x) <- descFrame$desc
+         #grep nodeIDs in colnames(x)
 
-  print(descFrame$desc)
-  #x <- x[,colnames(x) %in% markersToInterrogate$desc]
-  if(!is.null(nodeIDs) & length(nodeIDs)>0){
-    x <- x[,-nodeIDs]
+          #print(descFrame$desc)
+
+        #x <- x[,colnames(x) %in% markersToInterrogate$desc]
+    if(!is.null(nodeIDs) & length(nodeIDs)>0){
+      keepNodes <- colnames(x)[!colnames(x) %in% nodeIDs]
+      x <- x[,..keepNodes]
+      #x <- x[,-nodeIDs]
     }
-  return(x)
-  })
+    return(x)
+    })
 
   filteredExprList <- lapply(filteredExprList, function(x){
     #print(class(x))
     #print(head(x))
-    if(class(x) == "numeric"){x <- as.matrix(t(x))}
+    #if(class(x) == "numeric"){x <- as.matrix(t(x))}
     if(nrow(x) != 0){
       if(!is.null(samplePopulation)){
         if(nrow(x) > samplePopulation){
@@ -510,21 +495,32 @@ returnMeltedDataFromGS <- function(gS, population, removeMarkers = NULL, sampleP
 
   names(filteredExprList) <- sampleNames(amlList)
 
-  filteredExprMeltList <- lapply(names(filteredExprList), function(y){ x <- filteredExprList[[y]]
+  filteredExprMeltList <-
+    lapply(names(filteredExprList), function(y){
+
+      x <- filteredExprList[[y]]
   #rownames(x) <- 1:nrow(x)
   #print(head(x))
   if(nrow(x)==0){
     cell=NULL
     idVar=NULL
-    x <- data.frame(cell,idVar,x)
+    ##need to figure out data.table way to add columns
+
+    x <- data.table(data.frame(idVar,cell, x))
   }
   else{
-    x <- data.frame(cell=1:nrow(x), idVar=y, x)
-    x <- reshape2::melt(x, id.vars=c("cell", "idVar"))
+    cell <- 1:nrow(x)
+    x <- data.table(idVar=y, cell, x)
+    #use data.table::melt here
+    x <- data.table::melt(x, id.vars=c("cell", "idVar"))
+
   }
+      #print(head(x))
   return(x)})
 
-  adultExprMelt <- do.call(rbind, filteredExprMeltList)
+  filteredExprMeltList <- lapply(filteredExprMeltList, function(x){if(nrow(x)>0){return(x)}})
+
+  adultExprMelt <- rbindlist(filteredExprMeltList)
   adultExprMelt <- adultExprMelt %>% mutate(Population = population)
 
   return(adultExprMelt)
@@ -687,20 +683,18 @@ findPointsGeomTile <- function(point, data, xcol, ycol, ps){
   #print(yCellSize)
   yCellNum <- numRows - ceiling(point$y - 0.5) + 1
 
-  print(xCellNum)
-  print(yCellNum)
+  #print(xCellNum)
+  #print(yCellNum)
 
   #ps <- popSubsets[[input$ps]]
   xName <- xcol[xCellNum]
   #print(colnames(spreaddata))
   yName <- ps[yCellNum]
 
-  print(xName)
-  print(yName)
+  #print(xName)
+  #print(yName)
 
   outLine <- data[name==xName & Population== yName]
-
-
 
   return(outLine)
 }

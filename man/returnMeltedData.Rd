@@ -4,7 +4,8 @@
 \alias{returnMeltedData}
 \title{Title}
 \usage{
-returnMeltedData(fS, selectMarkers = NULL, returnCellNum = FALSE)
+returnMeltedData(fS, selectMarkers = NULL, samplePop = NULL,
+  returnCellNum = FALSE)
 }
 \arguments{
 \item{fS}{- a flowSet.}

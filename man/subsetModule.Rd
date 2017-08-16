@@ -4,7 +4,8 @@
 \alias{subsetModule}
 \title{Title}
 \usage{
-subsetModule(input, output, session, subsetOptionList, annotation)
+subsetModule(input, output, session, subsetOptionList, annotation,
+  mapVar = NULL)
 }
 \arguments{
 \item{subsetOptionList}{}

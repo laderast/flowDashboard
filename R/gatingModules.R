@@ -55,11 +55,13 @@ gatingModuleUI <- function(id, label = "gatingModule", popSubsets){
                     selectInput(ns("ps"), "Select Cellular Subsets", choices=names(popSubsets),
                                 selected=names(popSubsets)[1]),
                   plotOutput(ns("popHeatmap"), click = clickOpts(id=ns("clickGate"), clip=TRUE),
-                             hover=hoverOpts(id=ns("hoverGate"), clip=TRUE,delay = 500)),
-                  uiOutput(ns("clickTip")),
-                  uiOutput(ns("hoverTip")),
+                             hover=hoverOpts(id=ns("hoverGate"), clip=TRUE,delay = 300,
+                                             delayType="debounce"), height=50*(length(popSubsets$all))),
+                  uiOutput(ns("clickTipG")),
+                  uiOutput(ns("hoverTipG")),
                   width=12
-                  ) #,
+
+      ) #,
                    #)
 
     # absolutePanel(id="scheme",imageOutput(ns("pipelineHierarchy")), top=250, left=650),
@@ -95,7 +97,7 @@ gatingModuleOutputGGFromGO <- function(input, output, session, GO, annotation, o
   callModule(gatingModuleGGOutput, id=objId, popTable = GO$popTable, annotation=annotation,
              imageDir = GO$imageDir, displayNodes =GO$populations, plotObj=plotObj,
              popSubsets=GO$popSubsets, annotCols=GO$annotCols,
-             mapVar=GO$mapVar)
+             mapVar=GO$mapVar, objId=GO$objId)
 
 }
 
@@ -131,7 +133,7 @@ padMissingValues <- function(popTable){
 gatingModuleGGOutput <- function(input, output, session,
                                imageDir, popTable, displayNodes,
                                annotation, annotCols, plotObj,
-                               popSubsets,
+                               popSubsets, objId,
                                mapVar){
 
   pngGraph <- reactive({
@@ -155,20 +157,25 @@ gatingModuleGGOutput <- function(input, output, session,
   })
 
 
+
   outDat <- reactive({
     #if(is.null(input$ps)){return(NULL)}
-    popSubset <- input$ps
+    if(is.null(input$ps))
+      {popSubset <- "all"}
+    else{
+      popSubset <- input$ps
+      }
     ##need to add sort by levels
     ##popsubset is affecting the xcols here
     outDat <- popTable[annotation(), on=mapVar]#[!is.na(percentPop)]
-    if(!is.null(popSubset)){
+
+    #if(!is.null(popSubset)){
       outDat <- outDat[Population %in% popSubset()]
-    }
+    #}
     outDat
   })
 
   outDataXColNames <- reactive({
-    #outDatSpread <- data.table::dcast(outDat(), Population~factor(name), value.var="percentPop", fill = NA)
     as.character(unique(outDat()$name))
   })
 
@@ -181,23 +188,16 @@ gatingModuleGGOutput <- function(input, output, session,
   })
 
 
-  output$clickTip <- renderUI({
+  output$clickTipG <- renderUI({
     click <- input$clickGate
 
     if(is.null(click$x)){
       return(NULL)
     }
 
-    print(click$x)
-    print(click$y)
-
     point <- findPointsGeomTile(click, data=outDat(), xcol = outDataXColNames(),
                                 ycol=outDataYColNames(), ps=popSubset())
 
-    #print(point)
-    #print(popSubset())
-
-    #point <- outDat()[floor(click$x),]
     outClick <- paste0(imageDir, point$idVar, ".png")
     plotObj[["gating"]] <- outClick
     #print(outClick)
@@ -205,7 +205,7 @@ gatingModuleGGOutput <- function(input, output, session,
   })
 
   ##need to add hovertips
-  output$hoverTip <- renderUI({
+  output$hoverTipG <- renderUI({
 
     hover <- input$hoverGate
 
@@ -213,18 +213,13 @@ gatingModuleGGOutput <- function(input, output, session,
       return(NULL)
     }
 
+    #print(hover)
+
     point <- findPointsGeomTile(hover, data=outDat(), xcol = outDataXColNames(),
                                 ycol=outDataYColNames(),ps=popSubset())
 
-    #print(ncol(outDatSpread))
-    #print(point)
-
-    #point <- outDat()[floor(click$x),]
-    #outClick <- paste0(imageDir, point$idVar, ".png")
-    #plotObj2[["gating"]] <- outClick
-    #print(outClick)
-
-    outputString <- flowDashboard:::makeOutputString(point, annotCols)
+    outputString <- makeOutputString(point, annotCols)
+    #print(outputString)
 
     left_pct <- (hover$x - hover$domain$left) / (hover$domain$right - hover$domain$left)
     top_pct <- (hover$domain$top - hover$y) / (hover$domain$top - hover$domain$bottom)

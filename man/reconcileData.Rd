@@ -9,6 +9,9 @@ reconcileData(annotation, data, mapVar, idsInBoth)
 \arguments{
 \item{idsInBoth}{}
 }
+\value{
+
+}
 \description{
 Reconcile annotation and data tables in object
 }

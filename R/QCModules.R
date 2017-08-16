@@ -212,7 +212,9 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
     #grab sort variable (used as key)
     dataOut$idVar <- droplevels(dataOut$idVar)
-    dataOut$idVar <- factor(dataOut$idVar, levels=unique(as.character(annotation()$FCSFiles)))
+
+    dataOut$idVar <- factor(dataOut$idVar,
+                            levels=unique(as.character(annotation()[[mapVar]])))
 
     dataOut
   })

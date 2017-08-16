@@ -129,6 +129,7 @@ violinOutput <- function(input, output, session, data, annotation, facetList=NUL
 
     #need to test whether these inputs exist
     validate(
+      need(input$populations, "need a population"),
       need(input$markers, "need marker input"),
       need(input$colorVar, "need color variable")
     )

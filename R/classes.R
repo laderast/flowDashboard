@@ -1,9 +1,6 @@
 library(data.table)
 library(R6)
 
-## To add: check if imageDir exists for GatingObj
-
-
 #' Reconcile annotation and data tables in object
 #'
 #' @param annotation
@@ -12,7 +9,6 @@ library(R6)
 #' @param idsInBoth
 #'
 #' @return
-#' @export
 #'
 #' @examples
 reconcileData <- function(annotation, data, mapVar, idsInBoth){
@@ -37,7 +33,6 @@ reconcileData <- function(annotation, data, mapVar, idsInBoth){
     data[[names(mapVar)]] <- droplevels(data[[names(mapVar)]])
   }
 
-
   return(list(annotation=annotation, data=data))
 
 }
@@ -52,7 +47,6 @@ reconcileData <- function(annotation, data, mapVar, idsInBoth){
 #' @param reconcile - LOGICAL - reconcile ids in both annotation and data
 #'
 #' @return
-#' @export
 #'
 #' @examples
 checkIntegrity <- function(annotation, data, mapVar, reconcile=TRUE){
@@ -111,7 +105,6 @@ checkIntegrity <- function(annotation, data, mapVar, reconcile=TRUE){
 
 returnMergedData <- function(data, annotation, mapVar){
   return(data[annotation, on=mapVar])
-
 }
 
 ##commonDataObj - SuperClass for other classes
@@ -239,7 +232,7 @@ commonDataObj <-
                     invisible(self)
                     },
               setAnnotationDisplayOptions=function(annotCols){
-                annotCols <- annotCols[annotCols %in% colnames(self$annotation)]
+                annotCols <- annotCols[annotCols %in% colnames(self$returnMergedData())]
                 self$annotCols <- annotCols
               }
 
@@ -254,12 +247,13 @@ setMarkers <- function(markers, data, oldMarkers){
   }
 
   notInMarkers <- markers[!markers %in% oldMarkers]
+
   if(length(notInMarkers) > 0){
     errorMsg <- paste0("These markers not in qcData:\n",
-                       paste(notInMarkers, collapse="\n")
-    )
+                       paste(notInMarkers, collapse="\n"))
     stop(errorMsg)
   }
+
   newMarkers <- droplevels(oldMarkers[oldMarkers %in% markers])
   newData <- data[variable %in% newMarkers]
   data$variable <- droplevels(data$variable)
@@ -356,6 +350,8 @@ gatingObj <-
                               self$gates <- gates
                               self$mapVar <- mapVar
                               self$populations <- pops
+                              self$popSubsets <- list(all=pops)
+
 
                               invisible(self)
                             },
@@ -384,17 +380,22 @@ gatingObj <-
           self$popTable <- popTable
           invisible(self)
       },
-      setPopulationSubset = function(subPopSets){
-        if(!is.list(subPopSets)){stop("Input must be a list")}
+      setPopulationSubset = function(subPopSets=NULL){
+        if(!is.list(subPopSets) | is.null(subPopSets)){warning("Input must be a list")}
         populations = self$populations
         outList <- list(all=populations)
-        oL <- lapply(subPopSets, function(x){
-          xOut <- x[x %in% populations]
-          xOut
-        })
-        outList <- c(outList, oL)
+        names(outList) <- c("all")
 
-        names(outList) <- c("all",names(subPopSets))
+        if(!is.null(subPopSets)) {
+          oL <- lapply(subPopSets, function(x){
+          xOut <- x[x %in% populations]
+          xOut})
+
+          outList <- c(outList, oL)
+
+          names(outList) <- c("all",names(subPopSets))
+        }
+
         self$popSubsets <- outList
         invisible(self)
       },
@@ -420,7 +421,8 @@ populationExpressionObj <-
 
                                        if(checkIntegrity){
                                          outList <- checkIntegrity(annotation,
-                                                                   expressionData, mapVar, reconcile)
+                                                                   expressionData, mapVar,
+                                                                   reconcile)
                                          annotation <- outList$annotation
                                          expressionData <- outList$data
                                        }
@@ -428,7 +430,7 @@ populationExpressionObj <-
                                         mapVar <- c("idVar"="FCSFiles")
                                       }
 
-                                       populations <- unique(expressionData$Population)
+                                       populations <- as.character(unique(expressionData$Population))
                                        self$annotation <- annotation
                                        self$expressionData <- expressionData
                                        self$mapVar <- mapVar
@@ -438,8 +440,8 @@ populationExpressionObj <-
                                        invisible(self)
 
                                      },
-                  returnMergedData = function(self){
-                    self$expData[self$annotation, on=self$mapVar]
+                  returnMergedData = function(){
+                    self$expressionData[self$annotation, on=self$mapVar]
                   },
                   setMarkers = function(markers){
                     expData <- self$expressionData
@@ -471,7 +473,7 @@ populationExpressionObj <-
 #' @export
 #'
 #' @examples
-qcFlowObjFromGatingSet <- function(gs, annotation=NULL, samplePop=4000,
+QCOFromGatingSet <- function(gs, annotation=NULL, samplePop=4000,
                                qcMarkers=NULL, mapVar=NULL, objId=NULL){
 
   #make sure the marker names are R-permitted
@@ -481,7 +483,7 @@ qcFlowObjFromGatingSet <- function(gs, annotation=NULL, samplePop=4000,
 
   if(class(gs)[1] == "flowSet"){
     dataMelt <- returnMeltedData(gs, selectMarkers=qcMarkers,
-                                 returnCellNum = samplePop)
+                                 samplePop = samplePop)
 
     if(is.null(annotation)){
       annotation <- pData(gs@data@phenoData)
@@ -491,7 +493,7 @@ qcFlowObjFromGatingSet <- function(gs, annotation=NULL, samplePop=4000,
 
   if(class(gs)[1] == "GatingSet"){
     dataMelt <- returnMeltedData(fS = gs@data, selectMarkers=qcMarkers,
-                                 returnCellNum = samplePop)
+                                samplePop = samplePop)
     if(is.null(annotation)){
       annotation <- pData(gs@data@phenoData)
       mapVar = c("idVar"="name")
@@ -544,7 +546,7 @@ qcFlowObjFromGatingSet <- function(gs, annotation=NULL, samplePop=4000,
 #' @export
 #'
 #' @examples
-gatingObjFromGatingSet <- function(gs, annotation=NULL, populations=NULL,
+GOFromGatingSet <- function(gs, annotation=NULL, populations=NULL,
                               imageDir=NULL, mapVar=NULL, objId=NULL, makeGraphs=FALSE){
     if(is.null(annotation)){
       annotation <- pData(gs@data@phenoData)
@@ -566,19 +568,22 @@ gatingObjFromGatingSet <- function(gs, annotation=NULL, populations=NULL,
     objId <- paste0("GO-", randName)
   }
 
+  annotation <- data.table(annotation)
+  popTable <- data.table(getPopulationsAndZscores(gs, pipelineFile=objId))
+
+  GO <- gatingObj$new(popTable=popTable, annotation=annotation, mapVar=mapVar)
+
     GO$objId <- objId
 
-    annotation <- data.table(annotation)
-    popTable <- data.table(getPopulationsAndZscores(gs, pipelineFile=objId))
-
-    GO <- gatingObj$new(popTable=popTable, annotation=annotation, mapVar=mapVar)
     GO$setPopulations(populations)
+    GO$setPopulationSubset()
 
     annotCols <- colnames(annotation)
-    annotCols <- annotCols[!annotCols %in% mapVar]
+    sortCols <- annotCols[!annotCols %in% mapVar]
+    annotCols <- c(sampleId="name", sortCols, "Population", "Count")
 
     GO$setAnnotationDisplayOptions(annotCols)
-    GO$setSubsetAndSortOptions(annotCols, annotCols)
+    GO$setSubsetAndSortOptions(sortCols, sortCols)
 
     if(!is.null(imageDir)){
       if(makeGraphs){
@@ -601,36 +606,43 @@ gatingObjFromGatingSet <- function(gs, annotation=NULL, populations=NULL,
 #'
 #' @param gs - a gatingSet
 #' @param annotation - Annotations for each sample, where one column = sampleNames(gs).
-#' If NULL, then it will attempt to grab annotation from the phenoData slot.
+#' If NULL, then it will attempt to grab annotation from the phenoData slot of
+#' the gatingSet.
 #' @param populations - A list of populations (must correspond to populationNames in gs).
 #' If NULL, will just set populations with all populations in gatingSet
 #' @param samplePop - Number of cells per population to sample. If NULL, returns all
 #' cells in population.
+#' @param objId - A unique object identifier used to avoid namespace collisions.
+#' If NULL, a unique ID will be generated for the populationExpressionObj
 #'
 #' @return populationExpressionObj
 #' @export
 #'
 #' @examples
-PEOFromGatingSet <- function(gs, annotation=NULL, populations=NULL, samplePop=4000, objId=NULL){
+PEOFromGatingSet <- function(gs, annotation=NULL, populations=NULL,
+                             samplePop=4000, objId=NULL, mapVar=NULL){
 
   if(is.null(annotation)){
     annotation <- pData(gs@data@phenoData)
+    mapVar <- c("idVar"="name")
   }
 
   if(is.null(populations)){
     populations <- getNodes(gs)[-1]
   }
 
-  dataList <- lapply(nodes, function(x){
-    flowDashboard::returnMeltedDataFromGS(gs=gs,
-                                          population=x, samplePopulation=samplePop)})
+  dataList <- lapply(populations, function(x){
+    flowDashboard::returnMeltedDataFromGS(gS=gs,
+                                          population=x,
+                                          samplePopulation=samplePop)})
 
   annotation <- data.table(annotation)
   expressionData <- data.table(do.call(rbind,dataList))
 
-  PEO <- populationExpressionObj$new(expressionData=expressionData, annotation=annotation)
+  PEO <- populationExpressionObj$new(expressionData=expressionData,
+                                     annotation=annotation, mapVar=mapVar)
 
-  PEO$setPopulations(populations)
+  #PEO$setPopulations(populations)
 
   if(is.null(objId)){
     randName <- makeRandomId()
@@ -642,7 +654,7 @@ PEOFromGatingSet <- function(gs, annotation=NULL, populations=NULL, samplePop=40
 
   PEO$setAnnotationDisplayOptions(annotCols)
   PEO$setSubsetAndSortOptions(annotCols, annotCols)
-
+  PEO$objId <- objId
 
   return(PEO)
 }

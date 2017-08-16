@@ -17,8 +17,8 @@ waterfallOutputUI <- function(id, label="waterfall", populationChoices, colorCol
     selectInput(ns("colorVar"), "Select Outcome to Color", choices=colorColumns,
                 selected = colorColumns[1]),
     #uiOutput(ns("waterfallDynamicUI")),
-    plotOutput(ns("waterfallPlot"), hover = hoverOpts(ns("plotHover"), delay = 100, delayType = "debounce")),
-    #uiOutput(ns("hoverTip")),
+    plotOutput(ns("waterfallPlot"), hover = hoverOpts(ns("plotHoverWF"), delay = 100, delayType = "debounce")),
+    uiOutput(ns("hoverTipWF")),
     plotOutput(ns("annotationHeatmap"))
 
   )
@@ -62,7 +62,7 @@ waterfallOutputFromGO <- function(GO, annotation, objId=NULL){
 
   callModule(waterfallOutput, id=objId, data=GO$popTable, annotation=annotation,
              populationChoices=GO$populations, colorColumns=GO$sortOptions,
-             mapVar = GO$mapVar)
+             mapVar = GO$mapVar, annotDisplayOptions=GO$annotCols)
 
 }
 
@@ -144,11 +144,11 @@ waterfallOutput <- function(input, output, session, data, annotation,
 
   })
 
-  output$hoverTip <- renderUI({
+  output$hoverTipWF <- renderUI({
 
     ns <- session$ns
 
-    hover <- input$plotHover
+    hover <- input$plotHoverWF
 
     if(is.null(hover$x)){
       return(NULL)

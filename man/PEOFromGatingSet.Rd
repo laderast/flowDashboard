@@ -5,7 +5,7 @@
 \title{Build a populationExpressionObj from a GatingSet}
 \usage{
 PEOFromGatingSet(gs, annotation = NULL, populations = NULL,
-  samplePop = 4000)
+  samplePop = 4000, objId = NULL)
 }
 \arguments{
 \item{gs}{- a gatingSet}
@@ -16,7 +16,11 @@ If NULL, then it will attempt to grab annotation from the phenoData slot.}
 \item{populations}{- A list of populations (must correspond to populationNames in gs).
 If NULL, will just set populations with all populations in gatingSet}
 
-\item{samplePop}{- Number of points per population to sample. If}
+\item{samplePop}{- Number of cells per population to sample. If NULL, returns all
+cells in population.}
+}
+\value{
+populationExpressionObj
 }
 \description{
 Build a populationExpressionObj from a GatingSet

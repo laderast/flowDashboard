@@ -13,6 +13,9 @@ checkIntegrity(annotation, data, mapVar, reconcile = TRUE)
 
 \item{reconcile}{- LOGICAL - reconcile ids in both annotation and data}
 }
+\value{
+
+}
 \description{
 Check integrity of data objects
 }
