@@ -339,7 +339,7 @@ returnMeltedData <- function(fS, selectMarkers =NULL, samplePop=NULL,
       stop("selectMarkers not in dataset")
     }
 
-    cellFrame <- cellFrame[,colsInMarkers]
+    cellFrame <- cellFrame[,colsInMarkers, with=FALSE]
   }
 
   if(returnCellNum){
