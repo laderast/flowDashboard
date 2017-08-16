@@ -486,7 +486,7 @@ QCOFromGatingSet <- function(gs, annotation=NULL, samplePop=4000,
                                  samplePop = samplePop)
 
     if(is.null(annotation)){
-      annotation <- pData(gs@data@phenoData)
+      annotation <- pData(fs@phenoData)
       mapVar = c("idVar"="name")
     }
   }

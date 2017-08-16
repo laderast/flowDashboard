@@ -10,6 +10,8 @@ plotAllPopulationsOld(gateSet, nodeList = NULL, pipelineFile = "panel1",
 \arguments{
 \item{gateSet}{- a gatingSet with attached populations}
 
+\item{nodeList}{- a list of populations to plot}
+
 \item{imagePath}{- directory to write population images}
 }
 \value{

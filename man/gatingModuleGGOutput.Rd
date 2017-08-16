@@ -5,7 +5,7 @@
 \title{Output module for popHeatmapGG}
 \usage{
 gatingModuleGGOutput(input, output, session, imageDir, popTable, displayNodes,
-  annotation, annotCols, plotObj, popSubsets, mapVar)
+  annotation, annotCols, plotObj, popSubsets, objId, mapVar)
 }
 \arguments{
 \item{input}{- Shiny input object}

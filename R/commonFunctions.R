@@ -295,11 +295,19 @@ findMedianValues <- function(controlMelt){
 returnMeltedData <- function(fS, selectMarkers =NULL, samplePop=NULL,
                              returnCellNum=TRUE){
 
-  pD <- pData(parameters(fS[[1]]))
+  if(class(fS)[1]=="GatingSet"){
+  pD <- pData(parameters(fS@data[[1]]))
+  } else{
+    pD <- pData(parameters(fS[[1]]))
+  }
   markers <- pD$desc
 
   listExprs <- lapply(sampleNames(fS), function(x){
+    if(class(fS)[1] == "GatingSet"){
+      out <- exprs(fS@data[[x]])
+    }else{
     out <- exprs(fS[[x]])
+    }
     colnames(out) <- pD$desc
   #don't replace name entry with desc where desc is NA (for example, SSC-A)
     #dontReplace <- which(!is.na(pD$desc))
@@ -342,8 +350,8 @@ returnMeltedData <- function(fS, selectMarkers =NULL, samplePop=NULL,
     #cellFrame <- cellFrame[,!colnames(cellFrame) %in% c("cellNum")]
   }
 
-  cellMelt <- reshape2::melt(cellFrame, id.vars=idVars)
-  return(data.table::data.table(cellMelt))
+  cellMelt <- data.table::melt(cellFrame, id.vars=idVars)
+  return(cellMelt)
 
 }
 

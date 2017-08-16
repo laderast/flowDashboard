@@ -5,19 +5,23 @@
 \title{Build a populationExpressionObj from a GatingSet}
 \usage{
 PEOFromGatingSet(gs, annotation = NULL, populations = NULL,
-  samplePop = 4000, objId = NULL)
+  samplePop = 4000, objId = NULL, mapVar = NULL)
 }
 \arguments{
 \item{gs}{- a gatingSet}
 
 \item{annotation}{- Annotations for each sample, where one column = sampleNames(gs).
-If NULL, then it will attempt to grab annotation from the phenoData slot.}
+If NULL, then it will attempt to grab annotation from the phenoData slot of
+the gatingSet.}
 
 \item{populations}{- A list of populations (must correspond to populationNames in gs).
 If NULL, will just set populations with all populations in gatingSet}
 
 \item{samplePop}{- Number of cells per population to sample. If NULL, returns all
 cells in population.}
+
+\item{objId}{- A unique object identifier used to avoid namespace collisions.
+If NULL, a unique ID will be generated for the populationExpressionObj}
 }
 \value{
 populationExpressionObj

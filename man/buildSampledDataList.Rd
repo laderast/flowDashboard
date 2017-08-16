@@ -2,7 +2,7 @@
 % Please edit documentation in R/commonFunctions.R
 \name{buildSampledDataList}
 \alias{buildSampledDataList}
-\title{buildSampledDataList}
+\title{buildSampledDataList - deprecated}
 \usage{
 buildSampledDataList(fSet, controlMarkers = NULL, controlSize = 2000)
 }
@@ -10,6 +10,6 @@ buildSampledDataList(fSet, controlMarkers = NULL, controlSize = 2000)
 \item{controlSize}{}
 }
 \description{
-buildSampledDataList
+buildSampledDataList - deprecated
 }
 
