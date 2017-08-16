@@ -293,7 +293,7 @@ findMedianValues <- function(controlMelt){
 #'
 #' @examples
 returnMeltedData <- function(fS, selectMarkers =NULL, samplePop=NULL,
-                             returnCellNum=FALSE){
+                             returnCellNum=TRUE){
 
   pD <- pData(parameters(fS[[1]]))
   markers <- pD$desc
