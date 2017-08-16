@@ -481,7 +481,7 @@ QCOFromGatingSet <- function(gs, annotation=NULL, samplePop=4000,
     qcMarkers <- make.names(qcMarkers)
   }
 
-  if(class(gs)[1] == "flowSet"){
+  if(class(gs)[1] %in% c("flowSet", "ncdfFlowSet")){
     dataMelt <- returnMeltedData(gs, selectMarkers=qcMarkers,
                                  samplePop = samplePop)
 
