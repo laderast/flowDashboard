@@ -381,7 +381,7 @@ gatingObj <-
           invisible(self)
       },
       setPopulationSubset = function(subPopSets=NULL){
-        if(!is.list(subPopSets) | is.null(subPopSets)){warning("Input must be a list")}
+        if(!is.list(subPopSets)){warning("Input must be a list")}
         populations = self$populations
         outList <- list(all=populations)
         names(outList) <- c("all")
