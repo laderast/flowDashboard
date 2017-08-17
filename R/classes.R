@@ -381,7 +381,7 @@ gatingObj <-
           invisible(self)
       },
       setPopulationSubset = function(subPopSets=NULL){
-        if(!is.list(subPopSets)){warning("Input must be a list")}
+        if(!is.null(subPopSets) | !is.list(subPopSets)){warning("Input must be a list")}
         populations = self$populations
         outList <- list(all=populations)
         names(outList) <- c("all")
@@ -628,7 +628,7 @@ PEOFromGatingSet <- function(gs, annotation=NULL, populations=NULL,
   }
 
   if(is.null(populations)){
-    populations <- getNodes(gs)[-1]
+    populations <- getNodes(gs, path="auto")[-1]
   }
 
   dataList <- lapply(populations, function(x){
@@ -637,7 +637,7 @@ PEOFromGatingSet <- function(gs, annotation=NULL, populations=NULL,
                                           samplePopulation=samplePop)})
 
   annotation <- data.table(annotation)
-  expressionData <- data.table(do.call(rbind,dataList))
+  expressionData <- data.table::rbindlist(dataList)
 
   PEO <- populationExpressionObj$new(expressionData=expressionData,
                                      annotation=annotation, mapVar=mapVar)
