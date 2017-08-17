@@ -293,7 +293,7 @@ findMedianValues <- function(controlMelt){
 #'
 #' @examples
 returnMeltedData <- function(fS, selectMarkers =NULL, samplePop=NULL,
-                             returnCellNum=TRUE){
+                             returnCellNum=FALSE){
 
   if(class(fS)[1]=="GatingSet"){
   pD <- pData(parameters(fS@data[[1]]))

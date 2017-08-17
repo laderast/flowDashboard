@@ -493,7 +493,7 @@ QCOFromGatingSet <- function(gs, annotation=NULL, samplePop=4000,
 
   if(class(gs)[1] == "GatingSet"){
     dataMelt <- returnMeltedData(fS = gs@data, selectMarkers=qcMarkers,
-                                samplePop = samplePop, returnCellNum=TRUE)
+                                samplePop = samplePop)
     if(is.null(annotation)){
       annotation <- pData(gs@data@phenoData)
       mapVar = c("idVar"="name")
