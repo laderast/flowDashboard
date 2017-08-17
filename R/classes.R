@@ -575,8 +575,7 @@ GOFromGatingSet <- function(gs, annotation=NULL, populations=NULL,
 
     GO$objId <- objId
 
-    if(!is.null(Populations))
-    GO$setPopulations(populations)
+    if(!is.null(populations)) {GO$setPopulations(populations)}
     GO$setPopulationSubset(subPopSets = NULL)
 
     annotCols <- colnames(annotation)
