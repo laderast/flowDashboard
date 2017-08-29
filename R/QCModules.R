@@ -32,12 +32,10 @@ qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
   tagList(
     #uiOutput(ns("qcHeatmapUI")),
     box(
-    ggvisOutput(ns("qcHeatmap")),
-      width=12),
+    plotOutput(ns("qcHeatmap"), width="100%"), width=12),
     box(
       uiOutput(ns("qcViolinUI")),
-      plotOutput(ns("qcViolinPlot"), width="1000px"),
-      width = 12)#,
+      plotOutput(ns("qcViolinPlot"), width="100%"), width=12)#,
           #hover= hoverOpts(ns("plotHover"),
           #delay = 500, delayType = "debounce")),
     #uiOutput(ns("hoverTip"))
@@ -108,12 +106,6 @@ qcModuleOutput <- function(input, output, session, data, annotation,
                            colorConditions, mapVar = c("idVar"="FCSFiles")) {
 
   medData <- reactive({
-    ord <- input$Order
-    #subdata <- data[annotateSelect(), on=c("idVar"="FCSFiles"), nomatch=0]
-
-    #print(class(annotation()))
-
-
     subdata <- data[annotation(), on=mapVar, nomatch=0]
 
     if(nrow(annotation())==0){
@@ -133,30 +125,14 @@ qcModuleOutput <- function(input, output, session, data, annotation,
       mutate(zscore = scale_this(med), popKey=paste0(idVar, "-", variable)) #%>%
       #arrange_(ord)
     medTable <- data.table(medTable)
-    #setkey(medTable, popKey)
-    #print(medTable)
-    #medTable <- medTable[annotateSelect()]
-
-    #  inner_join(y=annotateSelect(), by=c("idVar"="FCSFiles"))
-
-    #medTable <- data.table(medTable)
-    #setkey(medTable, idVar)
-    #%>%
-      #dplyr::filter(patientID %in% subsetVar)
-      #dplyr::filter_(interp(~v==patientID, v=as.name(subsetVar)))#%>% arrange_(input$order)
-    #print(medTable)
-
-    #upd.cols = sapply(medTable, is.factor)
-    #medTable[, names(medTable)[upd.cols] := lapply(.SD, factor), .SDcols = upd.cols]
-    #print(head(medTable))
 
     medTable
   })
 
-  qcHeatmapReact <- reactive({
+  output$qcHeatmap <- renderPlot({
     #print(medData())
     #fakeData <- data[1:10]
-    qcHeatmapPlot(medData())
+    qcHeatmapGG(medData())
   })
 
 
@@ -185,9 +161,9 @@ qcModuleOutput <- function(input, output, session, data, annotation,
 
   ns <- session$ns
 
-  if(!is.null(qcHeatmapReact)){
-  qcHeatmapReact %>% bind_shiny(ns("qcHeatmap"))
-  }
+  #if(!is.null(qcHeatmapReact)){
+  #qcHeatmapReact %>% bind_shiny(ns("qcHeatmap"))
+  #}
 
   ##Viol code here
 
@@ -395,4 +371,56 @@ buildMedianTable <- function(data){
   medTable
 }
 
+#' Title
+#'
+#' @param data
+#' @param mapVar
+#'
+#' @return
+#' @export
+#'
+#' @examples
+qcHeatmapGG <- function(data, text=TRUE, xVar="idVar", yVar="variable", fillVar="zscore", numVar="med",
+                        lowColor="blue", highColor="orange"){
+
+  #xVar <- sym(xVar)
+  #yVar <- sym(yVar)
+  numVar = quote(numVar)
+
+  #dataNew <- data[annotation, on=mapVar]
+  dataNew <- data#[!is.na(percentPop)]
+  dataNew[[yVar]] <- fct_rev(factor(dataNew[[yVar]],
+                                       levels=unique(dataNew[[yVar]])))
+
+  dataNew[[fillVar]] <- round(dataNew[[fillVar]])
+
+  domY <- unique(as.character(data[[yVar]]))
+  displayNodes <- domY
+  noMarkers <- length(displayNodes)
+
+  domX <- unique(as.character(data[[xVar]]))
+  noSamples <- length(domX)
+
+
+  levs <- sort(unique(round(data$zscore)))
+
+  #print(levs)
+
+  #pal <- c(Blue(3), "#E5E5E5", Orange(6))
+
+  #outData <- dataNew[Population %in% displayNodes]
+
+  outPlot <- dataNew %>%
+    #mutate(fillVals = round(zscore)) %>%
+    ggplot(aes_string(x=xVar, y=yVar, fill=fillVar)) +
+    geom_tile(colour="black") +
+    scale_fill_gradient2(low = lowColor, mid="darkgrey", high = highColor) +
+    scale_y_discrete() + theme(axis.text.x = element_text(angle=90))
+
+  if(text){
+    outPlot <- outPlot +
+      geom_text(aes(label=signif(med,digits = 2)), color="white")
+  }
+  outPlot
+}
 

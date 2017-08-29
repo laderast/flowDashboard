@@ -61,9 +61,11 @@ test_that("plotAllPopulations",{
 
 test_that("returnMeltedData tests", {
   pD <- pData(parameters(gs@data[[1]]))
-  returnMeltedData(gs)
-  returnMeltedData(gs@data)
-  returnMeltedData(gs, selectMarkers = pD$desc[1:5])
+  expect_is("data.table",returnMeltedData(gs))
+  expect_is("data.table",returnMeltedData(gs@data))
+  expect_is("data.table",returnMeltedData(gs, selectMarkers = pD$desc[1:5]))
+  expect_error(returnMeltedData(gs, selectMarkers= c("Blah", "Blah")))
+
 
 })
 

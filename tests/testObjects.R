@@ -1,6 +1,8 @@
 library(testthat)
 library(data.table)
+library(flowWorkspace)
 source("R/classes.R")
+source("R/commonFunctions.R")
 
 annotation <- fread("inst/extdata/FCSFileInfo.txt")
 load("inst/extdata/qcData.RData")
@@ -49,6 +51,8 @@ test_that("testQCO", {
   expect_error(qco$setMarkers(markers=c("Not","In","Data")))
   expect_silent(qco$setMarkers(markers=c("CD4", "CD8")))
 
+  expect_silent(QCOFromGatingSet(gs, samplePop = 100))
+
   #expect_error()
 })
 
@@ -69,6 +73,8 @@ test_that("testGO",{
   subsetOptions = c("fileName"="FCSFiles", "Gender", "Source")
   expect_silent(go$setSubsetAndSortOptions(subsetOptions, subsetOptions))
 
+  #expect_silent(GOFromGatingSet(gs))
+
 })
 
 test_that("testPEO",{
@@ -86,6 +92,14 @@ test_that("testPEO",{
   expect_silent(PEO$setMarkers(markers=c("CD14", "OX40","CD3")))
   expect_error(PEO$setMarkers(markers=c("Not", "A","Marker")))
 
+  pD <- pData(gs@data)
+
+  testNodes <- getNodes(gs)[-1]
+
+  PEOFromGatingSet(gs, populations = testNodes)
+
+  expect_silent(PEOFromGatingSet(gs, samplePop = 100))
+  expect_silent(PEOFromGatingSet(gs, annotation = pD, mapVar=c(idVar="name")))
 
 })
 
@@ -123,11 +137,11 @@ test_that("violinOutTests", {
 test_that("subsetTests", {})
 
 test_that("gatingSetTests", {
-  expect_is(qcFlowObjFromGatingSet(gs), "qcFlowObj")
-  expect_error(qcFlowObjFromGatingSet(gs, annotation = pData(gs@data@phenoData)))
-  QCO <- qcFlowObjFromGatingSet(gs, annotation = pData(gs@data@phenoData), mapVar=c("idVar"="name"))
+  expect_is(QCOFromGatingSet(gs), "qcFlowObj")
+  expect_error(QCOFromGatingSet(gs, annotation = pData(gs@data@phenoData)))
+  QCO <- QCOFromGatingSet(gs, annotation = pData(gs@data@phenoData), mapVar=c("idVar"="name"))
   expect_is(QCO, "qcFlowObj")
-  QCO <- qcFlowObjFromGatingSet(gs, samplePop = 1000)
+  QCO <- qcFlowObjFromGatingSet(gs, samplePop = 100)
   expect_is(QCO, "qcFlowObj")
 
   objId <- "GO"
@@ -135,9 +149,9 @@ test_that("gatingSetTests", {
   expect_null(GO$objId)
   expect_null(GO$imageDir)
   imageDir = tempdir()
-  GO <- gatingObjFromGatingSet(gs[1:3], objId = objId)
-  GO <- gatingObjFromGatingSet(gs[1:2], objId = objId, makeGraphs=TRUE, imageDir = imageDir)
+  GO <- GOFromGatingSet(gs[1:3], objId = objId)
+  GO <- GOFromGatingSet(gs[1:2], objId = objId, makeGraphs=TRUE, imageDir = imageDir)
   expect_equal(GO$imageDir, imageDir)
-  expect_error(gatingObjFromGatingSet(gs[1:3], makeGraphs = TRUE, imageDir = NULL))
+  expect_error(GOFromGatingSet(gs[1:3], makeGraphs = TRUE, imageDir = NULL))
 
 })

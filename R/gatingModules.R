@@ -157,7 +157,6 @@ gatingModuleGGOutput <- function(input, output, session,
   })
 
 
-
   outDat <- reactive({
     #if(is.null(input$ps)){return(NULL)}
     if(is.null(input$ps))
