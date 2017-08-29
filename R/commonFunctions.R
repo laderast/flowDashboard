@@ -445,45 +445,27 @@ setMethod("buildFileManifest", signature=c(object="flowSet"),
 #'
 #' @examples
 returnMeltedDataFromGS <- function(gS, population, removeMarkers = NULL, samplePopulation = NULL){
-  #require(reshape2)
   if(!is.character(population)){stop("population must be specified")}
 
   amlList <- getData(gS, population)
-  #amlList <- amlList[grep("D",sampleNames(amlList))]
-
-  #exprList <- fsApply(amlList, return, use.exprs = TRUE)
 
   descFrame <- pData(parameters(amlList[[1]]))
   grepRes <- sapply(removeMarkers, function(x){grep(x, descFrame$desc)})
   nodeIDs <- do.call("c", grepRes)
-  #print(nodeIDs)
-
-  #markersToInterrogate <- descFrame[!descFrame$desc %in% removeMarkers,]
-
-  #exprList <- fsApply(amlList, function(x){data.table(exprs(x))})
 
   exprList <- as(amlList, "list")
   exprList <- lapply(exprList, function(x){data.table(flowCore::exprs(x))})
   filteredExprList <-
     lapply(exprList, function(x){colnames(x) <- descFrame$desc
 
-         #grep nodeIDs in colnames(x)
-
-          #print(descFrame$desc)
-
-        #x <- x[,colnames(x) %in% markersToInterrogate$desc]
     if(!is.null(nodeIDs) & length(nodeIDs)>0){
       keepNodes <- colnames(x)[!colnames(x) %in% nodeIDs]
       x <- x[,..keepNodes]
-      #x <- x[,-nodeIDs]
     }
     return(x)
     })
 
   filteredExprList <- lapply(filteredExprList, function(x){
-    #print(class(x))
-    #print(head(x))
-    #if(class(x) == "numeric"){x <- as.matrix(t(x))}
     if(nrow(x) != 0){
       if(!is.null(samplePopulation)){
         if(nrow(x) > samplePopulation){
