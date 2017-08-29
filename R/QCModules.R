@@ -173,7 +173,6 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     validate(need(input$Marker, "Marker not specified"))
     Marker <- input$Marker
 
-
     dataOut <- data[annotation(), nomatch=0, on=mapVar][variable %in% Marker]
 
     #grab sort variable (used as key)
@@ -392,7 +391,7 @@ qcHeatmapGG <- function(data, text=TRUE, xVar="idVar", yVar="variable", fillVar=
 
   if(text){
     outPlot <- outPlot +
-      geom_text(aes(label=signif(!!numVar,digits = 2)), color="white")
+      geom_text(aes(label=signif(med,digits = 2)), color="white")
   }
   outPlot
 }
