@@ -463,7 +463,7 @@ returnMeltedDataFromGS <- function(gS, population, removeMarkers = NULL, sampleP
   #exprList <- fsApply(amlList, function(x){data.table(exprs(x))})
 
   exprList <- as(amlList, "list")
-  exprList <- lapply(exprList, function(x){data.table(exprs(x))})
+  exprList <- lapply(exprList, function(x){data.table(flowCore::exprs(x))})
   filteredExprList <-
     lapply(exprList, function(x){colnames(x) <- descFrame$desc
 
