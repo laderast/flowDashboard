@@ -372,12 +372,15 @@ buildMedianTable <- function(data){
 qcHeatmapGG <- function(data, text=TRUE, xVar="idVar", yVar="variable", fillVar="zscore", numVar="med",
                         lowColor="blue", highColor="gold"){
 
-  #xVar <- sym(xVar)
-  #yVar <- sym(yVar)
-  numVar <- rlang::sym(numVar)
+  #xVar <- rlang::sym(xVar)
+  #yVar <- rlang::sym(yVar)
+  #fillVar <- rlang::sym(fillVar)
+  #numVar <- rlang::sym(numVar)
 
   #dataNew <- data[annotation, on=mapVar]
   dataNew <- data#[!is.na(percentPop)]
+
+  #reverse the plotted order
   dataNew[[yVar]] <- fct_rev(factor(dataNew[[yVar]],
                                        levels=unique(dataNew[[yVar]])))
 
@@ -386,7 +389,7 @@ qcHeatmapGG <- function(data, text=TRUE, xVar="idVar", yVar="variable", fillVar=
   outPlot <- dataNew %>%
     ggplot(aes_string(x=xVar, y=yVar, fill=fillVar)) +
     geom_tile(colour="black") +
-    scale_fill_gradient2(low = lowColor, mid="grey30", high = highColor) +
+    scale_fill_gradient2(low = lowColor, mid="grey30", high = highColor,guide = "legend") +
     scale_y_discrete() + theme(axis.text.x = element_text(angle=90))
 
   if(text){
