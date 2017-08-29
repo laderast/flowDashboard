@@ -375,7 +375,7 @@ qcHeatmapGG <- function(data, text=TRUE, xVar="idVar", yVar="variable", fillVar=
 
   #xVar <- sym(xVar)
   #yVar <- sym(yVar)
-  numVar = quote(numVar)
+  numVar <- rlang::sym(numVar)
 
   #dataNew <- data[annotation, on=mapVar]
   dataNew <- data#[!is.na(percentPop)]
@@ -383,16 +383,6 @@ qcHeatmapGG <- function(data, text=TRUE, xVar="idVar", yVar="variable", fillVar=
                                        levels=unique(dataNew[[yVar]])))
 
   dataNew[[fillVar]] <- round(dataNew[[fillVar]])
-
-  domY <- unique(as.character(data[[yVar]]))
-  displayNodes <- domY
-  noMarkers <- length(displayNodes)
-
-  domX <- unique(as.character(data[[xVar]]))
-  noSamples <- length(domX)
-
-
-  levs <- sort(unique(round(data$zscore)))
 
   outPlot <- dataNew %>%
     ggplot(aes_string(x=xVar, y=yVar, fill=fillVar)) +
@@ -402,7 +392,7 @@ qcHeatmapGG <- function(data, text=TRUE, xVar="idVar", yVar="variable", fillVar=
 
   if(text){
     outPlot <- outPlot +
-      geom_text(aes(label=signif(med,digits = 2)), color="white")
+      geom_text(aes(label=signif(!!numVar,digits = 2)), color="white")
   }
   outPlot
 }
