@@ -295,19 +295,15 @@ findMedianValues <- function(controlMelt){
 returnMeltedData <- function(fS, selectMarkers =NULL, samplePop=NULL,
                              returnCellNum=FALSE){
 
-  if(class(fS)[1]=="GatingSet"){
-  pD <- pData(parameters(fS@data[[1]]))
-  } else{
-    pD <- pData(parameters(fS[[1]]))
+  if(class(fS)[1] == "GatingSet"){
+    fS <- fS@data
   }
-  markers <- pD$desc
+
+    pD <- pData(parameters(fS[[1]]))
+    markers <- pD$desc
 
   listExprs <- lapply(sampleNames(fS), function(x){
-    if(class(fS)[1] == "GatingSet"){
-      out <- exprs(fS@data[[x]])
-    }else{
-    out <- exprs(fS[[x]])
-    }
+    out <- flowCore::exprs(fS[[x]])
     colnames(out) <- pD$desc
   #don't replace name entry with desc where desc is NA (for example, SSC-A)
     #dontReplace <- which(!is.na(pD$desc))
