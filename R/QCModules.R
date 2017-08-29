@@ -371,7 +371,7 @@ buildMedianTable <- function(data){
 #'
 #' @examples
 qcHeatmapGG <- function(data, text=TRUE, xVar="idVar", yVar="variable", fillVar="zscore", numVar="med",
-                        lowColor="blue", highColor="orange"){
+                        lowColor="blue", highColor="gold"){
 
   #xVar <- sym(xVar)
   #yVar <- sym(yVar)
