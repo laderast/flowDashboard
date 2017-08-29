@@ -15,32 +15,22 @@ qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
                        colorConditions, annotation) {
   # Create a namespace function using the provided id
   ns <- NS(id)
-#  if(!subsetCondition %in% colnames(annotation)){
-#    stop("subset condition is not in annotation file")
-#  }
 
-#  sortConditions <- sortConditions[sortConditions %in% colnames(annotation)]
-#  colorConditions <- colorConditions[colorConditions %in% colnames(annotation)]
-
-#  if(length(sortConditions) == 0 | length(colorConditions) == 0){
-#    stop("subset or color conditions are not in annotation file")
-#  }
-
-  #subsetChoices = unique(as.character(annotation[[subsetCondition]]))
-  #print(subsetChoices)
-
+  #box(
   tagList(
     #uiOutput(ns("qcHeatmapUI")),
-    box(
-    plotOutput(ns("qcHeatmap"), width="100%"), width=12),
-    box(
+    #box(
+    plotOutput(ns("qcHeatmap"), width="100%"),
+    #box(
       uiOutput(ns("qcViolinUI")),
-      plotOutput(ns("qcViolinPlot"), width="100%"), width=12)#,
+      plotOutput(ns("qcViolinPlot"), width="100%")#,
           #hover= hoverOpts(ns("plotHover"),
           #delay = 500, delayType = "debounce")),
     #uiOutput(ns("hoverTip"))
-
   )
+  #, width=NULL)
+  #)
+
 }
 
 #' Title
