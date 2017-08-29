@@ -394,17 +394,10 @@ qcHeatmapGG <- function(data, text=TRUE, xVar="idVar", yVar="variable", fillVar=
 
   levs <- sort(unique(round(data$zscore)))
 
-  #print(levs)
-
-  #pal <- c(Blue(3), "#E5E5E5", Orange(6))
-
-  #outData <- dataNew[Population %in% displayNodes]
-
   outPlot <- dataNew %>%
-    #mutate(fillVals = round(zscore)) %>%
     ggplot(aes_string(x=xVar, y=yVar, fill=fillVar)) +
     geom_tile(colour="black") +
-    scale_fill_gradient2(low = lowColor, mid="darkgrey", high = highColor) +
+    scale_fill_gradient2(low = lowColor, mid="grey30", high = highColor) +
     scale_y_discrete() + theme(axis.text.x = element_text(angle=90))
 
   if(text){
