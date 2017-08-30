@@ -1,5 +1,7 @@
 # flowDashboard
 
+[![DOI](https://zenodo.org/badge/72794399.svg)](https://zenodo.org/badge/latestdoi/72794399)
+
 Shiny modules for visualizing flow cytometry data as well as data transformation methods to enable the rapid display of cytometry data. `flowDashboard` uses data objects that are derived from `GatingSet`s to enable rapid deployment of comparative dashboards for large experiments. It is designed to scale to very large comparisons (100+) across patient populations. Visualizations can be subset, sorted, and colored according to annotations in the data.
 
 For a sample reference dashboard [click here for a demo](https://tladeras.shinyapps.io/sampleFlowDashboard/) and the sample dashboard repo: https://github.com/laderast/sampleFlowDashboard
