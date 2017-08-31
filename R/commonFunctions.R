@@ -299,6 +299,10 @@ returnMeltedData <- function(fS, selectMarkers =NULL, samplePop=NULL,
     fS <- fS@data
   }
 
+  if(!is.null(selectMarkers)){
+    selectMarkers <- make.names(selectMarkers)
+  }
+
     pD <- pData(parameters(fS[[1]]))
     markers <- pD$desc
 
@@ -320,7 +324,8 @@ returnMeltedData <- function(fS, selectMarkers =NULL, samplePop=NULL,
 
     #return sampled Data if samplePop is a numeric value
     if(!is.null(samplePop)){
-      out <- out[sample(nrow(out), samplePop),]
+      if(nrow(out)>samplePop){
+      out <- out[sample(nrow(out), samplePop),]}
     }
 
   return(data.table(out))
@@ -329,7 +334,7 @@ returnMeltedData <- function(fS, selectMarkers =NULL, samplePop=NULL,
   cellFrame <- rbindlist(listExprs)
 
   if(!is.null(selectMarkers)){
-    colsInMarkers <- colnames(cellFrame) %in% c("idVar",selectMarkers)
+    colsInMarkers <- colnames(cellFrame) %in% c("idVar","cellNum",selectMarkers)
 
     if(length(which(colsInMarkers))==0){
       stop("selectMarkers not in dataset")

@@ -64,6 +64,7 @@ test_that("returnMeltedData tests", {
   expect_is(returnMeltedData(gs),"data.table")
   expect_is(returnMeltedData(gs@data),"data.table")
   expect_is(returnMeltedData(gs, selectMarkers = pD$desc[1:5]),"data.table")
+  expect_is(returnMeltedData(gs, returnCellNum = TRUE), "data.table")
   expect_error(returnMeltedData(gs, selectMarkers= c("Blah", "Blah")))
 })
 

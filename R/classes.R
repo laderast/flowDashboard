@@ -481,9 +481,9 @@ QCOFromGatingSet <- function(gs, annotation=NULL, samplePop=4000,
     qcMarkers <- make.names(qcMarkers)
   }
 
-  if(class(gs)[1] %in% c("flowSet", "ncdfFlowSet")){
+  if(class(gs)[1] %in% c("flowSet", "ncdfFlowSet", "GatingSet")){
     dataMelt <- returnMeltedData(gs, selectMarkers=qcMarkers,
-                                 samplePop = samplePop)
+                                 samplePop = samplePop, returnCellNum = TRUE)
 
     if(is.null(annotation)){
       annotation <- pData(fs@phenoData)
@@ -491,14 +491,6 @@ QCOFromGatingSet <- function(gs, annotation=NULL, samplePop=4000,
     }
   }
 
-  if(class(gs)[1] == "GatingSet"){
-    dataMelt <- returnMeltedData(fS = gs@data, selectMarkers=qcMarkers,
-                                samplePop = samplePop)
-    if(is.null(annotation)){
-      annotation <- pData(gs@data@phenoData)
-      mapVar = c("idVar"="name")
-    }
-  }
 
   if(!is.null(annotation) & is.null(mapVar)){
     stop("You need to supply a mapping variable in the form of mapVar=c('idVar'= X),
