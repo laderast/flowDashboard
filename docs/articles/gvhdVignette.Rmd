@@ -1,0 +1,137 @@
+---
+title: "Transforming the GvHD set into flowDashboard Objects"
+author: "Ted Laderas"
+date: "8/4/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
+knitr::opts_knit$set(root.dir = "../")
+```
+
+## Creating a GatingSet from GvHD Data
+
+This code was taken from the `flowWorkspace` documentation. Note that we take the incoming flowSet and convert it to a ncdfFlowSet. In general, we find this file format is more stable, especially when generating plots
+
+```{r}
+## This code was modified from flowWorkspace examples
+library(flowStats)
+data(GvHD)
+#select raw flow data and cast as ncdfFlowSet
+fs<-ncdfFlowSet(GvHD[1:20])
+
+pData(fs)$Visit <- ordered(pData(fs)$Visit)
+pData(fs)$Days <- ordered(pData(fs)$Days)
+
+#transform the raw data
+tf <- transformList(colnames(fs[[1]])[3:6], asinh, transformationId="asinh")
+fs_trans<-transform(fs,tf)
+#add transformed data to a GatingSet
+gs <- GatingSet(fs_trans)
+gs
+getNodes(gs[[1]]) #only contains root node
+#add one gate
+rg <- rectangleGate("FSC-H"=c(200,400), "SSC-H"=c(250, 400),
+                    filterId="rectangle")
+nodeID<-add(gs, rg)#it is added to root node by default if parent is not specified
+nodeID
+getNodes(gs[[1]]) #the second population is named after filterId of the gate
+#add a quadGate
+qg <- quadGate("FL1-H"=2, "FL2-H"=4)
+nodeIDs<-add(gs,qg,parent="rectangle")
+nodeIDs #quadGate produces four population nodes
+getNodes(gs[[1]]) #population names are named after dimensions of gate if not specified
+
+#do the actual gating
+recompute(gs)
+
+
+
+#dir <- paste0(tempdir(),"/gs")
+#create.dir(dir)
+
+#save_gs(dir)
+```
+
+## Building Data Objects
+
+Now that the `GvHD` data is gated and in a `GatingSet`, we can build the various objects. First we look at the markers and pick three markers as markers for general QC. Annotation is derived from the `phenoData` slot of `gs@data`.  Here, we sample our data, in order to save memory.
+
+```{r}
+#load_gs(dir)
+#show annotation
+pD <- pData(gs@data@phenoData)
+qcMarkers <- pD$desc[1:3]
+
+#show first three markers
+qcMarkers
+
+library(flowDashboard)
+##build QCO object
+QCO <- QCOFromGatingSet(gs,samplePop = 1000, qcMarkers = qcMarkers)
+##show structure of qcFlowObj
+QCO
+```
+
+Things to notice: `QCO` has three main slots: `QCO$qcData`, which holds the expression data, `QCO$annotation`, which holds the annotation, and `QCO$mapVar`, which is the key mapping `QCO$annotation` into `QCO$data`. 
+
+Additionally, there are multiple methods that alter display options. Once these are set, the UI elements are generated automatically from the object.
+
+-`QCO$setAnnotationDisplayOptions()` - this controls what annotation columns to display (supplied as a vector of column names) in the hover tooltip when you mouse over the heatmap. This method checks to see that the column names supplied exist within `QCO$annotation`.
+-`QCO$setSubsetAndSortOptions()` - this controls what columns to subset on and sort on (supplied as a vector of column names) in the subset module. This also checks to see that the column names exist in `QCO$annotation`.
+
+Note that `QCO` has a slot called `objId`. This is the identifier used when using `QCO` in one of `flowDashboard`'s shiny modules. Having unique identfiers for each object helps to avoid namespace collisions in the shiny option. By default, the identifer is randomly generated, though the user can override the default, either by specifying `objId` as an argument in the `QCOfromGatingSet()` function, or when invoking the modules separately. This `objId` lets the `flowDashboard` modules work together, or work separately (more on that later). 
+
+```{r}
+QCO$objId
+```
+
+If we use the `returnMergedData()` method, we can see the underlying merged data/annotation. We keep these two `data.table`s separate in order to save space (avoiding redundant information), and because different display methods require either the annotation or the underlying data.
+
+```{r}
+kable(QCO$returnMergedData()[1:15,])
+```
+
+Here we build the `gatingObj` from the `GatingSet`. We also create all of the relevant gating plots. Note that if you have a lot of samples and a lot of gates, the plotting can take a while. 
+
+```{r}
+GO <- GOFromGatingSet(gs,imageDir = "../sampleDashboard/data/gating/", makeGraphs = TRUE)
+##show structure of gatingObj
+GO
+```
+
+Again, we can see the merged data table from `GO` by using `returnMergedData()`:
+
+```{r}
+kable(GO$returnMergedData()[1:15,])
+```
+
+Finally, we build a `populationExpressionObj` from the `GatingSet`.
+
+```{r}
+PEO <- PEOFromGatingSet(gs, samplePop = 1000)
+PEO
+```
+
+We want to remove `Time` as a marker from PEO
+
+```{r}
+markers <- as.character(PEO$markers)
+markers
+PEO$setMarkers(markers[1:7])
+
+```
+
+Viewing the merged data table from `PEO`:
+
+```{r}
+kable(PEO$returnMergedData()[1:20,])
+```
+
+Save all objects into a new Rda:
+
+```{r}
+save(PEO, GO, QCO, file="../sampleDashboard/data/GvHD.rda")
+```

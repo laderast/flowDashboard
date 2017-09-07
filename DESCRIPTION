@@ -4,7 +4,8 @@ Title: Shiny Modules for Building interactive Dashboards for flow cytometry
     analysis
 Version: 0.1.1
 Author: Ted Laderas
-Maintainer: Ted Laderas <laderast@ohsu.edu>
+Authors@R: person("Ted", "G.", "Laderas", role = c("aut", "cre"), email = "tedladeras@gmail.com")
+Maintainer: Ted Laderas <tedladeras@gmail.com>
 Description: This package contains shiny modules to visualize gating results
     from the flowWorkspace/flowCore packages. It includes routines for translating
     GatingSet results to representations for experiment annotation, QC, gating

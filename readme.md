@@ -12,7 +12,7 @@ The shiny modules are intended to address each step of an analysis workflow (pre
 
 ## Installing `flowDashboard`
 
-The shiny modules themselves are not dependent on any Bioconductor packages. However, in building the data objects that plug into the dashboards, `flowDashboard` is dependent upon `flowCore` and `flowWorkspace`.
+The shiny modules themselves are not dependent on any Bioconductor packages. However, in building the data objects that plug into the dashboards, `flowDashboard` is dependent upon `flowCore` and `flowWorkspace`, mostly for the `GatingSet` objects.
 
 ```
 source("http://www.bioconductor.org/biocLite.R")

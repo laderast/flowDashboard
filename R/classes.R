@@ -107,8 +107,27 @@ returnMergedData <- function(data, annotation, mapVar){
   return(data[annotation, on=mapVar])
 }
 
-##commonDataObj - SuperClass for other classes
-##classes that inherit
+#' SuperClass for other DataObj Classes
+#'
+#' @docType class
+#' @importFrom R6 R6Class
+#' @export
+#' @keywords data
+#' @return Object of \code{\link{R6Class}} with methods for getting/setting features for flowDashboard.
+#' @format \code{\link{R6Class}} object.
+#' @examples
+#' library(flowWorkspace)
+#' gs <- load_gs(flowStats::GvHD)
+#' #
+#' @field annotation Annotation (can be extracted as phenoData from a GatingSet) as data.table.
+#' @field subsetOptions set which columns in annotation to use for subsetting. Set by \code{setSubsetAndSortOptions()}.
+#' @field subsetOptionList named list, where every entry corresponds to levels in a column in annotation.
+#' #' @section Methods:
+#' \describe{
+#'   \item{Documentation}{For full documentation of each method go to https://github.com/lightning-viz/lightining-r/}
+#'   \item{\code{new()}}{initialize method. }
+#'   \item{\code{checkIntegrity()}}{This method checks whether the identifier used in annotation and data agree and ensures data integrity between the two.}
+#'   \item{\code{setSubsetAndSortOptions()}}{set the subset and sortOptions}
 commonDataObj <-
   R6Class("commonDataObj",
           public=list(
@@ -270,7 +289,28 @@ setMarkers <- function(markers, data, oldMarkers){
 ##qcData = "data.table"
 ##subsetOptions = "list"
 ##mapVar = character
+#' R6 object for Quality Control of flow data
+#'
+#' @docType class
+#' @importFrom R6 R6Class
 #' @export
+#' @keywords data
+#' @return Object of \code{\link{R6Class}} with methods for getting/setting features for flowDashboard.
+#' @format \code{\link{qcFlowObj}} object.
+#' @examples
+#' library(flowWorkspace)
+#' gs <- load_gs(flowStats::GvHD)
+#' #
+#' @field annotation Annotation (can be extracted as phenoData from a GatingSet) as data.table.
+#' @field subsetOptions set which columns in annotation to use for subsetting. Set by \code{setSubsetAndSortOptions()}.
+#' @field subsetOptionList named list, where every entry corresponds to levels in a column in annotation.
+#' #' @section Methods:
+#' \describe{
+#'   \item{Documentation}{For full documentation of each method go to https://github.com/lightning-viz/lightining-r/}
+#'   \item{\code{new()}}{}
+#'   \item{\code{checkIntegrity()}}{This method checks whether the identifier used in annotation and data agree and ensures data integrity between the two.}
+#'   \item{\code{setSubsetAndSortOptions()}}{set the subset and sortOptions}
+#'   @seealso
 qcFlowObj <- R6Class(
   "qcFlowObj", inherit=commonDataObj,
   public=list(
@@ -464,15 +504,22 @@ populationExpressionObj <-
 
 #' Build a qcFlowObj from flowSet or gatingSet
 #'
-#' @param gs - can be flowSet or gatingSet
+#' @param gs - usually a GatingSet, but can also be a flowSet (useful for QC before gating)
 #' @param annotation - annotation. if NULL, will attempt to get from phenoData slot
 #' @param samplePop - number of points to sample from each flowFrame
-#' @param qcMarkers - list of markers to return that represent qcMarkers
+#' @param qcMarkers - list of markers to return that represent qcMarkers. Will return warning if the markers don't exist in data
+#' @param mapVar - maps the identifier in gs to annotation. If annotation is pulled from GatingSet phenoData, will be generated automatically
+#' @param objId - Unique object ID, used in ShinyModule to avoid namespace collisions. If NULL, will be generated automatically
+#'
 #'
 #' @return qcFlowObj
 #' @export
 #'
 #' @examples
+#' gsFile <- system.file("extdata", "gvHDgs", package="flowDashboard")
+#' gs <- load_gs(gsFile)
+#' QCO <- QCOFromGatingSet(gs)
+#' QCO
 QCOFromGatingSet <- function(gs, annotation=NULL, samplePop=4000,
                                qcMarkers=NULL, mapVar=NULL, objId=NULL){
 
@@ -486,7 +533,7 @@ QCOFromGatingSet <- function(gs, annotation=NULL, samplePop=4000,
                                  samplePop = samplePop, returnCellNum = TRUE)
 
     if(is.null(annotation)){
-      annotation <- pData(fs@phenoData)
+      annotation <- pData(gs@data@phenoData)
       mapVar = c("idVar"="name")
     }
   }
@@ -528,16 +575,25 @@ QCOFromGatingSet <- function(gs, annotation=NULL, samplePop=4000,
 #'
 #' @param gs - a GatingSet object.
 #' @param annotation - annotation object. if NULL, will try to pull from phenoData in gs@data
-#' @param populations
+#' @param populations - set of populations to display in data. Used in Shiny modules
 #' @param objId - unique ID for this object. Used in shiny modules to avoid namespace collisions.
-#' @param imageDir -
+#' @param imageDir - image directory for making all gating images. Will be created if it doesn't exist.
 #' @param mapVar - a named variable that will map to populationTable.
-#' The column to map in popTable is `name`.
+#' @param makeGraphs - Boolean that sets whether the function will generate all gating images
+#' The column to map in popTable is `name`. Default value is FALSE.
 #'
-#' @return
+#' @return gatingObj
 #' @export
 #'
 #' @examples
+#' gsFile <- system.file("extdata", "gvHDgs", package="flowDashboard")
+#' gs <- load_gs(gsFile)
+#' tmpDir <- tempdir()
+#' GO <- GOFromGatingSet(gs, imageDir=tmpDir, makeGraphs=TRUE)
+#' GO
+#'
+#' annot <- pData(gs@data@phenoData)
+#' GO <- GOFromGatingSet(gs, annotation=annot, makeGraphs=FALSE)
 GOFromGatingSet <- function(gs, annotation=NULL, populations=NULL,
                               imageDir=NULL, mapVar=NULL, objId=NULL, makeGraphs=FALSE){
     if(is.null(annotation)){
@@ -611,6 +667,10 @@ GOFromGatingSet <- function(gs, annotation=NULL, populations=NULL,
 #' @export
 #'
 #' @examples
+#' gsFile <- system.file("extdata", "gvHDgs", package="flowDashboard")
+#' gs <- load_gs(gsFile)
+#' PEO <- PEOFromGatingSet(gs)
+#' PEO
 PEOFromGatingSet <- function(gs, annotation=NULL, populations=NULL,
                              samplePop=4000, objId=NULL, mapVar=NULL){
 
