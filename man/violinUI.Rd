@@ -12,4 +12,3 @@ violinUI(id, label = "qcViolin")
 \description{
 Title
 }
-

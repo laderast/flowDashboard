@@ -12,4 +12,3 @@ buildSampledDataList(fSet, controlMarkers = NULL, controlSize = 2000)
 \description{
 buildSampledDataList - deprecated
 }
-

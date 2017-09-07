@@ -13,4 +13,3 @@ makePopulationIdentifier(popName, name, pipelineFile = "Panel1",
 \description{
 Title
 }
-

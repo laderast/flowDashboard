@@ -13,4 +13,3 @@ flagModuleUI(id, label = "qcViolin", markers, sortConditions, colorConditions,
 \description{
 Title
 }
-

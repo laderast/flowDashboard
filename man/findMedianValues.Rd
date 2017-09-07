@@ -12,4 +12,3 @@ findMedianValues(controlMelt)
 \description{
 Find Median Values of Melted Data Frame
 }
-

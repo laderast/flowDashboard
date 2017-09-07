@@ -13,4 +13,3 @@ violinPlot(data, facets = NULL, colorVar = NULL, aggregateVar = NULL,
 \description{
 Title
 }
-

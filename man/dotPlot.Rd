@@ -13,4 +13,3 @@ dotPlot(data, aesList = aes_string(x = "Population", y = "percentPop"),
 \description{
 Title
 }
-

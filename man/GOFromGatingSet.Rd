@@ -12,14 +12,30 @@ GOFromGatingSet(gs, annotation = NULL, populations = NULL,
 
 \item{annotation}{- annotation object. if NULL, will try to pull from phenoData in gs@data}
 
-\item{imageDir}{-}
+\item{populations}{- set of populations to display in data. Used in Shiny modules}
 
-\item{mapVar}{- a named variable that will map to populationTable.
-The column to map in popTable is `name`.}
+\item{imageDir}{- image directory for making all gating images. Will be created if it doesn't exist.}
+
+\item{mapVar}{- a named variable that will map to populationTable.}
 
 \item{objId}{- unique ID for this object. Used in shiny modules to avoid namespace collisions.}
+
+\item{makeGraphs}{- Boolean that sets whether the function will generate all gating images
+The column to map in popTable is `name`. Default value is FALSE.}
+}
+\value{
+gatingObj
 }
 \description{
 Build a gatingObj from a gatingSet
 }
+\examples{
+gsFile <- system.file("extdata", "gvHDgs", package="flowDashboard")
+gs <- load_gs(gsFile)
+tmpDir <- tempdir()
+GO <- GOFromGatingSet(gs, imageDir=tmpDir, makeGraphs=TRUE)
+GO
 
+annot <- pData(gs@data@phenoData)
+GO <- GOFromGatingSet(gs, annotation=annot, makeGraphs=FALSE)
+}

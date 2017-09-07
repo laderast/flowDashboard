@@ -12,4 +12,3 @@ gatingModuleUIFromGO(GO, objId = NULL)
 \description{
 Title
 }
-

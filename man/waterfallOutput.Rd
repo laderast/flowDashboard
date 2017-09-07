@@ -20,4 +20,3 @@ waterfallOutput(input, output, session, data, annotation, populationChoices,
 \description{
 Waterfall plot output module
 }
-

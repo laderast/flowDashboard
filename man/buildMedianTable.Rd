@@ -12,4 +12,3 @@ buildMedianTable(data)
 \description{
 Title
 }
-

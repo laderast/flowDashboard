@@ -2,7 +2,7 @@
 % Please edit documentation in R/QCModules.R
 \name{qcHeatmapPlot}
 \alias{qcHeatmapPlot}
-\title{Title}
+\title{Generates a heatmap using ggvis (deprecated)}
 \usage{
 qcHeatmapPlot(data, height = NULL, width = NULL, addText = TRUE,
   xVar = "idVar", yVar = "variable")
@@ -11,6 +11,5 @@ qcHeatmapPlot(data, height = NULL, width = NULL, addText = TRUE,
 \item{data}{}
 }
 \description{
-Title
+Generates a heatmap using ggvis (deprecated)
 }
-

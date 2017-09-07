@@ -13,4 +13,3 @@ subsetModule(input, output, session, subsetOptionList, annotation,
 \description{
 Title
 }
-

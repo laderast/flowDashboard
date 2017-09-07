@@ -12,4 +12,3 @@ waterfallOutputUI(id, label = "waterfall", populationChoices, colorColumns)
 \description{
 Title
 }
-

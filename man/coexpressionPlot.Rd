@@ -12,4 +12,3 @@ coexpressionPlot(input, output, session, data, markerList)
 \description{
 Title
 }
-

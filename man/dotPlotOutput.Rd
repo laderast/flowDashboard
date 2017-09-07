@@ -15,4 +15,3 @@ dotPlotOutput(input, output, session, data, annotation, mapVar = c(name =
 \description{
 Percent Plot Module
 }
-

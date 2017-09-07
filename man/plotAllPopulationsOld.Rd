@@ -20,4 +20,3 @@ nothing. Side effect is images written to the imagePath.
 \description{
 Given a gatingSet, plot the provenance for each sample and each population.
 }
-

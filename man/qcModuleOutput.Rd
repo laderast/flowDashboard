@@ -10,7 +10,9 @@ qcModuleOutput(input, output, session, data, annotation, markers,
 \arguments{
 \item{idColumn}{}
 }
+\value{
+
+}
 \description{
 Title
 }
-

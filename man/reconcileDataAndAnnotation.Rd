@@ -12,4 +12,3 @@ reconcileDataAndAnnotation(annotation, data, mapVar)
 \description{
 Title
 }
-

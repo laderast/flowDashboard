@@ -12,4 +12,3 @@ qcModuleUIFromQCO(QCO)
 \description{
 Title
 }
-

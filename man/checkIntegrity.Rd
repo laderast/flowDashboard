@@ -19,4 +19,3 @@ checkIntegrity(annotation, data, mapVar, reconcile = TRUE)
 \description{
 Check integrity of data objects
 }
-

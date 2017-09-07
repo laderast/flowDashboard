@@ -12,4 +12,3 @@ waterfallOutputUIfromGO(GO, objId = NULL)
 \description{
 Title
 }
-

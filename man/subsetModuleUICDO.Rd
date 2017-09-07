@@ -12,4 +12,3 @@ subsetModuleUICDO(dataObj, objId = NULL)
 \description{
 Title
 }
-

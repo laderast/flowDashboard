@@ -15,4 +15,3 @@ reconcileData(annotation, data, mapVar, idsInBoth)
 \description{
 Reconcile annotation and data tables in object
 }
-

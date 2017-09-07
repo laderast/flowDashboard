@@ -12,4 +12,3 @@ subsetModuleUI(id, subsetOptionList, sortOptions, subsetOptions)
 \description{
 Title
 }
-

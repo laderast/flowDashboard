@@ -10,7 +10,9 @@ qcModuleUI(id, label = "qcViolin", markers, sortConditions, colorConditions,
 \arguments{
 \item{annotation}{}
 }
+\value{
+
+}
 \description{
 Title
 }
-

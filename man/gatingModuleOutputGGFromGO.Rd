@@ -13,4 +13,3 @@ gatingModuleOutputGGFromGO(input, output, session, GO, annotation,
 \description{
 Title
 }
-

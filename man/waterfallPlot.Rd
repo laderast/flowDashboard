@@ -12,4 +12,3 @@ waterfallPlot(data, colorChoice)
 \description{
 Waterfall graphic expects a sorted table by population percentage
 }
-

@@ -17,4 +17,3 @@ returnMeltedData(fS, selectMarkers = NULL, samplePop = NULL,
 \description{
 Title
 }
-

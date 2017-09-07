@@ -12,4 +12,3 @@ dotPlotUI(id, populationList, facetConditions)
 \description{
 Title
 }
-

@@ -38,4 +38,3 @@ shiny output module
 \description{
 Output module for popHeatmapGG
 }
-

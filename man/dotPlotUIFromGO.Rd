@@ -12,4 +12,3 @@ dotPlotUIFromGO(GO, objId = NULL)
 \description{
 Title
 }
-

@@ -12,4 +12,3 @@ makeAnnotationReactive(subsetList = NULL, annotation, input)
 \description{
 Title
 }
-

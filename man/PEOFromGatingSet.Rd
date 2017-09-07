@@ -29,4 +29,9 @@ populationExpressionObj
 \description{
 Build a populationExpressionObj from a GatingSet
 }
-
+\examples{
+gsFile <- system.file("extdata", "gvHDgs", package="flowDashboard")
+gs <- load_gs(gsFile)
+PEO <- PEOFromGatingSet(gs)
+PEO
+}

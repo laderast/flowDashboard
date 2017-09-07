@@ -12,4 +12,3 @@ popHeatmapGG(data, text = TRUE)
 \description{
 Title
 }
-

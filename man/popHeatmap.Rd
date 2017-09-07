@@ -12,4 +12,3 @@ popHeatmap(data, annotation, mapVar = c(name = "FCSFiles"))
 \description{
 Title
 }
-

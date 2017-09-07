@@ -12,4 +12,3 @@ getPopulationsAndZscores(gateSet, pipelineFile = "panel1", delimiter = "+")
 \description{
 Title
 }
-

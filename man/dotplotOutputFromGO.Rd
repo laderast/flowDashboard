@@ -12,4 +12,3 @@ dotplotOutputFromGO(input, output, GO, objId = NULL, annotation)
 \description{
 Title
 }
-

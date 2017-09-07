@@ -12,4 +12,3 @@ violinOutputFromPEO(input, output, PEO, annotation)
 \description{
 Title
 }
-

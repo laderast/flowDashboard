@@ -12,4 +12,3 @@ qcModuleFromQCO(input, output, session, QCO, annotationReact)
 \description{
 Title
 }
-

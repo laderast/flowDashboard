@@ -12,4 +12,3 @@ gatingModuleUI(id, label = "gatingModule", popSubsets)
 \description{
 Title
 }
-

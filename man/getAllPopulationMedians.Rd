@@ -12,4 +12,3 @@ getAllPopulationMedians(gs, excludeCols = NULL, excludePopulations = NULL)
 \description{
 Title
 }
-

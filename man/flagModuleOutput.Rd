@@ -14,4 +14,3 @@ flagModuleOutput(input, output, session, data, annotation,
 \description{
 Title
 }
-

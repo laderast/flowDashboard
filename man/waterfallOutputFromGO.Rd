@@ -15,4 +15,3 @@ waterfallOutputFromGO(GO, annotation, objId = NULL)
 \description{
 Title
 }
-

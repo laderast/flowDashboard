@@ -13,4 +13,3 @@ returnMeltedDataFromGS(gS, population, removeMarkers = NULL,
 \description{
 Returns a long data frame with population/marker data
 }
-

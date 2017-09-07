@@ -15,4 +15,3 @@ row in data that corresponds to clicked point
 \description{
 Finds line in file for geom_tile() heatmaps
 }
-

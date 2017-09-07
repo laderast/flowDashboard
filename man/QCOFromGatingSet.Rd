@@ -8,13 +8,17 @@ QCOFromGatingSet(gs, annotation = NULL, samplePop = 4000,
   qcMarkers = NULL, mapVar = NULL, objId = NULL)
 }
 \arguments{
-\item{gs}{- can be flowSet or gatingSet}
+\item{gs}{- usually a GatingSet, but can also be a flowSet (useful for QC before gating)}
 
 \item{annotation}{- annotation. if NULL, will attempt to get from phenoData slot}
 
 \item{samplePop}{- number of points to sample from each flowFrame}
 
-\item{qcMarkers}{- list of markers to return that represent qcMarkers}
+\item{qcMarkers}{- list of markers to return that represent qcMarkers. Will return warning if the markers don't exist in data}
+
+\item{mapVar}{- maps the identifier in gs to annotation. If annotation is pulled from GatingSet phenoData, will be generated automatically}
+
+\item{objId}{- Unique object ID, used in ShinyModule to avoid namespace collisions. If NULL, will be generated automatically}
 }
 \value{
 qcFlowObj
@@ -22,4 +26,9 @@ qcFlowObj
 \description{
 Build a qcFlowObj from flowSet or gatingSet
 }
-
+\examples{
+gsFile <- system.file("extdata", "gvHDgs", package="flowDashboard")
+gs <- load_gs(gsFile)
+QCO <- QCOFromGatingSet(gs)
+QCO
+}

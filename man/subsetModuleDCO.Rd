@@ -12,4 +12,3 @@ subsetModuleDCO(input, output, dataObj, objId = NULL)
 \description{
 Title
 }
-

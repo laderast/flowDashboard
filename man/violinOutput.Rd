@@ -14,4 +14,3 @@ violinOutput(input, output, session, data, annotation, facetList = NULL,
 \description{
 Title
 }
-
