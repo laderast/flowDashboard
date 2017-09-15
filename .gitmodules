@@ -1,0 +1,3 @@
+[submodule "sampleFlowDashboard"]
+	path = sampleFlowDashboard
+	url = git://github.com/laderast/sampleFlowDashboard
