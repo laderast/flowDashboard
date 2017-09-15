@@ -20,11 +20,23 @@ SuperClass for other DataObj Classes
 \item{\code{annotation}}{Annotation (can be extracted as phenoData from a GatingSet) as data.table.}
 
 \item{\code{subsetOptions}}{set which columns in annotation to use for subsetting. Set by \code{setSubsetAndSortOptions()}.}
+
+\item{\code{subsetOptionList}}{named list, where every entry corresponds to levels in a column in annotation.}
 }}
 
+\section{Methods}{
+
+\describe{
+  \item{\code{new()}}{initialize method. }
+  \item{\code{checkIntegrity()}}{This method checks whether the identifier used in annotation and data agree and ensures data integrity between the two.}
+  \item{\code{setSubsetAndSortOptions()}}{set the subset and sortOptions}
+  \item{\code{subsetAnnotation(ids)}}{given a vector of ids, subset both the data and annotation slots.}
+  \item{\code{setAnnotationDisplayOptions(annotCols)}}{given a vector of column names in annotation, select those columns and drop the rest.}
+  }
+}
+
 \examples{
-library(flowWorkspace)
-gs <- load_gs(flowStats::GvHD)
-#
+
 }
 \keyword{data}
+\keyword{flow}

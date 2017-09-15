@@ -10,6 +10,16 @@ flowDashboard currently transforms `GatingSets` (derived from the flowWorkspace 
 
 The shiny modules are intended to address each step of an analysis workflow (preprocessing/data transformation, normalization, gating and comparative analysis).
 
+## Why New Data Objects?
+
+One might ask why new data objects are even necessary. The short answer is that the current data object for storing gating results in Bioconductor, the `GatingSet`, is really designed to display results of one FCS file at a time. The `flowDashboard` objects allow for rapid visualization and aggregation across samples based on their annotation. There are three main data objects:
+
++ `qcFlowObj` - made for QC assessment of markers
++ `gatingObj` - made for assessment of automated gating and population percentages
++ `populationExpressionObj` - made for comparison and assessment of marker expression within populations of interest
+
+Additionally, these objects set default display options (such as what Populations and markers to display) for the Shiny Dashboards, allowing you to drop them into our reference implementation with only a small amount of effort.
+
 ## Installing `flowDashboard`
 
 The shiny modules themselves are not dependent on any Bioconductor packages. However, in building the data objects that plug into the dashboards, `flowDashboard` is dependent upon `flowCore` and `flowWorkspace`, mostly for the `GatingSet` objects.
