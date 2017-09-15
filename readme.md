@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/72794399.svg)](https://zenodo.org/badge/latestdoi/72794399)
 
-Shiny modules for visualizing flow cytometry data as well as data transformation methods to enable the rapid display of cytometry data. `flowDashboard` uses data objects that are derived from `GatingSet`s to enable rapid deployment of comparative dashboards for large experiments. It is designed to scale to very large comparisons (100+) across patient populations. Visualizations can be subset, sorted, and colored according to annotations in the data.
+Shiny modules for visualizing flow cytometry data as well as data transformation methods to enable the rapid display of cytometry data. `flowDashboard` uses data objects that are derived from `GatingSet`s to enable rapid deployment of comparative dashboards for large experiments. It is designed to scale to very large comparisons (100+) across patient populations. Visualizations can be subset, sorted, and colored according to annotations provided in the data.
 
 For a sample reference dashboard [click here for a demo](https://tladeras.shinyapps.io/sampleFlowDashboard/) and the sample dashboard repo: https://github.com/laderast/sampleFlowDashboard
 
@@ -41,7 +41,13 @@ shiny::runGitHub("laderast/sampleFlowDashboard")
 
 Please refer to the vignette in the `sampleFlowDashboard` repo for more info on building the data objects that plug into `flowDashboard`: https://github.com/laderast/sampleFlowDashboard/blob/master/docs/gvhdVignette.Rmd
 
-More documentation on the data objects is forthcoming.
+Also, please refer to `?QCOFromGatingSet`, `?GOFromGatingSet`, and `?PEOFromGatingSet` for what inputs you need. If you have provided your annotation as `phenoData` for your `GatingSet`, you should be able to build the objects easily.
+
+More documentation on the data objects is forthcoming. 
+
+## Dropping Objects Into the Reference Implementation
+
+If you save your objects (named `QCO`, `GO` and `PEO`) and your gating images in the `sampleFlowDashboard/data` folder, you should just be able to load them directly into the reference implementation in `global.R`.
 
 ## Interested in Contributing?
 
