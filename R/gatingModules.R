@@ -315,7 +315,7 @@ popHeatmap <- function(data, annotation, mapVar=c("name"="FCSFiles")){
 #' @export
 #'
 #' @examples
-popHeatmapGG <- function(data, text=TRUE){
+popHeatmapGG <- function(data, text=TRUE, xVar=NULL, yVar=NULL, fillVar=NULL){
 
   #dataNew <- data[annotation, on=mapVar]
   dataNew <- data#[!is.na(percentPop)]
@@ -345,9 +345,22 @@ popHeatmapGG <- function(data, text=TRUE){
 
   outData <- dataNew[Population %in% displayNodes]
 
+  if(is.null(xVar)){
+    xVar <- "name"
+  }
+
+  if(is.null(yVar)){
+
+    yVar <- "Population"
+  }
+
+  if(is.null(fillVar)){
+    fillVar = "fillVals"
+  }
+
   outPlot <- outData %>%
     mutate(fillVals = round(zscore)) %>%
-    ggplot(aes_string(x="name", y="Population", fill="fillVals")) +
+    ggplot(aes_string(x=xVar, y=yVar, fill=fillVar)) +
     geom_tile(colour="black") +
     scale_fill_gradient2(low = "green", mid="Black", high = "red") +
     scale_y_discrete() + theme(axis.text.x = element_text(angle=90))

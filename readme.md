@@ -47,7 +47,7 @@ More documentation on the data objects is forthcoming.
 
 ## Dropping Objects Into the Reference Implementation
 
-If you save your objects (named `QCO`, `GO` and `PEO`) and your gating images in the `sampleFlowDashboard/data` folder, you should just be able to load them directly into the reference implementation in `global.R`.
+If you save your objects (named `QCO`, `GO` and `PEO`) as an `.RData` file and your gating images into the `sampleFlowDashboard/data` folder, you should just be able to load them directly into the reference implementation in `global.R` using the `load()` command (make sure to comment out the `load("data/GvHD.rda")` line).
 
 ## Interested in Contributing?
 
