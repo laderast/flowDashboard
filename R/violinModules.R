@@ -7,11 +7,6 @@ violinUIFromCDO<- function(dataObj){
 #'
 #' @param id
 #' @param label
-#' @param markers
-#' @param sortConditions
-#' @param subsetCondition
-#' @param populations
-#' @param annotation
 #'
 #' @return
 #' @export

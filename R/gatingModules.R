@@ -39,7 +39,7 @@ gatingModuleUI <- function(id, label = "gatingModule", popSubsets){
     #                    choices=c("1", "3"), selected=c("1","3")),
     #uiOutput(ns("gatingDynamicUI")),
     #fluidRow(
-    box(
+    shinydashboard::box(
       absolutePanel(id=ns("gating"), draggable=TRUE,top=0,
                     fixed=FALSE,
                     style="opacity: 0.8; background-color: white",
@@ -49,7 +49,7 @@ gatingModuleUI <- function(id, label = "gatingModule", popSubsets){
       width=12, height=225#)
     ),
     #fluidRow(
-    box(
+    shinydashboard::box(
       #absolutePanel(id=ns("heatmap"),
                     h4("Population Heatmap (Click on box to see provenance)"),
                     selectInput(ns("ps"), "Select Cellular Subsets", choices=names(popSubsets),
