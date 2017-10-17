@@ -36,7 +36,7 @@ SuperClass for other DataObj Classes
 }
 
 \examples{
-
+See \\code{\\link{qcFlowObj}}, \\code{\\link{gatingObj}}, and \\code{\\link{populationExpressionObj}} for code examples.
 }
 \keyword{data}
 \keyword{flow}

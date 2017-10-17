@@ -29,6 +29,9 @@ Build a qcFlowObj from flowSet or gatingSet
 \examples{
 gsFile <- system.file("extdata", "gvHDgs", package="flowDashboard")
 gs <- load_gs(gsFile)
+#default sampling is set to 4000 cells per FCS File
 QCO <- QCOFromGatingSet(gs)
 QCO
+
+#generate
 }

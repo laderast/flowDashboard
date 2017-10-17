@@ -7,7 +7,7 @@
 violinUI(id, label = "qcViolin")
 }
 \arguments{
-\item{annotation}{}
+\item{label}{}
 }
 \description{
 Title
