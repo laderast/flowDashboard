@@ -194,23 +194,13 @@ plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
 #' @export
 #'
 #' @examples
-plotHierarchy <- function(node, gateSet, imagePath) {
+plotHierarchy <- function(node, gateSet) {
   if(node != "root"){
-    outnodes <- strsplit(x = node, split="/")[[1]]
-    outnodes <- setdiff(outnodes, c(""))
-    outPop <- outnodes[length(outnodes)]
-    outPop <- makePopulationName(outPop)
-    #outnodes <- unlist(outnodes)
 
-    print(outPop)
-
-    fileId <- paste0(imagePath, outPop, ".png")
-    png(fileId, width=200*length(outnodes), height=200)
     try(flowWorkspace::plotGate(gateSet, y=outnodes, default.y="Cell_length",
                                 checkName=FALSE,
                                 marker.only=TRUE, raw.scale=FALSE,
                                 gpar = list(nrow=1, ncol=length(outnodes))))
-    dev.off()
   }
 }
 

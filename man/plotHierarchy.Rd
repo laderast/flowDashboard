@@ -4,7 +4,7 @@
 \alias{plotHierarchy}
 \title{Title}
 \usage{
-plotHierarchy(node, gateSet, imagePath)
+plotHierarchy(node, gateSet)
 }
 \arguments{
 \item{imagePath}{}
