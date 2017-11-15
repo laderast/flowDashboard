@@ -184,6 +184,35 @@ plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
   }
 }
 
+
+#' Title
+#'
+#' @param node
+#' @param imagePath
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plotHierarchy <- function(node, gateSet, imagePath) {
+  if(node != "root"){
+    outnodes <- strsplit(x = node, split="/")[[1]]
+    outnodes <- setdiff(outnodes, c(""))
+    outPop <- outnodes[length(outnodes)]
+    outPop <- makePopulationName(outPop)
+    #outnodes <- unlist(outnodes)
+    popID <- makePopulationIdentifier(popName=outPop, name = sampName, pipelineFile = pipelineFile,
+                                      delimiter=delimiter)
+
+    fileId <- paste0(imagePath, popID, ".png")
+    png(fileId, width=200*length(outnodes), height=200)
+    try(flowWorkspace::plotGate(gateSet[[i]], y=outnodes, default.y="Cell_length",checkName=FALSE,
+                                marker.only=TRUE, raw.scale=FALSE,
+                                gpar = list(nrow=1, ncol=length(outnodes))))
+    dev.off()
+  }
+}
+
 #' @export
 scale_this <- function(x){
   as.vector(scale(x))

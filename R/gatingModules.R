@@ -178,6 +178,10 @@ gatingModuleGGOutput <- function(input, output, session,
     as.character(unique(outDat()$name))
   })
 
+  outDataXColsNum <- reactive({
+    length(unique(outDat()$name))
+  })
+
   outDataYColNames <- reactive({
     as.character(unique(outDat()$Population))
   })
