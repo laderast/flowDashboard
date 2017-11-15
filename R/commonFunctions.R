@@ -201,12 +201,13 @@ plotHierarchy <- function(node, gateSet, imagePath) {
     outPop <- outnodes[length(outnodes)]
     outPop <- makePopulationName(outPop)
     #outnodes <- unlist(outnodes)
-    popID <- makePopulationIdentifier(popName=outPop, name = sampName, pipelineFile = pipelineFile,
-                                      delimiter=delimiter)
 
-    fileId <- paste0(imagePath, popID, ".png")
+    print(outPop)
+
+    fileId <- paste0(imagePath, outPop, ".png")
     png(fileId, width=200*length(outnodes), height=200)
-    try(flowWorkspace::plotGate(gateSet[[i]], y=outnodes, default.y="Cell_length",checkName=FALSE,
+    try(flowWorkspace::plotGate(gateSet, y=outnodes, default.y="Cell_length",
+                                checkName=FALSE,
                                 marker.only=TRUE, raw.scale=FALSE,
                                 gpar = list(nrow=1, ncol=length(outnodes))))
     dev.off()
