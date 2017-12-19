@@ -138,6 +138,9 @@ If NULL, a unique ID will be generated for the populationExpressionObj</p></td>
     <p>populationExpressionObj</p>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>gsFile</span> <span class='kw'>&lt;-</span> <span class='fu'>system.file</span>(<span class='st'>"extdata"</span>, <span class='st'>"gvHDgs"</span>, <span class='kw'>package</span><span class='kw'>=</span><span class='st'>"flowDashboard"</span>)
+<span class='no'>gs</span> <span class='kw'>&lt;-</span> <span class='fu'>load_gs</span>(<span class='no'>gsFile</span>)</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): could not find function "load_gs"</span></div><div class='input'><span class='no'>PEO</span> <span class='kw'>&lt;-</span> <span class='fu'>PEOFromGatingSet</span>(<span class='no'>gs</span>)</div><div class='output co'>#&gt; <span class='error'>Error in PEOFromGatingSet(gs): could not find function "pData"</span></div><div class='input'><span class='no'>PEO</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object 'PEO' not found</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -145,7 +148,9 @@ If NULL, a unique ID will be generated for the populationExpressionObj</p></td>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

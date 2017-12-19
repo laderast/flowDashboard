@@ -72,15 +72,29 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#flowdashboard" class="anchor"></a>flowDashboard</h1></div>
 
-<p>Shiny modules for visualizing flow cytometry data as well as data transformation methods to enable the rapid display of cytometry data. <code>flowDashboard</code> uses data objects that are derived from <code>GatingSet</code>s to enable rapid deployment of comparative dashboards for large experiments. It is designed to scale to very large comparisons (100+) across patient populations. Visualizations can be subset, sorted, and colored according to annotations in the data.</p>
+<p>Shiny modules for visualizing flow cytometry data as well as data transformation methods to enable the rapid display of cytometry data. <code>flowDashboard</code> uses data objects that are derived from <code>GatingSet</code>s to enable rapid deployment of comparative dashboards for large experiments. It is designed to scale to very large comparisons (100+) across patient populations. Visualizations can be subset, sorted, and colored according to annotations provided in the data.</p>
 <p>For a sample reference dashboard <a href="https://tladeras.shinyapps.io/sampleFlowDashboard/">click here for a demo</a> and the sample dashboard repo: <a href="https://github.com/laderast/sampleFlowDashboard" class="uri">https://github.com/laderast/sampleFlowDashboard</a></p>
 <p>flowDashboard currently transforms <code>GatingSets</code> (derived from the flowWorkspace package) into data objects. Using the <code>CytoML</code> package, gating schemes from flowJo and Cytobank can also be imported into <code>GatingSets</code> for use with <code>flowDashboard</code>.</p>
 <p>The shiny modules are intended to address each step of an analysis workflow (preprocessing/data transformation, normalization, gating and comparative analysis).</p>
+<div id="why-new-data-objects" class="section level2">
+<h2 class="hasAnchor">
+<a href="#why-new-data-objects" class="anchor"></a>Why New Data Objects?</h2>
+<p>One might ask why new data objects are even necessary. The short answer is that the current data object for storing gating results in Bioconductor, the <code>GatingSet</code>, is really designed to display results of one FCS file at a time. The <code>flowDashboard</code> objects allow for rapid visualization and aggregation across samples based on their annotation. There are three main data objects:</p>
+<ul>
+<li>
+<code>qcFlowObj</code> - made for QC assessment of markers</li>
+<li>
+<code>gatingObj</code> - made for assessment of automated gating and population percentages</li>
+<li>
+<code>populationExpressionObj</code> - made for comparison and assessment of marker expression within populations of interest</li>
+</ul>
+<p>Additionally, these objects set default display options (such as what Populations and markers to display) for the Shiny Dashboards, allowing you to drop them into our reference implementation with only a small amount of effort.</p>
+</div>
 <div id="installing-flowdashboard" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installing-flowdashboard" class="anchor"></a>Installing <code>flowDashboard</code>
 </h2>
-<p>The shiny modules themselves are not dependent on any Bioconductor packages. However, in building the data objects that plug into the dashboards, <code>flowDashboard</code> is dependent upon <code>flowCore</code> and <code>flowWorkspace</code>.</p>
+<p>The shiny modules themselves are not dependent on any Bioconductor packages. However, in building the data objects that plug into the dashboards, <code>flowDashboard</code> is dependent upon <code>flowCore</code> and <code>flowWorkspace</code>, mostly for the <code>GatingSet</code> objects.</p>
 <pre><code>source("http://www.bioconductor.org/biocLite.R")
 biocLite(c("flowCore", "flowWorkspace"), dependencies=TRUE)
 library(devtools)
@@ -93,7 +107,13 @@ install_github("laderast/flowDashboard")</code></pre>
 <a href="#building-data-objects-for-flowdashboard" class="anchor"></a>Building Data Objects for <code>flowDashboard</code>
 </h2>
 <p>Please refer to the vignette in the <code>sampleFlowDashboard</code> repo for more info on building the data objects that plug into <code>flowDashboard</code>: <a href="https://github.com/laderast/sampleFlowDashboard/blob/master/docs/gvhdVignette.Rmd" class="uri">https://github.com/laderast/sampleFlowDashboard/blob/master/docs/gvhdVignette.Rmd</a></p>
+<p>Also, please refer to <code><a href="reference/QCOFromGatingSet.html">?QCOFromGatingSet</a></code>, <code><a href="reference/GOFromGatingSet.html">?GOFromGatingSet</a></code>, and <code><a href="reference/PEOFromGatingSet.html">?PEOFromGatingSet</a></code> for what inputs you need. If you have provided your annotation as <code>phenoData</code> for your <code>GatingSet</code>, you should be able to build the objects easily.</p>
 <p>More documentation on the data objects is forthcoming.</p>
+</div>
+<div id="dropping-objects-into-the-reference-implementation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#dropping-objects-into-the-reference-implementation" class="anchor"></a>Dropping Objects Into the Reference Implementation</h2>
+<p>If you save your objects (named <code>QCO</code>, <code>GO</code> and <code>PEO</code>) as an <code>.RData</code> file and your gating images into the <code>sampleFlowDashboard/data</code> folder, you should just be able to load them directly into the reference implementation in <code>global.R</code> using the <code>load()</code> command (make sure to comment out the <code>load("data/GvHD.rda")</code> line).</p>
 </div>
 <div id="interested-in-contributing" class="section level2">
 <h2 class="hasAnchor">

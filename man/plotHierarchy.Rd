@@ -4,7 +4,7 @@
 \alias{plotHierarchy}
 \title{Title}
 \usage{
-plotHierarchy(node, gateSet)
+plotHierarchy(node, gateSet, default.y = "Cell_length")
 }
 \arguments{
 \item{imagePath}{}

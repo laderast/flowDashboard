@@ -43,7 +43,7 @@ makePopulationIdentifier <- function(popName, name, pipelineFile="Panel1", delim
 #'
 #' @examples
 plotAllPopulationsOld <- function(gateSet, nodeList=NULL, pipelineFile = "panel1",
-                               imagePath= "images/", delimiter="+"){
+                               imagePath= "images/", delimiter="+", default.y="Cell_length"){
   if(!dir.exists(imagePath)){
     dir.create(imagePath)
   }
@@ -72,7 +72,7 @@ plotAllPopulationsOld <- function(gateSet, nodeList=NULL, pipelineFile = "panel1
 
         fileId <- paste0(imagePath, popID, ".png")
         png(fileId, width=200*length(outnodes), height=200)
-        try(flowWorkspace::plotGate(gateSet[[i]], y=outnodes, default.y="Cell_length",checkName=FALSE,
+        try(flowWorkspace::plotGate(gateSet[[i]], y=outnodes, default.y=default.y,checkName=FALSE,
                      marker.only=TRUE, raw.scale=FALSE,
                      gpar = list(nrow=1, ncol=length(outnodes))))
         dev.off()
@@ -194,10 +194,13 @@ plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
 #' @export
 #'
 #' @examples
-plotHierarchy <- function(node, gateSet) {
-  if(node != "root"){
+plotHierarchy <- function(node, gateSet, default.y="Cell_length") {
 
-    try(flowWorkspace::plotGate(gateSet, y=outnodes, default.y="Cell_length",
+    if(node != "root"){
+      outnodes <- strsplit(x = node, split="/")[[1]]
+      outnodes <- setdiff(outnodes, c(""))
+
+    try(flowWorkspace::plotGate(gateSet, y=outnodes, default.y=default.y,
                                 checkName=FALSE,
                                 marker.only=TRUE, raw.scale=FALSE,
                                 gpar = list(nrow=1, ncol=length(outnodes))))

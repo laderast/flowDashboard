@@ -57,7 +57,7 @@ recompute(gs)
 
 ## Building Data Objects
 
-Now that the `GvHD` data is gated and in a `GatingSet`, we can build the various objects. First we look at the markers and pick three markers as markers for general QC. Annotation is derived from the `phenoData` slot of `gs@data`.  Here, we sample our data, in order to save memory.
+Now that the `GvHD` data is gated and in a `GatingSet`, we can build the various objects. First we look at the markers and pick three markers as markers for general QC. In this example, annotation is derived from the `phenoData` slot of `gs@data`.  Here, we sample our data, in order to save memory.
 
 ```{r}
 #load_gs(dir)
@@ -94,10 +94,11 @@ If we use the `returnMergedData()` method, we can see the underlying merged data
 kable(QCO$returnMergedData()[1:15,])
 ```
 
-Here we build the `gatingObj` from the `GatingSet`. We also create all of the relevant gating plots. Note that if you have a lot of samples and a lot of gates, the plotting can take a while. 
+Here we build the `gatingObj` from the `GatingSet`. We can also create all of the relevant gating plots by setting `makeGraphs` to `TRUE`. Note that if you have a lot of samples and a lot of gates, the plotting can take a while. 
 
 ```{r}
-GO <- GOFromGatingSet(gs,imageDir = "../sampleDashboard/data/gating/", makeGraphs = TRUE)
+GO <- GOFromGatingSet(gs,imageDir = "../sampleDashboard/data/gating/", makeGraphs = FALSE)
+#GO <- GOFromGatingSet(gs,imageDir = "../sampleDashboard/data/gating/", makeGraphs = TRUE)
 ##show structure of gatingObj
 GO
 ```
@@ -132,6 +133,6 @@ kable(PEO$returnMergedData()[1:20,])
 
 Save all objects into a new Rda:
 
-```{r}
+```{r eval=FALSE}
 save(PEO, GO, QCO, file="../sampleDashboard/data/GvHD.rda")
 ```

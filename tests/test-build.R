@@ -58,6 +58,11 @@ test_that("plotAllPopulations",{
 
 })
 
+test_that("plotHierarchy", {
+  gs <- load_gs("inst/extdata/gvHDgs/")
+  nodes <- getNodes(gs, path=1)
+  expect_silent(plotHierarchy(nodes[3], gs, "FSC-Height"))
+})
 
 test_that("returnMeltedData tests", {
   pD <- pData(parameters(gs@data[[1]]))

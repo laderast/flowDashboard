@@ -53,22 +53,22 @@ Here we build a `qcFlowObj` from a subset of `GvHD` dataset. Before we do, we lo
 
 ```{r}
 library(flowWorkspace)
-gs <- load_gs("../inst/extdata/gvHDgs/")
-
+gsFile <- system.file("extdata/gvHDgs/", package = "flowDashboard")
+gs <- load_gs(gsFile)
 ##look at phenoData slot in gs
 phenotypes <- pData(gs@data@phenoData)
 phenotypes
 ```
 
-```{r}
+```{r eval=FALSE}
 ##look at marker information in gs
 markerInfo <- pData(parameters(gs))
 markerInfo
 ```
 
-```{r}
+```{r eval=FALSE}
 #build a qcFlowObj 
-QCO <- qcFlowObjFromGatingSet(gs, samplePop = 1000)
+QCO <- QCOFromGatingSet(gs, samplePop = 1000)
 
 #show annotation slot
 QCO$annotation
@@ -81,7 +81,7 @@ Here we build a `gatingObj` from our `GatingSet`. If you want to show the gating
 
 ```{r}
 objId <- "GOgvhd"
-GO <- gatingObjFromGatingSet(gs, objId = objId) 
+#GO <- GOFromGatingSet(gs, objId = objId) 
 ```
 
 ```{r}

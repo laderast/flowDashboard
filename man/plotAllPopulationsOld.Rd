@@ -5,7 +5,7 @@
 \title{Plot all Populations}
 \usage{
 plotAllPopulationsOld(gateSet, nodeList = NULL, pipelineFile = "panel1",
-  imagePath = "images/", delimiter = "+")
+  imagePath = "images/", delimiter = "+", default.y = "Cell_length")
 }
 \arguments{
 \item{gateSet}{- a gatingSet with attached populations}

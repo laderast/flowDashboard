@@ -41,7 +41,8 @@ Please note that the usefulness of `flowDashboard` is only as good as your annot
 ```{r}
 library(flowWorkspace)
 library(flowDashboard)
-gs <- load_gs("inst/extdata/gvHDgs/")
+gsFile <- system.file("extdata/gvHDgs/", package = "flowDashboard")
+gs <- load_gs(gsFile)
 
 ##look at phenoData slot in gs
 phenotypes <- pData(gs@data@phenoData)

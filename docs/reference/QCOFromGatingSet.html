@@ -108,7 +108,7 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>gs</th>
-      <td><p>- can be flowSet or gatingSet</p></td>
+      <td><p>- usually a GatingSet, but can also be a flowSet (useful for QC before gating)</p></td>
     </tr>
     <tr>
       <th>annotation</th>
@@ -120,7 +120,15 @@
     </tr>
     <tr>
       <th>qcMarkers</th>
-      <td><p>- list of markers to return that represent qcMarkers</p></td>
+      <td><p>- list of markers to return that represent qcMarkers. Will return warning if the markers don't exist in data</p></td>
+    </tr>
+    <tr>
+      <th>mapVar</th>
+      <td><p>- maps the identifier in gs to annotation. If annotation is pulled from GatingSet phenoData, will be generated automatically</p></td>
+    </tr>
+    <tr>
+      <th>objId</th>
+      <td><p>- Unique object ID, used in ShinyModule to avoid namespace collisions. If NULL, will be generated automatically</p></td>
     </tr>
     </table>
     
@@ -129,6 +137,12 @@
     <p>qcFlowObj</p>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>gsFile</span> <span class='kw'>&lt;-</span> <span class='fu'>system.file</span>(<span class='st'>"extdata"</span>, <span class='st'>"gvHDgs"</span>, <span class='kw'>package</span><span class='kw'>=</span><span class='st'>"flowDashboard"</span>)
+<span class='no'>gs</span> <span class='kw'>&lt;-</span> <span class='fu'>load_gs</span>(<span class='no'>gsFile</span>)</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): could not find function "load_gs"</span></div><div class='input'><span class='co'>#default sampling is set to 4000 cells per FCS File</span>
+<span class='no'>QCO</span> <span class='kw'>&lt;-</span> <span class='fu'>QCOFromGatingSet</span>(<span class='no'>gs</span>)</div><div class='output co'>#&gt; <span class='error'>Error in match(x, table, nomatch = 0L): object 'gs' not found</span></div><div class='input'><span class='no'>QCO</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object 'QCO' not found</span></div><div class='input'>
+#generate
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -136,7 +150,9 @@
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

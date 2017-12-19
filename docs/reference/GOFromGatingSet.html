@@ -115,27 +115,48 @@
       <td><p>- annotation object. if NULL, will try to pull from phenoData in gs@data</p></td>
     </tr>
     <tr>
+      <th>populations</th>
+      <td><p>- set of populations to display in data. Used in Shiny modules</p></td>
+    </tr>
+    <tr>
       <th>imageDir</th>
-      <td><p>-</p></td>
+      <td><p>- image directory for making all gating images. Will be created if it doesn't exist.</p></td>
     </tr>
     <tr>
       <th>mapVar</th>
-      <td><p>- a named variable that will map to populationTable.
-The column to map in popTable is `name`.</p></td>
+      <td><p>- a named variable that will map to populationTable.</p></td>
     </tr>
     <tr>
       <th>objId</th>
       <td><p>- unique ID for this object. Used in shiny modules to avoid namespace collisions.</p></td>
     </tr>
+    <tr>
+      <th>makeGraphs</th>
+      <td><p>- Boolean that sets whether the function will generate all gating images
+The column to map in popTable is `name`. Default value is FALSE.</p></td>
+    </tr>
     </table>
     
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
+    <p>gatingObj</p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>gsFile</span> <span class='kw'>&lt;-</span> <span class='fu'>system.file</span>(<span class='st'>"extdata"</span>, <span class='st'>"gvHDgs"</span>, <span class='kw'>package</span><span class='kw'>=</span><span class='st'>"flowDashboard"</span>)
+<span class='no'>gs</span> <span class='kw'>&lt;-</span> <span class='fu'>load_gs</span>(<span class='no'>gsFile</span>)</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): could not find function "load_gs"</span></div><div class='input'><span class='no'>tmpDir</span> <span class='kw'>&lt;-</span> <span class='fu'>tempdir</span>()
+<span class='no'>GO</span> <span class='kw'>&lt;-</span> <span class='fu'>GOFromGatingSet</span>(<span class='no'>gs</span>, <span class='kw'>imageDir</span><span class='kw'>=</span><span class='no'>tmpDir</span>, <span class='kw'>makeGraphs</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='error'>Error in GOFromGatingSet(gs, imageDir = tmpDir, makeGraphs = TRUE): could not find function "pData"</span></div><div class='input'><span class='no'>GO</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object 'GO' not found</span></div><div class='input'>
+<span class='no'>annot</span> <span class='kw'>&lt;-</span> <span class='fu'>pData</span>(<span class='no'>gs</span>@<span class='kw'>data</span>@<span class='kw'>phenoData</span>)</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): could not find function "pData"</span></div><div class='input'><span class='no'>GO</span> <span class='kw'>&lt;-</span> <span class='fu'>GOFromGatingSet</span>(<span class='no'>gs</span>, <span class='kw'>annotation</span><span class='kw'>=</span><span class='no'>annot</span>, <span class='kw'>makeGraphs</span><span class='kw'>=</span><span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='error'>Error in GOFromGatingSet(gs, annotation = annot, makeGraphs = FALSE): object 'annot' not found</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#value">Value</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>
