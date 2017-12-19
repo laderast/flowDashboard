@@ -375,13 +375,13 @@ buildMedianTable <- function(data){
 #'
 #' @examples
 #' system.file("extdata", "")
-qcHeatmapGG <- function(data, text=TRUE, xVar="idVar", yVar="variable", fillVar="zscore", numVar="med",
+qcHeatmapGG <- function(data, text=TRUE, xVar="idVar", yVar="variable", fillVar="zscore",
                         lowColor="blue", highColor="gold"){
 
   #xVar <- rlang::sym(xVar)
   #yVar <- rlang::sym(yVar)
   #fillVar <- rlang::sym(fillVar)
-  numVar <- quo(numVar)
+
 
   #dataNew <- data[annotation, on=mapVar]
   dataNew <- data#[!is.na(percentPop)]
