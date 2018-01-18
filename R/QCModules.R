@@ -139,7 +139,7 @@ qcModuleOutput <- function(input, output, session, data, annotation,
     #print("<br>")
 
     outList <- unlist(lapply(1:length(colnames(annotation)), function(x){
-      paste0("<b>",colnames(annotation)[x],":</b> ", outRow[[x]], "<br>")
+      paste0("<b>",colnames(annotation)[x],":</b> ", as.character(outRow[[x]]), "<br>")
     }))
 
     outInfo <- paste(outList, sep= " ")
@@ -376,12 +376,13 @@ buildMedianTable <- function(data){
 #' @examples
 #' system.file("extdata", "")
 qcHeatmapGG <- function(data, text=TRUE, xVar="idVar", yVar="variable", fillVar="zscore",
-                        lowColor="blue", highColor="gold"){
+                        numVar="med", lowColor="blue", highColor="gold"){
 
   #xVar <- rlang::sym(xVar)
   #yVar <- rlang::sym(yVar)
   #fillVar <- rlang::sym(fillVar)
-
+  nv <- rlang::sym(numVar)
+  #nv
 
   #dataNew <- data[annotation, on=mapVar]
   dataNew <- data#[!is.na(percentPop)]
@@ -393,7 +394,9 @@ qcHeatmapGG <- function(data, text=TRUE, xVar="idVar", yVar="variable", fillVar=
   dataNew[[fillVar]] <- round(dataNew[[fillVar]])
 
   outPlot <- dataNew %>%
-    mutate(val = signif(med, digits=2)) %>%
+    mutate(val = signif(med, digits=2)
+      #rlang::UQ(n), digits=2)
+      ) %>%
     ggplot(aes_string(x=xVar, y=yVar, fill=fillVar)) +
     geom_tile(colour="black") +
     scale_fill_gradient2(low = lowColor, mid="grey30", high = highColor,guide = "legend") +
