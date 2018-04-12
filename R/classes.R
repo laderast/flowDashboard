@@ -657,7 +657,7 @@ QCOFromGatingSet <- function(gs, annotation=NULL, samplePop=4000,
 #' annot <- pData(gs@data@phenoData)
 #' GO <- GOFromGatingSet(gs, annotation=annot, makeGraphs=FALSE)
 GOFromGatingSet <- function(gs, annotation=NULL, populations=NULL,
-                              imageDir=NULL, mapVar=NULL, objId=NULL, makeGraphs=FALSE){
+                              imageDir=NULL, mapVar=NULL, objId=NULL, makeGraphs=FALSE, method="ggcyto"){
     if(is.null(annotation)){
       annotation <- pData(gs@data@phenoData)
       mapVar <- c("name"="name")

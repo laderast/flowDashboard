@@ -5,7 +5,8 @@
 \title{Build a gatingObj from a gatingSet}
 \usage{
 GOFromGatingSet(gs, annotation = NULL, populations = NULL,
-  imageDir = NULL, mapVar = NULL, objId = NULL, makeGraphs = FALSE)
+  imageDir = NULL, mapVar = NULL, objId = NULL, makeGraphs = FALSE,
+  method = "ggcyto")
 }
 \arguments{
 \item{gs}{- a GatingSet object.}

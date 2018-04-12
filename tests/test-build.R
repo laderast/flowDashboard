@@ -82,6 +82,12 @@ test_that("violinModules tests", {
 
 })
 
+test_that("plotHierarchyDens tests", {
+  nodes <- getNodes(gs, path=1)
+  pat <- sampleNames(gs)[2]
+  plotHierarchyDens(gs, nodes[3], pat)
+})
+
 # gs <- load_gs(paste0(testDir, "/gs_bcell_auto"))
 # fs <- gs@data
 #

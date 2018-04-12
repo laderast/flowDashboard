@@ -101,8 +101,8 @@ plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
   if(!dir.exists(imagePath)){
     dir.create(imagePath)
   }
-  require(flowWorkspace)
-  require(ggcyto)
+  #require(flowWorkspace)
+  #require(ggcyto)
 
   #for each node in the gatingTemplate, plot complete path
   for(i in 1:length(gateSet)){
@@ -183,6 +183,68 @@ plotAllPopulations <- function(gateSet, nodeList, pipelineFile = "panel1",
     }
   }
 }
+
+
+plotAllPopulationsDens <- function(gateSet, nodeList, pipelineFile = "panel1",
+                                   imagePath= "images/", cytof=TRUE, delimiter="+", scaling=FALSE){
+
+
+}
+
+
+#' Title
+#'
+#' @param gateSet
+#' @param node
+#' @param id
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plotHierarchyDens <- function(gateSet, node, id, width = 250, height=250, ...){
+
+  #get all parent associated with data
+  nodeList <- getNodeProvenance(gateSet, node)
+
+  #return gated flowSet here
+  gh <- gs[[id]]
+
+  ##make layout matrix
+  mat <- t(as.matrix(rep(1, length(nodeList))))
+
+  outLayout <- layout(mat)
+
+  outPlot <- lapply(nodeList, function(x){
+    print(x)
+    dat <- try(getData(gh, x))
+    if(nrow(dat)==0){stop("no data in gate!")}
+
+    gate <- getGate(gh, x)
+    dims <- unlist(lapply(gate@parameters, function(y){return(y@parameters)}))
+    #print(dims)
+    print(head(dat))
+    plotDens(dat, channels = dims, main = x, ...)
+  })
+
+  layout.show(outLayout)
+
+}
+
+getNodeProvenance <- function(gateSet, node){
+
+  nodeList <- NULL
+  nn <- node
+
+  while(nn != "root"){
+    nodeList <- c(nodeList, nn)
+    nn <- getParent(gateSet, nn)
+  }
+  #return in parent first order
+  return(rev(nodeList))
+
+}
+
 
 
 #' Title

@@ -36,9 +36,9 @@ violinUI <- function(id, label = "qcViolin") {
 #' @export
 #'
 #' @examples
-violinOutputFromPEO <- function(input, output, PEO, annotation){
+violinOutputFromPEO <- function(input, output, PEO, annotation, aggregateList=NULL){
       callModule(violinOutput, id=PEO$objId, data=PEO$expressionData,
-                 annotation=annotation,
+                 annotation=annotation,aggregateList=aggregateList,
                  colorConditions=PEO$subsetOptions,
                  markers=as.character(PEO$markers),
                  mapVar = PEO$mapVar)

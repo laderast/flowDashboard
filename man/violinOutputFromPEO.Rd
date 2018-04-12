@@ -4,7 +4,7 @@
 \alias{violinOutputFromPEO}
 \title{Title}
 \usage{
-violinOutputFromPEO(input, output, PEO, annotation)
+violinOutputFromPEO(input, output, PEO, annotation, aggregateList = NULL)
 }
 \arguments{
 \item{annotation}{}

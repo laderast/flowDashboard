@@ -19,8 +19,8 @@ gatingModuleUIFromGO <- function(GO, objId=NULL){
 
 #' Title
 #'
-#' @param id
-#' @param label
+#' @param id unique identifier for object
+#' @param label unique name for UI module
 #' @param sortConditions
 #' @param subsetCondition
 #' @param annotation
@@ -347,7 +347,9 @@ popHeatmapGG <- function(data, text=TRUE, xVar=NULL, yVar=NULL, fillVar=NULL){
 
   #pal <- c(Blue(3), "#E5E5E5", Orange(6))
 
-  outData <- dataNew[Population %in% displayNodes]
+  #outData <- dataNew[Population %in% displayNodes]
+
+  outData <- dataNew
 
   if(is.null(xVar)){
     xVar <- "name"

@@ -8,6 +8,7 @@
 #' @param annotation
 #'
 #' @return
+#' @export
 #'
 #' @examples
 qcModuleUI <- function(id, label = "qcViolin", markers, sortConditions,
