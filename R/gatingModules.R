@@ -54,9 +54,11 @@ gatingModuleUI <- function(id, label = "gatingModule", popSubsets){
                     h4("Population Heatmap (Click on box to see provenance)"),
                     selectInput(ns("ps"), "Select Cellular Subsets", choices=names(popSubsets),
                                 selected=names(popSubsets)[1]),
-                  plotOutput(ns("popHeatmap"), click = clickOpts(id=ns("clickGate"), clip=TRUE),
-                             hover=hoverOpts(id=ns("hoverGate"), clip=TRUE,delay = 300,
-                                             delayType="debounce")),
+                   #plotOutput(ns("popHeatmap"), click = clickOpts(id=ns("clickGate"), clip=TRUE),
+                    #          hover=hoverOpts(id=ns("hoverGate"), clip=TRUE,delay = 300,
+                     #                         delayType="debounce")),
+                  plotlyOutput(ns("popHeatmap2")),
+
                   uiOutput(ns("clickTipG")),
                   uiOutput(ns("hoverTipG")),
                   width=12
@@ -138,6 +140,7 @@ gatingModuleGGOutput <- function(input, output, session,
 
   pngGraph <- reactive({
     #print(plotObj2[["gating"]])
+    print(plotObj[["gating"]])
     return(plotObj[["gating"]])
   })
 
@@ -191,21 +194,65 @@ gatingModuleGGOutput <- function(input, output, session,
   })
 
 
+  output$popHeatmap2 <- renderPlotly({
+    l <- ggplotly(popHeatmapGG(outDat(),text = FALSE),
+                  source="popHeatmap2", tooltip=c("fill", "x", "y", "text"))
+    l$x$layout$width <- NULL
+    l$x$layout$height <- NULL
+    l$width <- NULL
+    l$height <- NULL
+    l
+  })
+
+
+  # output$clickTipG <- renderUI({
+  #   click <- input$clickGate
+  #
+  #   if(is.null(click$x)){
+  #     return(NULL)
+  #   }
+  #
+  #   point <- findPointsGeomTile(click, data=outDat(), xcol = outDataXColNames(),
+  #                               ycol=outDataYColNames(), ps=popSubset())
+  #
+  #   outClick <- paste0(imageDir, point$idVar, ".png")
+  #   plotObj[["gating"]] <- outClick
+  #   #print(outClick)
+  #   return(NULL)
+  # })
+
+  ## NEED TO FIX
+
   output$clickTipG <- renderUI({
-    click <- input$clickGate
+    click <- event_data("plotly_click", source="popHeatmap2")
 
-    if(is.null(click$x)){
-      return(NULL)
-    }
+    #print(click)
+    #point1 <- as.numeric(click$pointNumber)[1]
+    #print(outDat[point1,])
 
-    point <- findPointsGeomTile(click, data=outDat(), xcol = outDataXColNames(),
-                                ycol=outDataYColNames(), ps=popSubset())
+    #levels()
 
-    outClick <- paste0(imageDir, point$idVar, ".png")
+    name_value <- levels(outDat()$name)[click[["x"]]]
+    pop_value <- rev(outDat()$Population[outDat()$Population %in% popSubset()])[click[["y"]]]
+
+    print(name_value)
+    print(pop_value)
+
+    idVar <- outDat() %>% filter(name == name_value & Population == pop_value) %>%
+      pull(idVar)
+
+#    if(is.null(click$x)){
+#      return(NULL)
+#    }
+    print(idVar)
+
+    outClick <- paste0(imageDir, idVar, ".png")
     plotObj[["gating"]] <- outClick
     #print(outClick)
     return(NULL)
   })
+
+
 
   ##need to add hovertips
   output$hoverTipG <- renderUI({
@@ -319,7 +366,7 @@ popHeatmap <- function(data, annotation, mapVar=c("name"="FCSFiles")){
 #' @export
 #'
 #' @examples
-popHeatmapGG <- function(data, text=TRUE, xVar=NULL, yVar=NULL, fillVar=NULL){
+popHeatmapGG <- function(data, text=TRUE, xVar=NULL, yVar=NULL, fillVar=NULL, idVar="idVar"){
 
   #dataNew <- data[annotation, on=mapVar]
   dataNew <- data#[!is.na(percentPop)]
@@ -366,14 +413,15 @@ popHeatmapGG <- function(data, text=TRUE, xVar=NULL, yVar=NULL, fillVar=NULL){
 
   outPlot <- outData %>%
     mutate(fillVals = round(zscore)) %>%
-    ggplot(aes_string(x=xVar, y=yVar, fill=fillVar)) +
+    mutate(percentPop=signif(percentPop,digits = 2)) %>%
+    ggplot(aes_string(x=xVar, y=yVar, fill=fillVar, idVar=idVar)) +
     geom_tile(colour="black") +
     scale_fill_gradient2(low = "green", mid="Black", high = "red") +
     scale_y_discrete() + theme(axis.text.x = element_text(angle=90))
 
   if(text){
     outPlot <- outPlot +
-      geom_text(aes(label=signif(percentPop,digits = 2)), color="white")
+      geom_text(aes(label=percentPop), color="white")
   }
   outPlot
 }

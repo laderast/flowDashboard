@@ -7,6 +7,10 @@
 gatingModuleUI(id, label = "gatingModule", popSubsets)
 }
 \arguments{
+\item{id}{unique identifier for object}
+
+\item{label}{unique name for UI module}
+
 \item{annotation}{}
 }
 \description{

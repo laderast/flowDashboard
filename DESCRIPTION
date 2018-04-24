@@ -11,6 +11,7 @@ Description: This package contains shiny modules to visualize gating results
     hierarchies, and marker expression.
 Depends:
     tidyr,
+    plotly,
     dplyr,
     shiny,
     data.table,

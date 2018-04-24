@@ -5,7 +5,7 @@
 \title{Title}
 \usage{
 popHeatmapGG(data, text = TRUE, xVar = NULL, yVar = NULL,
-  fillVar = NULL)
+  fillVar = NULL, idVar = "idVar")
 }
 \arguments{
 \item{mapVar}{}

@@ -727,7 +727,8 @@ reconcileDataAndAnnotation<- function(annotation, data, mapVar){
 
 makeOutputString <- function(point, annotDisplayOptions){
   point <- as.list(point)[annotDisplayOptions]
-  outputString <- paste("<b>",names(point),":</b> ", point, "<br/>", collapse = "")
+  print(point)
+  outputString <- paste("<b>",names(point),":</b> ", as.character(point), "<br/>", collapse = "")
 
   outputString
 }
