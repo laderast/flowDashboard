@@ -27,8 +27,7 @@ waterfallOutputUI <- function(id, label="waterfall", populationChoices, colorCol
 
 #' Title
 #'
-#' @param GO
-#' @param objId
+#' @param GO - a `gatingObj`, built from \code{GOFromGatingSet}
 #'
 #' @return
 #' @export
@@ -112,8 +111,9 @@ waterfallOutput <- function(input, output, session, data, annotation,
     #sort data
     #print(nrow(annotation))
 
-    dataOut <- data[annotation(), on=mapVar][!is.na(percentPop)][order(-percentPop)][Population == pop]
-    dataOut$popKey <- factor(dataOut$popKey, levels=unique(dataOut$popKey))
+    dataOut <- data[annotation(),
+                    on=mapVar][!is.na(percentPop)][order(-percentPop)][Population == pop][,popKey:=fct_reorder(popKey, percentPop, .desc=TRUE)]
+    #dataOut$popKey <- factor(dataOut$popKey, levels=unique(dataOut$popKey))
 
     #print(head(dataOut))
     return(dataOut)
@@ -143,6 +143,9 @@ waterfallOutput <- function(input, output, session, data, annotation,
       gather_(key_col="variable", value_col="value", gather_cols=gather_cols)
 
   })
+
+  ## TODO: add tooltip for waterfall plots - show provenance of population percentage in plotly
+  ## need to change sorting routine to reactive
 
   output$hoverTipWF <- renderUI({
 
@@ -182,15 +185,18 @@ waterfallOutput <- function(input, output, session, data, annotation,
 
 #' Waterfall graphic expects a sorted table by population percentage
 #'
-#' @param data
-#' @param annotation
-#' @param colorChoice
+#' @param data - percent population data frame from gatingObj, should be merged with annotation
+#' @param population - population to sort on
+#' @param colorChoice - categorical variable to color by
+#'
+#' Given a filtered data set of one population, the function will plot a waterfall plot
+#' of those values colored by the factor variable defined in colorChoice
 #'
 #' @return
 #' @export
 #'
 #' @examples
-waterfallPlot <- function(data, colorChoice){
+waterfallPlot <- function(data, population, colorChoice){
 
   #TODO:
 
@@ -201,11 +207,11 @@ waterfallPlot <- function(data, colorChoice){
   #annotation <- annotation[data][,c("popKey",covariateChoices),with=FALSE]
   #print(annotation)
 
-  #data <- data[annotation]
+  #dat <- data %>% filter(Population==population) %>% mutate(popKey=fct_reorder(popKey, percentPop))
 
   #x <- 1:nrow(data)
   ##code from https://www.r-bloggers.com/waterfall-plots-what-and-how/
-  plot1 <- ggplot(data, aes_string(x="popKey", y="percentPop", fill=colorChoice, color=colorChoice)) +
+  plot1 <- ggplot(dat, aes_string(x="popKey", y="percentPop", fill=colorChoice, color=colorChoice)) +
     #scale_fill_discrete(name="Treatmentnarm") +
     scale_color_discrete(guide="none") +
     #labs(list(title = "Waterfall plot for changes in QoL scores", x = NULL, y = "Change from baseline (%) in QoL score")) +

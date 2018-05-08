@@ -11,6 +11,7 @@ popTable <- fread("inst/extdata/cleanupPopulations.txt")
 load("inst/extdata/expressionData.RData")
 gs <- load_gs("inst/extdata/gvHDgs/")
 
+
 #mapVar = c("idVar"="FCSFiles")
 #peo <- populationExpressionObj$new(annotation=annotation,expressionData=expressionData)
 #mapVar = c("name"="FCSFiles")
@@ -116,6 +117,19 @@ test_that("setSubsetOptions",{
 
 })
 
+test_that("waterfallTests",{
+  mapVar <- c("name"="FCSFiles")
+  pop = "CD4RA"
+
+  GO <- gatingObj$new(annotation, popTable, mapVar, reconcile=TRUE)
+  dat <- GO$popTable[GO$annotation, on=GO$mapVar, nomatch=0]
+  dat <- dat[Population==pop][order(percentPop, decreasing = TRUE)][,popKey:=fct_reorder(popKey, percentPop, .desc=TRUE)]
+  #dat <- dat %>% mutate(popKey=fct_reorder(popKey, percentPop))
+  pl <- flowDashboard::waterfallPlot(dat, colorChoice = "Gender")
+  #testthat::expect_type(pl, "ggplot")
+
+})
+
 test_that("dotPlotTests",{
 
   #dat <- GO$popTable[GO$annotation, on=GO$mapVar, nomatch=0][Population == "CD45+"]
@@ -129,9 +143,15 @@ test_that("gatingPlotTests",{
 
 
 test_that("violinOutTests", {
-  violinOut(PEO$expressionData[PEO$annotation, on=PEO$mapVar],population="live",
+
+  mapVar <- c("idVar"="FCSFiles")
+  PEO <- populationExpressionObj$new(annotation, expressionData, mapVar)
+
+  flowDashboard::violinPlot(PEO$expressionData[PEO$annotation, on=PEO$mapVar],population="live",
             marker="CD4", colorVar = "Gender")
 
+  violinPlot(dataOut, facets, colorVar, aggregateVar,
+             marker=marker, population=population)
 })
 
 test_that("subsetTests", {})
