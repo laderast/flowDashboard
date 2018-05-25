@@ -147,6 +147,9 @@ test_that("violinOutTests", {
   mapVar <- c("idVar"="FCSFiles")
   PEO <- populationExpressionObj$new(annotation, expressionData, mapVar)
 
+  violinPlot(dataOut, facets, colorVar, aggregateVar,
+             marker=marker, population=population)
+
   flowDashboard::violinPlot(PEO$expressionData[PEO$annotation, on=PEO$mapVar],population="live",
             marker="CD4", colorVar = "Gender")
 

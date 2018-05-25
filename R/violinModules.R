@@ -137,7 +137,7 @@ violinOutput <- function(input, output, session, data, annotation, facetList=NUL
     if(!is.null(facetList)) {facets <- input$facet}
     else {facets <- NULL}
 
-    dataOut <- data[annotation(), on=mapVar][variable %in% marker]
+    dataOut <- data[annotation(), on=mapVar][variable %in% marker][population==population]
 
     #dataOut$idVar <- factor(dataOut$idVar, levels = )
 

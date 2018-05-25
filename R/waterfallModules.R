@@ -17,9 +17,9 @@ waterfallOutputUI <- function(id, label="waterfall", populationChoices, colorCol
     selectInput(ns("colorVar"), "Select Outcome to Color", choices=colorColumns,
                 selected = colorColumns[1]),
     #uiOutput(ns("waterfallDynamicUI")),
-    plotOutput(ns("waterfallPlot"), hover = hoverOpts(ns("plotHoverWF"), delay = 100, delayType = "debounce")),
-    uiOutput(ns("hoverTipWF")),
-    plotOutput(ns("annotationHeatmap"))
+    plotlyOutput(ns("waterfallPlot"), hover = hoverOpts(ns("plotHoverWF"), delay = 100, delayType = "debounce")),
+    uiOutput(ns("clickTipG"))#,
+    #plotOutput(ns("annotationHeatmap"))
 
   )
 
@@ -147,6 +147,39 @@ waterfallOutput <- function(input, output, session, data, annotation,
   ## TODO: add tooltip for waterfall plots - show provenance of population percentage in plotly
   ## need to change sorting routine to reactive
 
+  output$waterfall <- renderPlotly({
+    l <- ggplotly(popHeatmapGG(popTable(),text = FALSE),
+                  source="waterfall", tooltip=c("fill", "x", "y", "text"))
+    l$x$layout$width <- NULL
+    l$x$layout$height <- NULL
+    l$width <- NULL
+    l$height <- NULL
+    l
+  })
+
+  output$clickTipG <- renderUI({
+    click <- event_data("plotly_click", source="popHeatmap2")
+
+    name_value <- levels(popTable()$name)[click[["x"]]]
+    pop_value <- rev(popTable()$Population[outDat()$Population %in% popSubset()])[click[["y"]]]
+
+    print(name_value)
+    print(pop_value)
+
+    idVar <- popTable() %>% filter(name == name_value & Population == pop_value) %>%
+      pull(idVar)
+
+    #    if(is.null(click$x)){
+    #      return(NULL)
+    #    }
+    print(idVar)
+
+    outClick <- paste0(imageDir, idVar, ".png")
+    plotObj[["gating"]] <- outClick
+    #print(outClick)
+    return(NULL)
+  })
+
   output$hoverTipWF <- renderUI({
 
     ns <- session$ns
@@ -196,7 +229,7 @@ waterfallOutput <- function(input, output, session, data, annotation,
 #' @export
 #'
 #' @examples
-waterfallPlot <- function(data, population, colorChoice){
+waterfallPlot <- function(data, colorChoice){
 
   #TODO:
 

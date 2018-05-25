@@ -221,16 +221,8 @@ gatingModuleGGOutput <- function(input, output, session,
   #   return(NULL)
   # })
 
-  ## NEED TO FIX
-
   output$clickTipG <- renderUI({
     click <- event_data("plotly_click", source="popHeatmap2")
-
-    #print(click)
-    #point1 <- as.numeric(click$pointNumber)[1]
-    #print(outDat[point1,])
-
-    #levels()
 
     name_value <- levels(outDat()$name)[click[["x"]]]
     pop_value <- rev(outDat()$Population[outDat()$Population %in% popSubset()])[click[["y"]]]
