@@ -17,8 +17,8 @@ waterfallOutputUI <- function(id, label="waterfall", populationChoices, colorCol
     selectInput(ns("colorVar"), "Select Outcome to Color", choices=colorColumns,
                 selected = colorColumns[1]),
     #uiOutput(ns("waterfallDynamicUI")),
-    plotlyOutput(ns("waterfallPlot"), hover = hoverOpts(ns("plotHoverWF"), delay = 100, delayType = "debounce")),
-    uiOutput(ns("clickTipG"))#,
+    plotlyOutput(ns("waterfall"))#,
+   # uiOutput(ns("clickTipG"))#,
     #plotOutput(ns("annotationHeatmap"))
 
   )
@@ -148,7 +148,9 @@ waterfallOutput <- function(input, output, session, data, annotation,
   ## need to change sorting routine to reactive
 
   output$waterfall <- renderPlotly({
-    l <- ggplotly(popHeatmapGG(popTable(),text = FALSE),
+
+    outcomeVar <- input$colorVar
+    l <- ggplotly(waterfallPlot(popTable(), colorChoice=outcomeVar),text = FALSE,
                   source="waterfall", tooltip=c("fill", "x", "y", "text"))
     l$x$layout$width <- NULL
     l$x$layout$height <- NULL
@@ -158,7 +160,7 @@ waterfallOutput <- function(input, output, session, data, annotation,
   })
 
   output$clickTipG <- renderUI({
-    click <- event_data("plotly_click", source="popHeatmap2")
+    click <- event_data("plotly_click", source="waterfall")
 
     name_value <- levels(popTable()$name)[click[["x"]]]
     pop_value <- rev(popTable()$Population[outDat()$Population %in% popSubset()])[click[["y"]]]
@@ -180,39 +182,39 @@ waterfallOutput <- function(input, output, session, data, annotation,
     return(NULL)
   })
 
-  output$hoverTipWF <- renderUI({
-
-    ns <- session$ns
-
-    hover <- input$plotHoverWF
-
-    if(is.null(hover$x)){
-      return(NULL)
-    }
-
-    #print(hover)
-    point <- popTable()[floor(hover$x),]
-    outputString <- makeOutputString(point, annotDisplayOptions)
-
-    left_pct <- (hover$x - hover$domain$left) / (hover$domain$right - hover$domain$left)
-    top_pct <- (hover$domain$top - hover$y) / (hover$domain$top - hover$domain$bottom)
-
-    # calculate distance from left and bottom side of the picture in pixels
-    left_px <- hover$range$left + left_pct * (hover$range$right - hover$range$left)
-    top_px <- hover$range$top + top_pct * (hover$range$bottom - hover$range$top)
-
-    # create style property fot tooltip
-    # background color is set so tooltip is a bit transparent
-    # z-index is set so we are sure are tooltip will be on top
-    style <- paste0("position:absolute; z-index:100; background-color: rgba(245, 245, 245, 0.85); ",
-                    "left:", left_px + 2, "px; top:", top_px + 2, "px;")
-
-    # actual tooltip created as wellPanel
-    wellPanel(
-      style = style,
-      p(HTML(outputString))
-    )
-  })
+  # output$hoverTipWF <- renderUI({
+  #
+  #   ns <- session$ns
+  #
+  #   hover <- input$plotHoverWF
+  #
+  #   if(is.null(hover$x)){
+  #     return(NULL)
+  #   }
+  #
+  #   #print(hover)
+  #   point <- popTable()[floor(hover$x),]
+  #   outputString <- makeOutputString(point, annotDisplayOptions)
+  #
+  #   left_pct <- (hover$x - hover$domain$left) / (hover$domain$right - hover$domain$left)
+  #   top_pct <- (hover$domain$top - hover$y) / (hover$domain$top - hover$domain$bottom)
+  #
+  #   # calculate distance from left and bottom side of the picture in pixels
+  #   left_px <- hover$range$left + left_pct * (hover$range$right - hover$range$left)
+  #   top_px <- hover$range$top + top_pct * (hover$range$bottom - hover$range$top)
+  #
+  #   # create style property fot tooltip
+  #   # background color is set so tooltip is a bit transparent
+  #   # z-index is set so we are sure are tooltip will be on top
+  #   style <- paste0("position:absolute; z-index:100; background-color: rgba(245, 245, 245, 0.85); ",
+  #                   "left:", left_px + 2, "px; top:", top_px + 2, "px;")
+  #
+  #   # actual tooltip created as wellPanel
+  #   wellPanel(
+  #     style = style,
+  #     p(HTML(outputString))
+  #   )
+  # })
 
 }
 
@@ -244,7 +246,7 @@ waterfallPlot <- function(data, colorChoice){
 
   #x <- 1:nrow(data)
   ##code from https://www.r-bloggers.com/waterfall-plots-what-and-how/
-  plot1 <- ggplot(dat, aes_string(x="popKey", y="percentPop", fill=colorChoice, color=colorChoice)) +
+  plot1 <- ggplot(data, aes_string(x="popKey", y="percentPop", fill=colorChoice, color=colorChoice)) +
     #scale_fill_discrete(name="Treatmentnarm") +
     scale_color_discrete(guide="none") +
     #labs(list(title = "Waterfall plot for changes in QoL scores", x = NULL, y = "Change from baseline (%) in QoL score")) +

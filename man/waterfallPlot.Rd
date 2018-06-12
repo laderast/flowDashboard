@@ -7,7 +7,14 @@
 waterfallPlot(data, colorChoice)
 }
 \arguments{
-\item{colorChoice}{}
+\item{data}{- percent population data frame from gatingObj, should be merged with annotation}
+
+\item{colorChoice}{- categorical variable to color by
+
+Given a filtered data set of one population, the function will plot a waterfall plot
+of those values colored by the factor variable defined in colorChoice}
+
+\item{population}{- population to sort on}
 }
 \description{
 Waterfall graphic expects a sorted table by population percentage

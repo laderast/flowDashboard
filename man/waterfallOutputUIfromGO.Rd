@@ -7,7 +7,7 @@
 waterfallOutputUIfromGO(GO, objId = NULL)
 }
 \arguments{
-\item{objId}{}
+\item{GO}{- a `gatingObj`, built from \code{GOFromGatingSet}}
 }
 \description{
 Title
