@@ -119,29 +119,44 @@ violinOutput <- function(input, output, session, data, annotation, facetList=NUL
   #   dataOut
   # })
 
+  violData <- reactive({
+
+    marker <- input$markers
+    #colorVar <- input$colorVar
+    population <- input$populations
+
+    dataOut <- data[annotation(), on=mapVar][variable %in% marker][Population == population]
+    head(dataOut)
+    dataOut
+  })
+
+
+
   # Return the reactive that yields the data frame
   output$violinPlot <- renderPlot({
 
     #need to test whether these inputs exist
-    validate(
-      need(input$populations, "need a population"),
-      need(input$markers, "need marker input"),
-      need(input$colorVar, "need color variable")
-    )
+    # validate(
+    #   need(input$populations, "need a population"),
+    #   need(input$markers, "need marker input"),
+    #   need(input$colorVar, "need color variable")
+    # )
 
     marker <- input$markers
     colorVar <- input$colorVar
     aggregateVar <- input$aggregateVar
-    population <- input$population
+    population <- input$populations
 
     if(!is.null(facetList)) {facets <- input$facet}
     else {facets <- NULL}
 
-    dataOut <- data[annotation(), on=mapVar][variable %in% marker][population==population]
+    #dataOut <- data[annotation(), on=mapVar][variable %in% marker]
+
+    #head(dataOut)
 
     #dataOut$idVar <- factor(dataOut$idVar, levels = )
 
-    violinPlot(dataOut, facets, colorVar, aggregateVar,
+    violinPlot(violData(), facets, colorVar, aggregateVar,
               marker=marker, population=population)
   })
 }
