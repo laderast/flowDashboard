@@ -23,7 +23,6 @@ test_that("testCheckIntegrity", {
                                 mapVar=c("idVar"="FCSFiles"), reconcile = TRUE))
   expect_warning(checkIntegrity(annotation, popTable,
                                 mapVar=c("name"="FCSFiles"), reconcile=TRUE))
-
   expect_warning(checkIntegrity(annotation, expressionData, mapVar = c("idVar"="FCSFiles"),
                                 reconcile = TRUE))
 
@@ -89,6 +88,7 @@ test_that("testPEO",{
   expect_error(PEO$setSubsetAndSortOptions(subsetOptions, subsetOptions))
   subsetOptions = c("fileName"="FCSFiles", "Gender", "Source")
   expect_silent(PEO$setSubsetAndSortOptions(subsetOptions, subsetOptions))
+  expect_silent(PEO$setAggregateOptions(subsetOptions))
 
   expect_silent(PEO$setMarkers(markers=c("CD14", "OX40","CD3")))
   expect_error(PEO$setMarkers(markers=c("Not", "A","Marker")))
@@ -101,6 +101,7 @@ test_that("testPEO",{
 
   expect_silent(PEOFromGatingSet(gs, samplePop = 100))
   expect_silent(PEOFromGatingSet(gs, annotation = pD, mapVar=c(idVar="name")))
+
 
 })
 

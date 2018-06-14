@@ -68,6 +68,10 @@ violinOutput <- function(input, output, session, data, annotation, facetList=NUL
 
     populations <- unique(as.character(data$Population))
 
+    tL <- list(tL,
+               radioButtons(ns("plotStyle"), "Select Plot Style",
+                            choices=c("violin", "boxplot"), selected = "violin"))
+
     if(length(populations) > 1){
       tL <- list(tL, selectInput(ns("populations"), "Select Population", choices=populations,
                         selected = populations[[1]]))
@@ -175,7 +179,7 @@ violinOutput <- function(input, output, session, data, annotation, facetList=NUL
 #'
 #' @examples
 violinPlot <- function(data, facets=NULL, colorVar=NULL, aggregateVar=NULL,
-                      population, marker){
+                      population, marker, geom="violin"){
 
   #marker <- unique(data$variable)[1]
   plotTitle <- marker
@@ -214,8 +218,16 @@ violinPlot <- function(data, facets=NULL, colorVar=NULL, aggregateVar=NULL,
     fill <- colorVar}
 
   out <- ggplot(data, aes_string(x=x,y=y, fill=fill)) +
-    geom_violin() + theme(axis.text.x=element_text(angle=90, hjust=1)) +
+    theme(axis.text.x=element_text(angle=90, hjust=1)) +
     ggtitle(plotTitle)
+
+    if(geom=="violin"){
+      out  <- out + geom_violin()
+    }
+    if(geom=="boxplot"){
+
+      out <- out + geom_boxplot()
+    }
 
   if(facetForm != ""){
     #print(facetForm)

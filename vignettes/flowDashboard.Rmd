@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Where `flowDashboard` Fits in an Analysis Workflow
 
-`flowDashboard` enables you to visualize data at both the Sample and Population Level. The package assumes that you either have FCS data in a directory, or have generated a GatingSet for your gating scheme. This gating scheme can either be automated (from a pipeline such as `openCyto`) or manually (imported from flowJo). 
+`flowDashboard` enables you to visualize data at both the Sample and cell population Level. The package assumes that you either have FCS data in a directory, or have generated a `GatingSet` for your gating scheme. This gating scheme can either be automated (from a pipeline such as `openCyto`) or manually (imported from flowJo). 
 
 There are multiple modules that will enable you to examine each step of the analysis. 
 

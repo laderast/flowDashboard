@@ -133,6 +133,7 @@ commonDataObj <-
             annotation=NULL,
             subsetOptions=NULL,
             subsetOptionList=NULL,
+            aggregateOptions=NULL,
             sortOptions=NULL,
             sortOptionList=NULL,
             contextID = NULL,
@@ -185,11 +186,33 @@ commonDataObj <-
                         self$subsetOptionList <- subsetOptionList
                         self$sortOptions <- sortOptions
 
+
                         #add colorOptions
 
                         invisible(self)
 
                         },
+            setAggregateOptions= function(aggregateOptions, checkIntegrity=FALSE){
+
+              annotation <- self$annotation
+
+              if(checkIntegrity){
+                agNotInAnnotation <-
+                  aggregateOptions[!aggregateOptions %in%
+                                  annotationCols]
+
+                if(length(agNotInAnnotation) > 0){
+                  stop(
+                    paste("annotation and subset options don't match:",
+                          agNotInAnnotation, collapse="\n")
+                  )
+                }
+              }
+
+              aggregateOptions <- unique(c("none",aggregateOptions))
+              self$aggregateOptions <- aggregateOptions
+              invisible(self)
+            },
 
             checkIntegrity =
               function(reconcile=FALSE){
@@ -399,22 +422,22 @@ qcFlowObj <- R6Class(
 #'   }
 #' @seealso \code{\link{QCOFromGatingSet}}
 #' @examples
-#' #Build a QCO Object from a GatingSet
+#' #Build a Gating Object from a GatingSet
 #' gsFile <- system.file("extdata", "gvHDgs", package="flowDashboard")
 #' gs <- load_gs(gsFile)
 #' #default sampling is set to 4000 cells per FCS File
-#' QCO <- QCOFromGatingSet(gs)
+#' GO <- GOFromGatingSet(gs)
 #' #look at slots of GatingObj
-#' QCO
+#' GO
 #'
-#' #build QCO from using new()
+#' #build gatingObj from using new()
 #' #Unless you want to build from scratch components, we recommend using
-#' #QCOFromGatingSet
+#' #GOFromGatingSet
 #'
-#' qc_data <- QCO$qcData
-#' annot <- QCO$annotation
-#' map_var <- QCO$mapVar
-#' QCO <- qcFlowObj$new(qcData=qc_data, annotation=annot, mapVar = map_var)
+#' pop_table <- GO$popTable
+#' annot <- GO$annotation
+#' map_var <- GO$mapVar
+#' GO <- gatingObj$new(popTable=pop_table, annotation=annot, mapVar = map_var)
 #'
 #' @export
 gatingObj <-
