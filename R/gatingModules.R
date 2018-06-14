@@ -405,12 +405,12 @@ popHeatmapGG <- function(data, text=TRUE, xVar=NULL, yVar=NULL, fillVar=NULL, id
 
   outPlot <- outData %>%
     mutate(fillVals = round(zscore)) %>%
-    mutate(percentPop=signif(percentPop,digits = 2)) %>%
-    ggplot(aes_string(x=xVar, y=yVar, fill=fillVar, idVar=idVar, text=paste0("<b>Population</b>: ",
-                                                                             Population, "\n", "<b>Parent:</b> ", Parent, "\n",
-                                                                             "<b>Percent Parent:</b> ", percentPop , "%\n",
-                                                                             "<b>Count: </b>", Count, "\n",
-                                                                             "<b>Parent Count: ", ParentCount))) +
+    mutate(percentPop=signif(percentPop,digits = 2), text=paste0("<b>Population</b>: ",
+                                                                 Population, "\n", "<b>Parent:</b> ", Parent, "\n",
+                                                                 "<b>Percent Parent:</b> ", percentPop , "%\n",
+                                                                 "<b>Count: </b>", Count, "\n",
+                                                                 "<b>Parent Count: ", ParentCount)) %>%
+    ggplot(aes_string(x=xVar, y=yVar, fill=fillVar, idVar=idVar, text="text")) +
     geom_tile(colour="black") +
     scale_fill_gradient2(low = "green", mid="Black", high = "red") +
     scale_y_discrete() + theme(axis.text.x = element_text(angle=90))
