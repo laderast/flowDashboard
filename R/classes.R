@@ -501,6 +501,7 @@ gatingObj <-
           invisible(self)
       },
       setPopulationSubset = function(subPopSets=NULL){
+
         if(!is.null(subPopSets) | !is.list(subPopSets)){warning("Input must be a list")}
         populations = self$populations
         outList <- list(all=populations)
@@ -687,7 +688,7 @@ GOFromGatingSet <- function(gs, annotation=NULL, populations=NULL,
     }
 
     if(is.null(populations)){
-      populations <- getNodes(gs, path="auto")[-1]
+      populations <- as.list(getNodes(gs, path="auto")[-1])
     }
 
     if(!is.null(annotation) & is.null(mapVar)){
@@ -709,7 +710,7 @@ GOFromGatingSet <- function(gs, annotation=NULL, populations=NULL,
     GO$objId <- objId
 
     if(!is.null(populations)) {GO$setPopulations(populations)}
-    GO$setPopulationSubset(subPopSets = NULL)
+    #GO$setPopulationSubset(subPopSets = NULL)
 
     annotCols <- colnames(annotation)
     sortCols <- annotCols[!annotCols %in% mapVar]

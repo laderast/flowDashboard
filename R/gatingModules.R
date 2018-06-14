@@ -195,8 +195,8 @@ gatingModuleGGOutput <- function(input, output, session,
 
 
   output$popHeatmap2 <- renderPlotly({
-    l <- ggplotly(popHeatmapGG(outDat(),text = FALSE),
-                  source="popHeatmap2", tooltip=c("fill", "x", "y", "text"))
+    l <- ggplotly(popHeatmapGG(outDat(),text = TRUE),
+                  source="popHeatmap2", tooltip=c("text"))
     l$x$layout$width <- NULL
     l$x$layout$height <- NULL
     l$width <- NULL
@@ -406,14 +406,19 @@ popHeatmapGG <- function(data, text=TRUE, xVar=NULL, yVar=NULL, fillVar=NULL, id
   outPlot <- outData %>%
     mutate(fillVals = round(zscore)) %>%
     mutate(percentPop=signif(percentPop,digits = 2)) %>%
-    ggplot(aes_string(x=xVar, y=yVar, fill=fillVar, idVar=idVar)) +
+    ggplot(aes_string(x=xVar, y=yVar, fill=fillVar, idVar=idVar, text=paste0("<b>Population</b>: ",
+                                                                             Population, "\n", "<b>Parent:</b> ", Parent, "\n",
+                                                                             "<b>Percent Parent:</b> ", percentPop , "%\n",
+                                                                             "<b>Count: </b>", Count, "\n",
+                                                                             "<b>Parent Count: ", ParentCount))) +
     geom_tile(colour="black") +
     scale_fill_gradient2(low = "green", mid="Black", high = "red") +
     scale_y_discrete() + theme(axis.text.x = element_text(angle=90))
 
   if(text){
     outPlot <- outPlot +
-      geom_text(aes(label=percentPop), color="white")
+      geom_text(aes(label=percentPop), color="white", size=3, label.padding=0.4)
   }
   outPlot
 }
+

@@ -13,7 +13,7 @@ gs <- load_gs("inst/extdata/gvHDgs/")
 
 
 #mapVar = c("idVar"="FCSFiles")
-#peo <- populationExpressionObj$new(annotation=annotation,expressionData=expressionData)
+peo <- populationExpressionObj$new(annotation=annotation,expressionData=expressionData)
 #mapVar = c("name"="FCSFiles")
 #go <- gatingObj$new(annotation=annotation,popTable = popTable)
 
@@ -149,7 +149,7 @@ test_that("violinOutTests", {
   PEO <- populationExpressionObj$new(annotation, expressionData, mapVar)
 
   violinPlot(dataOut, facets, colorVar, aggregateVar,
-             marker=marker, population=population)
+             marker=marker, population=population, text=TRUE)
 
   flowDashboard::violinPlot(PEO$expressionData[PEO$annotation, on=PEO$mapVar],population="live",
             marker="CD4", colorVar = "Gender")
@@ -169,7 +169,8 @@ test_that("gatingSetTests", {
   expect_is(QCO, "qcFlowObj")
 
   objId <- "GO"
-  GO <- gatingObjFromGatingSet(gs[1:3])
+GO <- GOFromGatingSet(gs[1:3])
+
   expect_null(GO$objId)
   expect_null(GO$imageDir)
   imageDir = tempdir()
