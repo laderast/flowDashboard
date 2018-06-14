@@ -5,7 +5,7 @@
 \title{Title}
 \usage{
 violinPlot(data, facets = NULL, colorVar = NULL, aggregateVar = NULL,
-  population, marker)
+  population, marker, geom = "violin")
 }
 \arguments{
 \item{marker}{}

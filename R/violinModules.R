@@ -140,16 +140,18 @@ violinOutput <- function(input, output, session, data, annotation, facetList=NUL
   output$violinPlot <- renderPlot({
 
     #need to test whether these inputs exist
-    # validate(
-    #   need(input$populations, "need a population"),
-    #   need(input$markers, "need marker input"),
-    #   need(input$colorVar, "need color variable")
-    # )
+     validate(
+       need(input$populations, "need a population"),
+       need(input$markers, "need marker input"),
+       need(input$colorVar, "need color variable"),
+        need(input$plotStyle, "need plotting style")
+     )
 
     marker <- input$markers
     colorVar <- input$colorVar
     aggregateVar <- input$aggregateVar
     population <- input$populations
+    plotStyle <- input$plotStyle
 
     if(!is.null(facetList)) {facets <- input$facet}
     else {facets <- NULL}
@@ -161,7 +163,7 @@ violinOutput <- function(input, output, session, data, annotation, facetList=NUL
     #dataOut$idVar <- factor(dataOut$idVar, levels = )
 
     violinPlot(violData(), facets, colorVar, aggregateVar,
-              marker=marker, population=population)
+              marker=marker, population=population, geom=plotStyle)
   })
 }
 
